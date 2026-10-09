@@ -1038,6 +1038,7 @@ class Inventory:
         since: str | None = None,
         until: str | None = None,
         note: str = "",
+        no_reminder: bool = False,
     ) -> Node:
         """Ausleihen (``lent``) oder entnehmen/auslagern (``out``); der Stammplatz bleibt (5.7)."""
         node = self.node(node_id)
@@ -1052,9 +1053,27 @@ class Inventory:
                 raise InvalidValueError(f'"{label}" muss ein Datum der Form JJJJ-MM-TT sein.')
         if until is not None and until < since:
             raise InvalidValueError('Das Rückgabedatum liegt vor dem Beginn ("bis" vor "seit").')
-        node.checkout = Checkout(CheckoutType(checkout_type), to, since, until, note.strip())
+        node.checkout = Checkout(
+            CheckoutType(checkout_type), to, since, until, note.strip(), bool(no_reminder)
+        )
         node.modified = self.now()
         self._record("checkout", node, details=node.checkout.to_dict())
+        return node
+
+    def set_checkout_reminder(self, node_id: str, enabled: bool) -> Node:
+        """Erinnerung „lange nicht zurück“ dieser Entnahme aus- (Langzeit-Ausleihe) oder einschalten.
+
+        Beim Wiedereinschalten beginnt die Frist nicht neu; maßgeblich bleibt „seit“. Wer die Frist neu
+        beginnen lassen will, entnimmt erneut mit neuem Datum.
+        """
+        node = self.node(node_id)
+        if node.checkout is None:
+            raise InvalidValueError(f'"{node.name}" ist gar nicht entnommen.')
+        if node.checkout.no_reminder == (not enabled):
+            return node
+        node.checkout.no_reminder = not enabled
+        node.modified = self.now()
+        self._record("checkout_reminder", node, details={"enabled": enabled})
         return node
 
     def return_node(self, node_id: str) -> Node:

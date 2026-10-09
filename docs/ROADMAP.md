@@ -6,7 +6,7 @@
 |---|---|---|
 | 0 | Grundlage: Gerüst, CI, leere Integration, Dokumentation | **fertig** |
 | 1 | Kern: Datenmodell, Regeln, Suche, Speicher, Exporte, Beispielinventar | **fertig** |
-| 2 | Home-Assistant-Schicht: WebSocket-API, Dienste, Sensoren, Kalender, Ereignisse, Reparaturen, Diagnose, Auslieferung | offen |
+| 2 | Home-Assistant-Schicht: WebSocket-API, Dienste, Sensoren, Kalender, Ereignisse, Reparaturen, Diagnose, Auslieferung | **fertig** |
 | 3 | Oberfläche, Grundfunktionen (Panel und Karte) | offen |
 | 4 | Erweiterungen A: Felder, Entnahme, Menge/To-do, Zustand, Ansichten Fällig/Entnommen/Nachkaufen, Wartung, Synonyme, Wert | offen |
 | 5 | Erweiterungen B: Listen, Inventur, Vorlagen, Druck, Protokoll, Sicherungen, Sprachabfrage, Berechtigungen | offen |

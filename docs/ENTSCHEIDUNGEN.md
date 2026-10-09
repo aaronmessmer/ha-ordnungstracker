@@ -3,7 +3,7 @@
 Dieses Dokument hält fest, **was bei der Entwicklung nachgeschlagen** und **was entschieden** wurde (Pflichtenheft
 Abschnitte 1, 15). Jede Entscheidung hat einen Satz Begründung. Neue Einträge werden unten ergänzt.
 
-Stand: Phase 0 und Phase 1.
+Stand: Phase 0 bis Phase 2.
 
 ## A. Ergebnisse der Prüfung aus Abschnitt 15
 
@@ -142,3 +142,25 @@ und gegen 2026.10.0 **und** 2026.3.1 getestet.
 
 ### Fehler
 - **B42. Fehlerklassen mit Codes.** Jede erwartbare Ablehnung ist ein `InventoryError` mit deutschem Text, Handlungshinweis, stabilem `code` (`not_found`, `number_taken`, `cycle`, …) und `placeholders`; die HA-Schicht kann daraus Übersetzungsschlüssel machen (Phase 2).
+
+### Nachträge zu Phase 1 (nach Rückmeldung des Auftraggebers)
+- **B43. Langzeit-Ausleihe.** Manche Dinge sind einfach lange bei jemand anderem. Jede Ausleihe hat deshalb den Schalter `no_reminder` (Dienst/Befehl `check_out` mit `no_reminder`, Befehl `checkout_reminder` zum Aus- und Wiedereinschalten): Dann entfällt die Rubrik „Ausgeliehenes ohne Datum länger als 30 Tage“ für diesen Eintrag. Ein gesetztes Rückgabedatum in der Vergangenheit bleibt trotzdem überfällig. Beim Wiedereinschalten zählt weiter „seit“; wer die Frist neu beginnen will, entnimmt erneut mit neuem Datum. Die Schwelle selbst (`lent_days`) bleibt einstellbar.
+
+## C. Entscheidungen zu Phase 2 (Home-Assistant-Schicht)
+
+- **C1. Feldnamen im WebSocket.** `id` und `type` sind in Nachrichten von Home Assistant belegt (Nachrichtenkennung, Befehlsname) – ein Befehl mit dem Feld `id` wird abgelehnt. Die Felder heißen `node_id`, `kind_id`, `person_id`, `field_id`, `template_id`, `checkout_type`, `field_type`.
+- **C2. Ungültige Datei beim Start:** Die Einrichtung wird mit `ConfigEntryNotReady` abgebrochen (Home Assistant versucht es mit wachsendem Abstand erneut) und es entsteht ein Reparaturhinweis mit den Fundstellen (die ersten fünf, mit Knotenname), dem Pfad und der letzten gültigen Sicherung. Nach der Korrektur startet die Integration von selbst, der Hinweis verschwindet. Nichts wird überschrieben.
+- **C3. Reparaturhinweise sind nicht „behebbar“ (`is_fixable=False`)**, weil nur der Nutzer die Datei richtig korrigieren kann; sie lassen sich ausblenden. Es gibt fünf: ungültige Datei, neuere Version, von Hand ungültig geändert, Konfliktdatei, Speichern fehlgeschlagen.
+- **C4. Takte.** Prüfung auf Änderungen von Hand alle 30 Sekunden (Prüfsumme der Datei, kein Dauerlesen), stündlich: Papierkorb aufräumen, Zahlen auffrischen (Datumswechsel!), Fälligkeiten melden. Zusätzlich nach jeder Änderung. Ausstehende Änderungen werden beim Entladen und beim Beenden von Home Assistant sofort geschrieben.
+- **C5. Ereignis `ordnungstracker_due` beim allerersten Start nicht für Bestehendes.** Liegt beim ersten Start schon eine Datei mit Fälligem vor (z. B. Import), wird der Stand nur gemerkt; sonst gäbe es eine Meldungsflut. Danach feuert jeder Eintrag einmal, ändert sich sein Datum, gilt er als neu. Der Merker liegt in `zustand.json`.
+- **C6. Abhängigkeiten.** Manifest: `dependencies: [http, websocket_api]`, `after_dependencies: [frontend, panel_custom, todo]`. Das Frontend ist keine harte Abhängigkeit, weil die Integration ohne Oberfläche (Phase 2) schon voll nutzbar ist und die Tests kein Frontend-Paket brauchen. Der Seitenleisten-Eintrag nutzt `panel_custom.async_register_panel` (öffentlicher Aufruf, vorhanden in 2026.3.1 und 2026.10.0).
+- **C7. Oberfläche wird nur angemeldet, wenn das Bündel existiert** (`frontend/ordnungstracker.js`, kommt in Phase 3). Der statische Pfad `/ordnungstracker_static` wird einmal je Start registriert (er lässt sich in Home Assistant nicht abmelden), `add_extra_js_url` und das Panel beim Entladen wieder entfernt. Der Seitenleisten-Eintrag („Ordnung“, `mdi:package-variant`) ist in den Optionen abschaltbar.
+- **C8. Druck- und Exportansichten:** angemeldete `HomeAssistantView` unter `/api/ordnungstracker/print/<ansicht>`; die Oberfläche holt eine 5 Minuten gültige signierte Adresse über `ordnungstracker/print_url`. Die Signatur gilt nur für genau diese Adresse (getestet: andere Ansicht → 401, nach 6 Minuten → 401). Verhalten in der Companion-App: siehe Prüfliste.
+- **C9. Dienste:** Einträge lassen sich mit Kennung **oder Nummer** nennen (`14`, `#14`) – so sind sie in Automationen und den Entwicklerwerkzeugen bequem. Alle Fehler des Kerns werden zu `ServiceValidationError` mit deutschem Text. Der aufrufende Benutzer (`call.context.user_id`) steht im Protokoll, ohne Benutzer `system`.
+- **C10. Sensoren.** Zustand = Anzahl; Attribute `total` und `items` (höchstens 10, je `name`, `path`, `detail`, `due`). „Dinge/Behälter gesamt“ haben keine Listen. Ein Test stellt sicher, dass auch 60 Einträge mit langen Namen weit unter 16 KB bleiben. Ein einziges Gerät „Ordnungs-Tracker“ (Typ Dienst) trägt alle Entitäten.
+- **C11. Kalender:** ganztägige Termine, Beschreibung = Ort des Eintrags; „nächster Termin“ = erster Termin der nächsten 400 Tage.
+- **C12. To-do-Übertragung:** Der Eintrag heißt wie der Knoten, die Beschreibung nennt Bestand, Mindestbestand und Ort. Doppelte werden über `todo.get_items` (offene Einträge, gleicher Titel ohne Beachtung der Groß-/Kleinschreibung) vermieden. Die automatische Übertragung bei Unterschreiten (Pflichtenheft 8.7, „wahlweise“) folgt in Phase 4 mit der Oberfläche; der Dienst und die Ziel-Liste in den Optionen gibt es schon.
+- **C13. Nicht in Phase 2 (laut Phasenplan später):** Berechtigungen „Löschen/Einstellungen nur für Administratoren“ (Phase 5), Sprachabfrage (Phase 5), Druckansichten in der Oberfläche (Phase 5). Bis dahin darf jeder angemeldete Benutzer alles; die Schnittstelle prüft den Benutzer bereits und vermerkt ihn im Protokoll.
+- **C14. Schemata:** `import voluptuous as vol` (siehe A6) läuft auf 2026.3.1 und 2026.10.0; alle Tests der HA-Schicht laufen gegen beide Versionen (`.venv` mit 2026.10.0, `.venv-min` mit 2026.3.1).
+- **C15. mypy:** streng nur im Kern (Pflichtenheft 11); die HA-Schicht wird mitgelesen, ihre Fehler aber nicht gemeldet.
+- **C16. `reload` ist keine Zwangsübernahme.** Der Dienst „Neu laden“ vergleicht wie die regelmäßige Prüfung die Prüfsumme: Ist die Datei seit unserem letzten Schreiben unverändert, geschieht nichts – insbesondere gehen ungespeicherte Änderungen nicht verloren.

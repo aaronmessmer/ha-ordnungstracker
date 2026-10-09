@@ -41,6 +41,20 @@ strict = true
 files = ["custom_components/ordnungstracker/core"]
 warn_unused_ignores = true
 
+# Streng gilt für den Kern; die Home-Assistant-Schicht wird nur mitgelesen (Pflichtenheft 11).
+[[tool.mypy.overrides]]
+module = [
+  "custom_components.ordnungstracker",
+  "custom_components.ordnungstracker.*",
+  "ordnungstracker",
+  "ordnungstracker.*",
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["custom_components.ordnungstracker.core.*", "ordnungstracker.core.*"]
+ignore_errors = false
+
 [[tool.mypy.overrides]]
 module = "tests.*"
 ignore_errors = true

@@ -3,9 +3,8 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 1 von 6 (Version 0.2.0).** Der **Kern** ist fertig und getestet (Datenmodell, Suche, Fälligkeiten, Speicherung, Exporte).
-> Die Anbindung an Home Assistant (Dienste, Sensoren), die **Oberfläche** und die Sprachabfrage folgen in den nächsten Phasen (`docs/ROADMAP.md`).
-> Heute lässt sich die Integration installieren und einrichten, sie tut aber noch nichts Sichtbares.
+> **Entwicklungsstand: Phase 2 von 6 (Version 0.3.0).** Kern **und** Anbindung an Home Assistant sind fertig: Du kannst über die **Entwicklerwerkzeuge → Aktionen** suchen und Einträge anlegen, ändern, verschieben, entnehmen und löschen;
+> Sensoren, Kalender und Ereignisse stehen bereit. Die **Oberfläche** (Seitenleiste, Karte) folgt in Phase 3, die Sprachabfrage in Phase 5 (`docs/ROADMAP.md`).
 
 ## Was es kann (Ziel)
 
@@ -34,7 +33,7 @@ Alles liegt im Ordner `ordnungstracker` im Konfigurationsverzeichnis (neben `con
 |---|---|
 | `inventar.json` | Das Inventar – die einzige Quelle der Wahrheit |
 | `benutzer.json` | Favoriten und zuletzt Angesehenes je Benutzer |
-| `verlauf.jsonl` | Änderungsprotokoll |
+| `verlauf.jsonl` | Änderungsprotokoll (wer hat wann was geändert) |
 | `sicherungen/` | Automatische Kopien von `inventar.json` |
 
 ### Sicherung und Wiederherstellung
@@ -50,9 +49,75 @@ das JSON-Schema in [`docs/inventar.schema.json`](docs/inventar.schema.json) (vie
 Wird die Datei außerhalb verändert, erkennt die Integration das: Gibt es keine ungespeicherten eigenen Änderungen, lädt sie neu; sonst legt sie ihren Stand als `inventar.konflikt-….json` daneben und meldet es. Ein Tippfehler macht die Datei nicht unbrauchbar –
 die Integration nennt dann genau, **was** und **in welchem Knoten** nicht stimmt.
 
+## Erste Schritte (bis die Oberfläche da ist)
+
+*Entwicklerwerkzeuge → Aktionen*, dort `ordnungstracker.…` wählen (die Aktionen sind auf Deutsch beschrieben):
+
+1. **Eintrag anlegen:** `ordnungstracker.create_node` mit `name: Keller` (ohne Ablageort = oberste Ebene, die Art wird vorgeschlagen), dann `name: Regal B`, `parent: Keller-Kennung`, und `name: Basteln`, `kind: kiste`, `number: auto` (kleinste freie Nummer).
+   Die Kennung steht in der Antwort. Später genügt für Einträge mit Nummer ihre Nummer: `parent: "#1"`.
+2. **Suchen:** `ordnungstracker.search` mit `query: heißkleb` – du bekommst Treffer mit vollständigem Pfad. Eingaben wie `14` oder `#14` springen zur Kiste mit dieser Nummer.
+3. **Beispieldaten ausprobieren:** `ordnungstracker.load_sample` lädt einen kleinen Beispielhaushalt (nur in ein leeres Inventar), `ordnungstracker.remove_sample` entfernt ihn wieder. (In Phase 3 geht das mit einem Tipp in der Oberfläche.)
+
+Alle Aktionen sind in [`docs/API.md`](docs/API.md) beschrieben.
+
+## Entitäten
+
+| Entität | Zustand | Attribute |
+|---|---|---|
+| Sensoren *Dinge gesamt*, *Behälter gesamt* | Anzahl | – |
+| *Leere Behälter*, *Unsortiert*, *Unter Mindestbestand*, *Läuft bald ab*, *Wartung fällig*, *Vermisst* | Anzahl | `total`, `items` (höchstens 10: `name`, `path`, …) |
+| *Entnommen* | Anzahl | zusätzlich `overdue` (davon überfällig) |
+| Kalender *Termine* | nächster Termin | Ablauf, Garantieende, Rückgabe, Wartung |
+
+Vollständige Listen liefern die Aktionen (`ordnungstracker.search`, `get_node`) – die Attribute bleiben absichtlich kurz.
+
+## Optionen
+
+*Einstellungen → Geräte & Dienste → Ordnungs-Tracker → Konfigurieren*: **To-do-Liste für Nachkäufe** und **Eintrag „Ordnung“ in der Seitenleiste** (wirkt, sobald die Oberfläche installiert ist).
+Die Schwellen für Erinnerungen (z. B. „Ausgeliehenes ohne Datum gilt nach 30 Tagen als überfällig“) gehören zu deinen Daten (`settings` in `inventar.json`).
+
+**Langzeit-Ausleihe:** Ist etwas für lange Zeit bei jemandem, schaltest du die Erinnerung für genau diese Ausleihe ab (`no_reminder: true` bei `check_out`) und bei Bedarf wieder ein.
+
+## Reparaturhinweise
+
+Probleme erscheinen unter *Einstellungen → System → Reparaturen*, auf Deutsch und mit Handlungshinweis: Datei ungültig (mit Fundstellen und letzter gültiger Sicherung), neuere Dateiversion, von Hand ungültig geändert,
+Konfliktdatei angelegt, Speichern fehlgeschlagen. Ein Tippfehler in der Datei richtet nie Schaden an: Es wird nichts überschrieben, und nach der Korrektur läuft alles von selbst weiter.
+
 ## Beispiel-Automationen
 
-Folgen mit Phase 2, sobald die Ereignisse und Sensoren existieren.
+**1. Benachrichtigung, wenn etwas neu fällig wird** (Ablauf, Rückgabe, Nachkauf, Wartung, vermisst):
+
+```yaml
+alias: Ordnungs-Tracker meldet Fälliges
+triggers:
+  - trigger: event
+    event_type: ordnungstracker_due
+actions:
+  - action: notify.notify          # eigenen Benachrichtigungsdienst eintragen
+    data:
+      title: "Ordnung: {{ trigger.event.data.name }}"
+      message: >-
+        {{ {'expiring': 'läuft bald ab', 'checkout_overdue': 'Rückgabe überfällig',
+            'below_min': 'nachkaufen', 'maintenance_due': 'Wartung fällig',
+            'missing': 'vermisst'}[trigger.event.data.category] }}
+        – {{ trigger.event.data.path }} {{ trigger.event.data.detail }}
+```
+
+**2. Jeden Samstag den Einkaufszettel ergänzen** (alles unter dem Mindestbestand auf die gewählte To-do-Liste, ohne Doppelte):
+
+```yaml
+alias: Nachkäufe auf die Einkaufsliste
+triggers:
+  - trigger: time
+    at: "09:00:00"
+conditions:
+  - condition: time
+    weekday: [sat]
+actions:
+  - action: ordnungstracker.transfer_to_todo
+    data:
+      todo_entity: todo.einkaufsliste   # oder weglassen, wenn in den Optionen gewählt
+```
 
 ## Entwicklung
 

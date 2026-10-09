@@ -1,0 +1,247 @@
+search:
+  fields:
+    query:
+      example: "schrauben keller"
+      selector:
+        text:
+    kind:
+      selector:
+        text:
+    within:
+      example: "#14"
+      selector:
+        text:
+    owner:
+      selector:
+        text:
+    tag:
+      selector:
+        text:
+    condition:
+      selector:
+        select:
+          translation_key: condition
+          options: [ok, missing, defective, to_sell, to_give_away, disposed]
+    checked_out:
+      selector:
+        boolean:
+    include_archived:
+      selector:
+        boolean:
+    limit:
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: box
+
+get_node:
+  fields:
+    node:
+      required: true
+      example: "#14"
+      selector:
+        text:
+
+create_node:
+  fields:
+    name:
+      required: true
+      example: "Schere"
+      selector:
+        text:
+    parent:
+      example: "#14"
+      selector:
+        text:
+    kind:
+      example: "ding"
+      selector:
+        text:
+    number:
+      example: "auto"
+      selector:
+        text:
+    aliases:
+      selector:
+        object:
+    tags:
+      selector:
+        object:
+    note:
+      selector:
+        text:
+          multiline: true
+    owner:
+      selector:
+        text:
+    quantity:
+      selector:
+        number:
+          mode: box
+          step: any
+    unit:
+      selector:
+        text:
+    min_quantity:
+      selector:
+        number:
+          mode: box
+          step: any
+
+update_node:
+  fields:
+    node:
+      required: true
+      selector:
+        text:
+    name:
+      selector:
+        text:
+    kind:
+      selector:
+        text:
+    number:
+      selector:
+        number:
+          min: 1
+          mode: box
+    aliases:
+      selector:
+        object:
+    tags:
+      selector:
+        object:
+    note:
+      selector:
+        text:
+          multiline: true
+    owner:
+      selector:
+        text:
+    quantity:
+      selector:
+        number:
+          mode: box
+          step: any
+    unit:
+      selector:
+        text:
+    min_quantity:
+      selector:
+        number:
+          mode: box
+          step: any
+    condition:
+      selector:
+        select:
+          translation_key: condition
+          options: [ok, missing, defective, to_sell, to_give_away, disposed]
+
+move_node:
+  fields:
+    nodes:
+      required: true
+      example: '["Schere", "#14"]'
+      selector:
+        object:
+    target:
+      required: true
+      example: "#20"
+      selector:
+        text:
+
+delete_node:
+  fields:
+    node:
+      required: true
+      selector:
+        text:
+    mode:
+      default: trash
+      selector:
+        select:
+          translation_key: delete_mode
+          options: [trash, lift]
+
+check_out:
+  fields:
+    node:
+      required: true
+      selector:
+        text:
+    type:
+      required: true
+      selector:
+        select:
+          translation_key: checkout_type
+          options: [lent, out]
+    to:
+      required: true
+      example: "Nachbar Huber"
+      selector:
+        text:
+    since:
+      selector:
+        date:
+    until:
+      selector:
+        date:
+    note:
+      selector:
+        text:
+    no_reminder:
+      default: false
+      selector:
+        boolean:
+
+return_node:
+  fields:
+    node:
+      required: true
+      selector:
+        text:
+
+adjust_quantity:
+  fields:
+    node:
+      required: true
+      selector:
+        text:
+    delta:
+      example: -1
+      selector:
+        number:
+          mode: box
+          step: any
+    quantity:
+      selector:
+        number:
+          min: 0
+          mode: box
+          step: any
+
+transfer_to_todo:
+  fields:
+    todo_entity:
+      selector:
+        entity:
+          domain: todo
+
+load_sample:
+remove_sample:
+reload:
+create_backup:
+
+export:
+  fields:
+    format:
+      required: true
+      selector:
+        select:
+          translation_key: export_format
+          options: [json, markdown]
+    node:
+      selector:
+        text:

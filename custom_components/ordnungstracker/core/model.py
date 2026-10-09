@@ -184,6 +184,7 @@ class Checkout:
     since: str
     until: str | None = None
     note: str = ""
+    no_reminder: bool = False  # Langzeit-Ausleihe: nicht an die Rückgabe erinnern
 
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {"type": self.type.value, "to": self.to, "since": self.since}
@@ -191,6 +192,8 @@ class Checkout:
             d["until"] = self.until
         if self.note:
             d["note"] = self.note
+        if self.no_reminder:
+            d["no_reminder"] = True
         return d
 
 

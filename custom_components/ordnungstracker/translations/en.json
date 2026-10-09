@@ -9,5 +9,408 @@
     "abort": {
       "single_instance_allowed": "Ordnungs-Tracker is already set up. Only one instance is possible."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ordnungs-Tracker settings",
+        "description": "Reminder thresholds (e.g. \"lent items are overdue after 30 days\") are set in the app; they are part of your data.",
+        "data": {
+          "todo_entity": "To-do list for restocking",
+          "show_sidebar": "Show the \"Ordnung\" entry in the sidebar"
+        },
+        "data_description": {
+          "todo_entity": "The service \"Transfer restocking to to-do list\" adds items below their minimum stock here.",
+          "show_sidebar": "Applies once the user interface is installed."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "items_total": {
+        "name": "Items total"
+      },
+      "containers_total": {
+        "name": "Containers total"
+      },
+      "empty_containers": {
+        "name": "Empty containers"
+      },
+      "unsorted": {
+        "name": "Unsorted"
+      },
+      "checked_out": {
+        "name": "Checked out"
+      },
+      "below_min": {
+        "name": "Below minimum stock"
+      },
+      "expiring": {
+        "name": "Expiring soon"
+      },
+      "maintenance_due": {
+        "name": "Maintenance due"
+      },
+      "missing": {
+        "name": "Missing"
+      }
+    },
+    "calendar": {
+      "dates": {
+        "name": "Dates"
+      }
+    }
+  },
+  "services": {
+    "search": {
+      "name": "Search",
+      "description": "Searches the inventory and returns hits with their full path.",
+      "fields": {
+        "query": {
+          "name": "Search term",
+          "description": "All words must match; input like 14 or #14 jumps to the box with that number."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Only entries of this kind (kind id, e.g. kiste)."
+        },
+        "within": {
+          "name": "Within",
+          "description": "Only entries inside this room, shelf or box (id or number)."
+        },
+        "owner": {
+          "name": "Owner",
+          "description": "Person id; the effective (possibly inherited) owner counts."
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Only entries with this tag."
+        },
+        "condition": {
+          "name": "Condition",
+          "description": "Only entries in this condition."
+        },
+        "checked_out": {
+          "name": "Checked out",
+          "description": "Only checked-out (or only not checked-out) entries."
+        },
+        "include_archived": {
+          "name": "Include archived",
+          "description": "Also show disposed or given-away entries."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Maximum number of hits."
+        }
+      }
+    },
+    "get_node": {
+      "name": "Read entry",
+      "description": "Returns all details of an entry including path and contents.",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number (e.g. #14)."
+        }
+      }
+    },
+    "create_node": {
+      "name": "Create entry",
+      "description": "Creates a new entry. Only the name is required.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name of the entry."
+        },
+        "parent": {
+          "name": "Location",
+          "description": "Id or number of the parent; top level if omitted."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "Kind id; a suitable one is suggested if omitted."
+        },
+        "number": {
+          "name": "Number",
+          "description": "A number, or auto for the lowest free number."
+        },
+        "aliases": {
+          "name": "Other names",
+          "description": "List of other names."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "List of tags."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Free text."
+        },
+        "owner": {
+          "name": "Owner",
+          "description": "Person id."
+        },
+        "quantity": {
+          "name": "Quantity",
+          "description": "Count."
+        },
+        "unit": {
+          "name": "Unit",
+          "description": "e.g. pieces or rolls."
+        },
+        "min_quantity": {
+          "name": "Minimum stock",
+          "description": "Below this the entry shows up under \"Restock\"."
+        }
+      }
+    },
+    "update_node": {
+      "name": "Change entry",
+      "description": "Changes details of an entry; unspecified details stay as they are.",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number."
+        },
+        "name": {
+          "name": "Name",
+          "description": "New name."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "New kind."
+        },
+        "number": {
+          "name": "Number",
+          "description": "New number."
+        },
+        "aliases": {
+          "name": "Other names",
+          "description": "Replaces the list."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Replaces the list."
+        },
+        "note": {
+          "name": "Note",
+          "description": "New note."
+        },
+        "owner": {
+          "name": "Owner",
+          "description": "Person id."
+        },
+        "quantity": {
+          "name": "Quantity",
+          "description": "New quantity."
+        },
+        "unit": {
+          "name": "Unit",
+          "description": "New unit."
+        },
+        "min_quantity": {
+          "name": "Minimum stock",
+          "description": "New minimum stock."
+        },
+        "condition": {
+          "name": "Condition",
+          "description": "New condition."
+        }
+      }
+    },
+    "move_node": {
+      "name": "Move entry",
+      "description": "Moves entries including their contents to a new location.",
+      "fields": {
+        "nodes": {
+          "name": "Entries",
+          "description": "List of ids or numbers."
+        },
+        "target": {
+          "name": "Target",
+          "description": "Id or number of the new location."
+        }
+      }
+    },
+    "delete_node": {
+      "name": "Delete entry",
+      "description": "Moves the entry to the trash (restorable for 30 days).",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number."
+        },
+        "mode": {
+          "name": "Delete mode",
+          "description": "Trash with contents, or remove only the entry and lift its contents one level up."
+        }
+      }
+    },
+    "check_out": {
+      "name": "Check out",
+      "description": "Records that something is lent out or temporarily elsewhere. Its home is kept.",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number."
+        },
+        "type": {
+          "name": "Type",
+          "description": "Lent, or taken out / stored elsewhere."
+        },
+        "to": {
+          "name": "To whom / where",
+          "description": "e.g. neighbour Huber or at the tyre shop."
+        },
+        "since": {
+          "name": "Since",
+          "description": "Today if omitted."
+        },
+        "until": {
+          "name": "Until",
+          "description": "Return date (optional)."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Free text."
+        },
+        "no_reminder": {
+          "name": "Long-term loan",
+          "description": "No \"not returned for long\" reminder for this loan."
+        }
+      }
+    },
+    "return_node": {
+      "name": "Put back",
+      "description": "Ends the checkout; the entry is back in its place.",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number."
+        }
+      }
+    },
+    "adjust_quantity": {
+      "name": "Change quantity",
+      "description": "Changes the quantity by a value or sets it (never below 0).",
+      "fields": {
+        "node": {
+          "name": "Entry",
+          "description": "Id or number."
+        },
+        "delta": {
+          "name": "Change",
+          "description": "e.g. -1 or 5."
+        },
+        "quantity": {
+          "name": "New quantity",
+          "description": "Sets the quantity."
+        }
+      }
+    },
+    "transfer_to_todo": {
+      "name": "Transfer restocking to to-do list",
+      "description": "Adds everything below its minimum stock to a to-do list (without duplicates).",
+      "fields": {
+        "todo_entity": {
+          "name": "To-do list",
+          "description": "The list chosen in the options if omitted."
+        }
+      }
+    },
+    "load_sample": {
+      "name": "Load sample data",
+      "description": "Loads a small sample household (about 60 entries) to try things out – only into an empty inventory."
+    },
+    "remove_sample": {
+      "name": "Remove sample data",
+      "description": "Removes the sample data again. Your own entries inside it move to \"Unsorted\"."
+    },
+    "reload": {
+      "name": "Reload",
+      "description": "Re-reads inventar.json, e.g. after editing it by hand."
+    },
+    "create_backup": {
+      "name": "Create backup",
+      "description": "Immediately creates a backup copy of inventar.json."
+    },
+    "export": {
+      "name": "Export",
+      "description": "Returns the inventory as a JSON file or a readable Markdown list.",
+      "fields": {
+        "format": {
+          "name": "Format",
+          "description": "JSON (inventar.json) or Markdown."
+        },
+        "node": {
+          "name": "Subtree",
+          "description": "Only this entry with its contents (Markdown only)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "condition": {
+      "options": {
+        "ok": "fine",
+        "missing": "missing",
+        "defective": "defective",
+        "to_sell": "to sell",
+        "to_give_away": "to give away",
+        "disposed": "disposed / given away"
+      }
+    },
+    "delete_mode": {
+      "options": {
+        "trash": "with contents to the trash",
+        "lift": "only the entry, contents one level up"
+      }
+    },
+    "checkout_type": {
+      "options": {
+        "lent": "lent out",
+        "out": "taken out / stored elsewhere"
+      }
+    },
+    "export_format": {
+      "options": {
+        "json": "JSON (inventar.json)",
+        "markdown": "Markdown list"
+      }
+    }
+  },
+  "issues": {
+    "invalid_file": {
+      "title": "The inventory file is invalid",
+      "description": "Ordnungs-Tracker has **changed nothing** and will only start again once the file is fine.\n\nFile: `{path}`\n\n{problems}\n\n**What to do?** Fix the listed places with a file editor; Ordnungs-Tracker retries automatically. Alternatively copy the last valid backup from the `sicherungen` folder over `inventar.json`: `{backup}`."
+    },
+    "newer_schema": {
+      "title": "The inventory file is from a newer version",
+      "description": "{message}\n\nFile: `{path}` (left untouched)."
+    },
+    "external_invalid": {
+      "title": "inventar.json was edited by hand and is now invalid",
+      "description": "Until the file is valid again, **no changes are saved**.\n\nFile: `{path}`\n\n{problems}\n\nUnsaved changes of your own are in: `{conflict}`.\n\n**What to do?** Fix the file; it is re-read automatically."
+    },
+    "conflict": {
+      "title": "inventar.json changed while there were unsaved changes",
+      "description": "The outside change was adopted. Your unsaved state is next to the file as `{conflict}` (`{path}`). Check whether anything is missing and copy it over by hand if needed."
+    },
+    "save_failed": {
+      "title": "The inventory could not be saved",
+      "description": "Error: {error}\n\nFile: `{path}`\n\nCheck free disk space and write permissions. Changes stay in memory and are retried."
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Ordnungs-Tracker is not loaded. Check Settings → Repairs for a complaint about inventar.json."
+    },
+    "no_todo_entity": {
+      "message": "No to-do list is selected. Choose one in the integration options or pass todo_entity."
+    },
+    "todo_unknown": {
+      "message": "The to-do list {entity_id} does not exist."
+    }
   }
 }

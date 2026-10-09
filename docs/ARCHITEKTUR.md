@@ -1,6 +1,6 @@
 # Architektur
 
-Verbindliche Vorgaben: `docs/PFLICHTENHEFT.md`, Abschnitt 4. Dieses Dokument beschreibt, wie sie umgesetzt sind. Stand: Phase 1.
+Verbindliche Vorgaben: `docs/PFLICHTENHEFT.md`, Abschnitt 4. Dieses Dokument beschreibt, wie sie umgesetzt sind. Stand: Phase 2.
 
 ## Drei Schichten
 
@@ -60,14 +60,32 @@ Protokollzeilen enthalten bei Änderungen die alten Werte.
 Knoten liegen flach in `nodes` und verweisen über `parent` aufeinander. Verschieben ändert genau eine Zeile, Verweise aus Listen bleiben stabil, und die Datei lässt sich mit jedem Werkzeug verarbeiten. Für die Navigation baut `Tree` einen Kinder-Index
 (`parent → [Kinder]`), der nach jeder strukturellen Änderung neu aufgebaut wird (bei 5.000 Knoten ≈ 1 ms).
 
-## Geplante Home-Assistant-Schicht (Phase 2)
+## Home-Assistant-Schicht (Phase 2)
 
-`__init__.py` (Laden des Speichers, Ablage in `entry.runtime_data`, Timer für Fremdänderungen und tägliche Pflege), `websocket_api.py`, `services.py`/`services.yaml`, `sensor.py`, `calendar.py`, `intent.py`, `diagnostics.py`, `repairs.py`, geschützte Ansichten für Export und Druck.
-Sie übersetzt nur zwischen Home Assistant und Kern. Einzelheiten der Plattform-Recherche: `docs/ENTSCHEIDUNGEN.md`, Abschnitt A.
+Sie übersetzt nur zwischen Home Assistant und Kern. Entscheidungen: `docs/ENTSCHEIDUNGEN.md`, Abschnitt C. Schnittstellen: `docs/API.md`.
+
+| Modul | Aufgabe |
+|---|---|
+| `__init__.py` | Einrichten/Entladen; registriert Dienste, WebSocket-Befehle und Ansichten einmal je Home Assistant; lädt die Datei **ohne** Überschreiben (ungültig → Reparaturhinweis + `ConfigEntryNotReady`) |
+| `runtime.py` | `OrdnungsTrackerRuntime` (in `entry.runtime_data`): Speicher, Suchindex, Benutzerdaten, Zeitgeber, Ereignis „fällig“, Abo, `Snapshot` der Sensorwerte |
+| `websocket_api.py` | `ordnungstracker/…`-Befehle (Tabellen `READ`/`WRITE`), Abo `subscribe` |
+| `services.py`, `services.yaml` | Dienste mit Antwortdaten; Einträge per Kennung oder Nummer |
+| `sensor.py`, `calendar.py` | Entitäten, aktualisiert über ein Dispatcher-Signal bei jeder Änderung |
+| `views.py` | geschützte Export-/Druckansichten und signierte Adressen |
+| `frontend_registration.py` | statischer Pfad, Karten-Ressource, Seitenleisten-Eintrag (sobald das Bündel existiert) |
+| `repairs.py`, `diagnostics.py`, `todo_transfer.py`, `config_flow.py` | Hinweise, Diagnose, To-do-Übertragung, Einrichtung und Optionen |
+
+```
+Oberfläche / Dienst / Automation
+   └─ OrdnungsTrackerRuntime.async_mutate(fn, user_id)
+        └─ InventoryStore.async_mutate        (Sperre, Regelprüfung, Rückrollen, Protokoll, gebündeltes Speichern)
+             └─ Change-Listener → Snapshot neu → Abo (WebSocket) + Dispatcher (Sensoren, Kalender)
+        └─ async_check_due                    (neu Fälliges → Ereignis, Merker in zustand.json)
+```
 
 ## Tests
 
 * `tests/core/` – Kern ohne Home Assistant, schnell (≈ 5 s), Abdeckung ≥ 90 % (aktuell ≈ 97 %).
-* `tests/ha/` – Home-Assistant-Schicht mit `pytest-homeassistant-custom-component`.
+* `tests/ha/` – Home-Assistant-Schicht mit `pytest-homeassistant-custom-component` (Einrichtung, ungültige Datei, WebSocket, Dienste, Sensoren, Kalender, Ereignisse, Ansichten, Metadaten); läuft gegen Home Assistant 2026.10.0 und 2026.3.1.
 * `tests/test_repository.py` – Gerüst (Manifest, Übersetzungen, HACS, Dokumente).
 * Besondere Tests: Fuzz-Test der Regeln (zufällige Operationsfolgen, 12 feste Startwerte), Fuzz-Test „gepflegter Index = frischer Index“, Leistungstest der Suche mit 5.000 Knoten, Absturz beim Schreiben, Fremdänderungen, Migrationen.

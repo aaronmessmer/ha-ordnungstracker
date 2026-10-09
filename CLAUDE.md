@@ -34,7 +34,7 @@ Python **3.14** nötig (Home Assistant 2026.x). Einrichtung z. B. mit uv:
 uv venv --python 3.14 .venv && uv pip install --python .venv/bin/python -r requirements_test.txt
 source .venv/bin/activate
 
-pytest                              # alle Tests (Kern ≈ 5 s)
+pytest                              # alle Tests (≈ 15 s)
 pytest --cov                        # mit Abdeckung des Kerns (Schwelle 90 %)
 ruff check custom_components tests && ruff format --check custom_components tests
 mypy                                # Kern streng
@@ -52,7 +52,8 @@ Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das E
 * Datenformat nur mit Migration ändern (`core/migrations.py`, `schema_version` anheben, `docs/DATENFORMAT.md` und `docs/inventar.schema.json` nachziehen, Beispieldatei neu erzeugen).
 * Nie blockierenden Dateizugriff im Event-Loop; Dateien nur atomar schreiben (`store.write_atomic`).
 * Versionen semantisch; `manifest.json` und `CHANGELOG.md` pro Phase aktualisieren. Release: GitHub → Actions → „Release“ von Hand starten.
-* `hacs.json: homeassistant` = älteste getestete Version (2026.3.0); Tests der HA-Schicht möglichst gegen die aktuelle **und** die älteste Version laufen lassen.
+* WebSocket-Felder heißen nie `id`/`type` (von Home Assistant belegt): `node_id`, `kind_id`, `checkout_type` usw.
+* `hacs.json: homeassistant` = älteste getestete Version (2026.3.0); Tests der HA-Schicht gegen die aktuelle **und** die älteste Version laufen lassen (zwei venvs: `uv pip install pytest-homeassistant-custom-component==0.13.317` ergibt HA 2026.3.1).
 
 ## Stand der Phasen
 
@@ -60,5 +61,6 @@ Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das E
 |---|---|
 | 0 Grundlage | fertig (0.1.0) |
 | 1 Kern | fertig (0.2.0) |
-| 2 Home-Assistant-Schicht | **als Nächstes** |
-| 3–6 | offen (siehe `docs/ROADMAP.md`) |
+| 2 Home-Assistant-Schicht | fertig (0.3.0) |
+| 3 Oberfläche, Grundfunktionen | **als Nächstes** |
+| 4–6 | offen (siehe `docs/ROADMAP.md`) |

@@ -168,6 +168,7 @@ class InventoryStore:
         self._last_backup: Any = None
         self._blocked: str | None = None
         self.save_error: Exception | None = None
+        self._change_listeners: list[Callable[[list[Change]], None]] = []
 
     # -- Zugriff --------------------------------------------------------------------------
     @property
@@ -185,6 +186,18 @@ class InventoryStore:
     def blocked_reason(self) -> str | None:
         """Grund, warum gerade nicht geschrieben wird (Datei von Hand ungültig geändert)."""
         return self._blocked
+
+    def add_change_listener(self, listener: Callable[[list[Change]], None]) -> Callable[[], None]:
+        """``listener`` erfährt jede abgeschlossene Änderung (auch Neuladen von außen, Import).
+
+        Liefert eine Funktion zum Abmelden.
+        """
+        self._change_listeners.append(listener)
+        return lambda: self._change_listeners.remove(listener)
+
+    def _notify(self, changes: list[Change]) -> None:
+        for listener in list(self._change_listeners):
+            listener(changes)
 
     # -- Laden ----------------------------------------------------------------------------
     async def async_load(self) -> Inventory:
@@ -297,8 +310,10 @@ class InventoryStore:
             self.inventory.replace_data(data)
             self._blocked = None
             self._dirty = True
-            self._pending = [Change(action, self.inventory.now(), user, details=details)]
+            change = Change(action, self.inventory.now(), user, details=details, touched=None, structure=True)
+            self._pending = [change]
             await self._write_locked()
+            self._notify([change])
             return self.inventory
 
     # -- Ändern ---------------------------------------------------------------------------
@@ -333,6 +348,7 @@ class InventoryStore:
                 self._pending.extend(changes)
                 self._dirty = True
                 await self._schedule_save_locked()
+                self._notify(changes)
             return result
 
     def _rollback(self, snapshot: dict[str, Any]) -> None:
@@ -402,13 +418,13 @@ class InventoryStore:
         return text
 
     # -- Änderungen von außen -------------------------------------------------------------
-    async def async_check_external(self, *, force: bool = False) -> ExternalResult:
+    async def async_check_external(self) -> ExternalResult:
         """Wurde die Datei außerhalb verändert? Dann neu laden oder Konfliktdatei anlegen (6.3)."""
         async with self._lock:
             current = await asyncio.to_thread(self._read_signature)
             if current is None:
                 return ExternalResult(ExternalStatus.UNCHANGED)
-            if not force and self._signature is not None and current[2] == self._signature[2]:
+            if self._signature is not None and current[2] == self._signature[2]:
                 self._signature = current
                 if self._blocked:
                     self._blocked = None
@@ -437,6 +453,7 @@ class InventoryStore:
             self._pending = []
             self._blocked = None
             self._signature = current
+            self._notify([Change("reload", self.inventory.now(), touched=None, structure=True)])
             return ExternalResult(status, conflict_name)
 
     def _write_conflict(self) -> str:

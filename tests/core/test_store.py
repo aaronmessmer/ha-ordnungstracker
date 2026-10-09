@@ -403,7 +403,7 @@ async def test_invalid_external_edit_blocks_writes_until_fixed(directory: Path, 
         await store.async_mutate(lambda i: i.create_node("X", "ding"), "x")
     assert (directory / "inventar.json").read_text() == "{kaputt"
     (directory / "inventar.json").write_text(good, encoding="utf-8")
-    assert (await store.async_check_external(force=True)).status is ExternalStatus.RELOADED
+    assert (await store.async_check_external()).status is ExternalStatus.RELOADED
     assert store.blocked_reason is None
     await store.async_mutate(lambda i: i.create_node("X", "ding"), "x")
 
@@ -428,7 +428,7 @@ async def test_forced_reload_service(directory: Path, clock: FakeClock) -> None:
     raw["nodes"]["h1"] = {"name": "Von Hand", "kind": "ding"}
     # Dateiinhalt ändert sich, Größe/Zeit bleiben gleich: force erkennt es trotzdem
     (directory / "inventar.json").write_text(jsonio.dumps(raw), encoding="utf-8")
-    assert (await store.async_check_external(force=True)).status is ExternalStatus.RELOADED
+    assert (await store.async_check_external()).status is ExternalStatus.RELOADED
 
 
 async def test_missing_file_during_check_is_ignored(directory: Path, clock: FakeClock) -> None:

@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.3.0] – Phase 2: Home-Assistant-Schicht
+
+### Hinzugefügt
+- Anbindung des Kerns: Laden beim Start **ohne** Überschreiben einer ungültigen Datei (Reparaturhinweis mit Fundstellen und letzter gültiger Sicherung, späterer automatischer Neuversuch), Schreiben beim Beenden, regelmäßige Prüfung auf Änderungen von Hand (alle 30 s), stündliche Pflege (Papierkorb, Zahlen, Fälligkeiten).
+- WebSocket-API `ordnungstracker/…` mit Abo für Änderungen (alle Geräte sehen Änderungen sofort), Benutzer im Änderungsprotokoll, Fehlercodes mit deutschem Text.
+- Dienste: suchen, Eintrag lesen, anlegen, ändern, verschieben, löschen, entnehmen, zurücklegen, Menge ändern, Nachkäufe in To-do-Liste übertragen, neu laden, Sicherung anlegen, exportieren – mit Antwortdaten; Einträge lassen sich über Kennung **oder Nummer** (`#14`) ansprechen.
+- Sensoren (Dinge, Behälter, leere Behälter, Unsortiert, Entnommen, Unter Mindestbestand, Läuft bald ab, Wartung fällig, Vermisst) mit höchstens 10 Einträgen als Attribut; Kalender mit Ablauf, Garantie, Rückgabe und Wartung.
+- Ereignis `ordnungstracker_due` einmalig, wenn ein Eintrag neu fällig wird (Merker überlebt Neustarts).
+- Reparaturhinweise (ungültige Datei, neuere Version, von Hand ungültig geändert, Konfliktdatei, Speichern fehlgeschlagen), Diagnose ohne Namen und Inhalte, Optionen (To-do-Liste, Seitenleiste).
+- Geschützte Export- und Druckansichten mit zeitlich begrenzter signierter Adresse; Auslieferung und Anmeldung des Oberflächen-Bündels (sobald es existiert).
+- **Langzeit-Ausleihe:** Die Erinnerung „Ausgeliehenes ohne Datum länger als 30 Tage“ lässt sich pro Ausleihe aus- und wieder einschalten (`no_reminder`).
+
 ## [0.2.0] – Phase 1: Kern
 
 ### Hinzugefügt

@@ -133,7 +133,7 @@ def collect_due(inv: Inventory) -> list[DueItem]:
                             True,
                         )
                     )
-            elif checkout.type is CheckoutType.LENT:
+            elif checkout.type is CheckoutType.LENT and not checkout.no_reminder:
                 away = (today - dates.to_date(checkout.since)).days
                 if away > settings.lent_days:
                     items.append(

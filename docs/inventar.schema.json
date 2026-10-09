@@ -134,7 +134,8 @@
         "to": { "type": "string", "minLength": 1 },
         "since": { "$ref": "#/$defs/date" },
         "until": { "$ref": "#/$defs/date" },
-        "note": { "type": "string" }
+        "note": { "type": "string" },
+        "no_reminder": { "type": "boolean", "description": "Langzeit-Ausleihe: keine Erinnerung „lange nicht zurück“." }
       }
     },
     "maintenanceTask": {

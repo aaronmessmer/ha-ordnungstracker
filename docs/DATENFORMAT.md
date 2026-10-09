@@ -90,7 +90,7 @@ Pflicht sind nur `name` und `kind`.
 | `owner` | Text | Kennung einer Person; **vererbt sich nach unten**, bis weiter unten etwas anderes steht |
 | `quantity`, `unit`, `min_quantity` | Zahl, Text, Zahl | Menge, Einheit, Mindestbestand (darunter: „Nachkaufen“) |
 | `condition` | Text | `ok` (Standard, nicht geschrieben), `missing`, `defective`, `to_sell`, `to_give_away`, `disposed` (archiviert, samt Inhalt) |
-| `checkout` | Objekt | Entnahme: `type` (`lent` ausgeliehen / `out` entnommen), `to` (an wen / wo), `since`, optional `until`, `note` |
+| `checkout` | Objekt | Entnahme: `type` (`lent` ausgeliehen / `out` entnommen), `to` (an wen / wo), `since`, optional `until`, `note`, `no_reminder` (`true` = Langzeit-Ausleihe, keine Erinnerung „lange nicht zurück“) |
 | `fields` | Objekt | Feldkennung → Wert |
 | `maintenance` | Liste | Aufgaben: `id`, `title`, optional `interval` (`{ "value": 6, "unit": "months" }`, Einheiten `days/weeks/months/years`), `next_due`, `note`, `log` (Liste `{ "date", "note" }`) |
 | `attachments` | Liste | **reserviert** (Dokumente und Fotos, Pflichtenheft 14); ohne Funktion |

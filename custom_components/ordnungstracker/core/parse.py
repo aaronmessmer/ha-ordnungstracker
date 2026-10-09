@@ -312,7 +312,7 @@ class _Parser:
         if d is None:
             return None
         w = f'{where}: "checkout"'
-        self.keys(d, {"type", "to", "since", "until", "note"}, w, node_id)
+        self.keys(d, {"type", "to", "since", "until", "note", "no_reminder"}, w, node_id)
         ctype = self.enum(d, "type", CheckoutType, w, node_id=node_id)
         to = self.text(d, "to", w, required=True, node_id=node_id)
         since = self.date_value(d, "since", w, node_id)
@@ -326,6 +326,7 @@ class _Parser:
             since,
             self.date_value(d, "until", w, node_id),
             self.text(d, "note", w, node_id=node_id),
+            self.boolean(d, "no_reminder", w, node_id),
         )
 
     def maintenance_task(self, raw: Any, where: str, node_id: str) -> MaintenanceTask | None:

@@ -214,3 +214,36 @@ async def test_state_data_and_corrupt_file(tmp_path: Path) -> None:
     await broken.async_load()
     assert broken.reported == set()
     assert (tmp_path / "zustand.json.kaputt").exists()  # beiseitegelegt statt überschrieben
+
+
+# -- Darstellung ---------------------------------------------------------------------------
+def test_present_structures_are_json_serializable_and_complete(sample: Any) -> None:
+    from custom_components.ordnungstracker.core import present
+    from custom_components.ordnungstracker.core.reminders import collect_due
+    from custom_components.ordnungstracker.core.search import SearchIndex
+
+    from .conftest import by_name
+
+    kiste = by_name(sample, "Basteln")
+    detail = present.node_detail(sample, kiste)
+    json.dumps(detail)  # darf nicht an Enums oder Dataclasses scheitern
+    assert [p["name"] for p in detail["path"]] == ["Keller", "Regal B", "Basteln"]
+    assert detail["number"] == 14 and detail["kind_name"] == "Kiste"
+    assert detail["effective_owner"]["name"] == "Mia" and detail["effective_owner"]["inherited"] is False
+    assert [c["name"] for c in detail["contents"]] == ["Bastelsachen"]
+    assert detail["contents"][0]["descendants"] == 5 and detail["suggested_kinds"][0] == "gruppe"
+    pistole = present.node_detail(sample, by_name(sample, "Heißklebepistole"))
+    assert pistole["checkout"]["to"] == "Nachbar Huber" and pistole["effective_owner"]["inherited"] is True
+    nudeln = present.node_detail(sample, by_name(sample, "Nudeln"))
+    assert any(f["id"] == "expiry" and f["value"] for f in nudeln["fields"])
+    hit = SearchIndex(sample).search("schere").hits[0]
+    json.dumps(present.hit_dict(hit))
+    due = collect_due(sample)[0]
+    d = present.due_dict(sample, due)
+    json.dumps(d)
+    assert d["key"] == due.key
+    cat = present.catalog(sample)
+    json.dumps(cat)
+    assert cat["settings"]["lent_days"] == 30 and cat["sample_loaded"] is True
+    json.dumps(present.node_detail(sample, "papierkorb"))
+    assert present.node_detail(sample, "papierkorb")["in_trash"] is True

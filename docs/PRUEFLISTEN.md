@@ -26,10 +26,44 @@ Der Kern hat noch keine Oberfläche; geprüft wird, was du sehen kannst:
 - [ ] `docs/DATENFORMAT.md` lesen: Fehlt dir eine Angabe, die du pro Ding festhalten möchtest? **Jetzt** ist der richtige Zeitpunkt, denn das Datenformat soll danach nicht mehr umgebaut werden.
 - [ ] In `docs/ENTSCHEIDUNGEN.md` (Abschnitt B) die getroffenen Festlegungen überfliegen, besonders: Preis gilt für den Eintrag als Ganzes (B11), Nummern bleiben im Papierkorb reserviert (B14), „Inhalt hochschieben“ legt den Knoten selbst in den Papierkorb (B15), Ausgeliehenes ohne Datum gilt nach mehr als 30 Tagen als überfällig (B32).
 
-## Text für den Pull Request (Phase 0 und 1)
+## Phase 2 – Home-Assistant-Schicht (Version 0.3.0)
+
+**Einrichtung und Daten**
+- [ ] Nach dem Update (HACS, Neustart) ist die Integration geladen; im Protokoll steht **keine** Meldung zum Ordnungs-Tracker. Im Ordner `ordnungstracker` neben `configuration.yaml` liegen `inventar.json`, `sicherungen/`, `anhaenge/`.
+- [ ] *Konfigurieren* der Integration zeigt **To-do-Liste** und **Seitenleiste**; Speichern lädt die Integration ohne Fehler neu.
+- [ ] Unter *Geräte & Dienste → Ordnungs-Tracker* gibt es ein Gerät „Ordnungs-Tracker“ mit 9 Sensoren und dem Kalender „Termine“ (alle zunächst 0 / leer).
+
+**Dienste (Entwicklerwerkzeuge → Aktionen)**
+- [ ] `ordnungstracker.create_node` mit `name: Keller` → Antwort mit `id`. Dann `name: Regal B`, `parent: <id>` und `name: Basteln`, `kind: kiste`, `number: auto`, `parent: <id des Regals>` → Antwort `number: 1`.
+- [ ] `ordnungstracker.search` mit `query: bastel` → Treffer mit Pfad „Keller › Regal B › Basteln“. `query: "#1"` springt zur Kiste.
+- [ ] `ordnungstracker.create_node` mit `name: Schere`, `parent: "#1"`; `ordnungstracker.move_node` (`nodes: ["Schere-Kennung"]`, `target: Keller-Kennung`) – danach zeigt die Suche den neuen Pfad.
+- [ ] `check_out` für die Schere (`type: lent`, `to: Nachbar Huber`) – die Suche nennt „ausgeliehen an Nachbar Huber“; `return_node` – der Hinweis verschwindet.
+- [ ] `delete_node` für die Schere – sie ist aus der Suche verschwunden (Papierkorb).
+- [ ] Fehlerfall: `create_node` mit `number: 1` → verständliche **deutsche** Fehlermeldung („Die Nummer 1 ist schon an … vergeben“).
+- [ ] `create_backup` → Datei in `sicherungen/`. `export` mit `format: markdown` → lesbare Liste in der Antwort.
+
+**Sensoren, Kalender, Ereignis**
+- [ ] `create_node` mit `quantity: 1`, `min_quantity: 3` → der Sensor *Unter Mindestbestand* springt sofort auf 1, das Attribut `items` nennt den Eintrag.
+- [ ] Ein Entwicklerwerkzeug-Abonnement auf das Ereignis `ordnungstracker_due` (*Ereignisse → Auf Ereignisse lauschen*) zeigt dasselbe Ereignis **genau einmal**; nach einem Neustart von Home Assistant kommt es nicht noch einmal.
+- [ ] `ordnungstracker.load_sample` (in ein leeres Inventar): Der Kalender „Termine“ zeigt Ablauf, Garantie, Rückgabe und Wartung; die Sensoren zeigen z. B. 8 Behälter, 1 vermisst, 2 unter Mindestbestand. `ordnungstracker.remove_sample` räumt wieder auf.
+
+**Datei von Hand**
+- [ ] `inventar.json` im Datei-Editor öffnen, einen Eintrag ergänzen, speichern. Nach spätestens 30 Sekunden ist er per `search` auffindbar.
+- [ ] Absichtlich einen Fehler einbauen (z. B. Komma löschen). Nach spätestens 30 Sekunden erscheint unter *Reparaturen* ein deutscher Hinweis; Änderungen werden jetzt **nicht** gespeichert. Fehler beheben → Hinweis verschwindet von selbst.
+- [ ] Ohne Neustart den Fehler im Dateiinhalt lassen und Home Assistant neu starten: Die Integration startet nicht mit leerem Inventar, der Hinweis nennt die Fundstelle **und die letzte gültige Sicherung**, `inventar.json` ist unverändert.
+
+**Diagnose und Druck**
+- [ ] *Geräte & Dienste → Ordnungs-Tracker → ⋮ → Diagnose herunterladen*: Die Datei enthält Zahlen, aber **keine Namen**.
+- [ ] Druckansichten und Export liefern erst in Phase 3/5 Knöpfe. Technisch kann man sie jetzt schon in einer angemeldeten Browsersitzung öffnen: `https://<dein-ha>/api/ordnungstracker/print/containers` (nur wenn du angemeldet bist; sonst „401“) – bitte **auch in der Companion-App** probieren (öffnet sich die Seite? lässt sie sich drucken/teilen?). Das Ergebnis bitte zurückmelden, davon hängt die Gestaltung der Druckknöpfe ab (ENTSCHEIDUNGEN A3/A4).
+
+## Text für den Pull Request (Phase 0 bis 2)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
 
 **Phase 1 – Kern.** Der gesamte Kern in reinem Python: Datenmodell, Regeln, Baumoperationen, Systemknoten, Papierkorb, Nummern, Vererbung von Besitz, Felder mit Geltungsbereich, Entnahme, Zustand, Menge, Wartung, Listen, Vorlagen, Synonyme, Fälligkeiten, Suche,
 Schnellerfassungs-Parser, Laden/Speichern/Sicherungen/Migration/Konflikterkennung, Protokoll, Exporte (Markdown, HTML für den Druck), Beispielinventar. Fertig, wenn: Abdeckung ≥ 90 % (≈ 97 %), Leistungstest der Suche besteht (≈ 4–17 ms bei 5.000 Knoten), Datenformat-Dokument vollständig.
+
+**Phase 2 – Home-Assistant-Schicht.** Anbindung des Kerns: sicheres Laden (ungültige Datei → Reparaturhinweis statt leerem Inventar), WebSocket-API mit Abo für Änderungen, Dienste mit Antwortdaten (Einträge auch per Nummer ansprechbar), 9 Sensoren und ein Kalender,
+Ereignis „neu fällig“ (einmalig, überlebt Neustarts), Reparaturhinweise, Diagnose ohne Inhalte, Optionen (To-do-Liste, Seitenleiste), geschützte Export-/Druckansichten mit signierter Adresse, Auslieferung des Oberflächen-Bündels (sobald vorhanden). Außerdem:
+Langzeit-Ausleihe (Erinnerung pro Ausleihe abschaltbar). Fertig, wenn: alles über Dienste bedienbar und getestet (≈ 400 Tests gegen Home Assistant 2026.10.0 und 2026.3.1).

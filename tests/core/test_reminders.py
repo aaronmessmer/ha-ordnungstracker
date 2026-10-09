@@ -229,3 +229,31 @@ def test_diagnostics_summary_has_numbers_but_no_content(sample: Inventory) -> No
     text = json.dumps(summary, ensure_ascii=False)
     for secret in ("Heißklebepistole", "Huber", "Papa", "Keller", "Schere", "Basteln", "Bosch", "SN-4711"):
         assert secret not in text, secret  # keine Namen oder Inhalte
+
+
+def test_long_term_loan_can_be_silenced_and_reactivated(inv: Inventory) -> None:
+    node = inv.create_node("Leiter", "ding")
+    inv.checkout_node(node.id, CheckoutType.LENT, "Onkel Bernd", since="2026-01-01")
+    assert len(items(inv, Category.CHECKOUT_OVERDUE)) == 1
+    inv.set_checkout_reminder(node.id, False)  # bei jemandem für lange Zeit: Ruhe
+    assert items(inv, Category.CHECKOUT_OVERDUE) == []
+    assert inv.node(node.id).checkout.no_reminder is True  # type: ignore[union-attr]
+    assert inv.node(node.id).checkout.to_dict()["no_reminder"] is True  # type: ignore[union-attr]
+    inv.set_checkout_reminder(node.id, False)  # nochmal: keine weitere Änderung
+    inv.set_checkout_reminder(node.id, True)
+    assert len(items(inv, Category.CHECKOUT_OVERDUE)) == 1
+    # ein Rückgabedatum in der Vergangenheit bleibt trotzdem überfällig
+    inv.checkout_node(
+        node.id, CheckoutType.LENT, "X", since="2026-09-01", until="2026-10-01", no_reminder=True
+    )
+    assert len(items(inv, Category.CHECKOUT_OVERDUE)) == 1
+
+
+def test_reminder_switch_needs_a_checkout(inv: Inventory) -> None:
+    import pytest as _pytest
+
+    from custom_components.ordnungstracker.core.errors import InvalidValueError
+
+    node = inv.create_node("A", "ding")
+    with _pytest.raises(InvalidValueError, match="gar nicht entnommen"):
+        inv.set_checkout_reminder(node.id, False)
