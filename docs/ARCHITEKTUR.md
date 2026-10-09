@@ -1,11 +1,11 @@
 # Architektur
 
-Verbindliche Vorgaben: `docs/PFLICHTENHEFT.md`, Abschnitt 4. Dieses Dokument beschreibt, wie sie umgesetzt sind. Stand: Phase 2.
+Verbindliche Vorgaben: `docs/PFLICHTENHEFT.md`, Abschnitt 4. Dieses Dokument beschreibt, wie sie umgesetzt sind. Stand: Phase 3.
 
 ## Drei Schichten
 
 ```
-Oberfläche (TypeScript, Lit)        frontend/ → custom_components/ordnungstracker/frontend/   (Phase 3)
+Oberfläche (TypeScript, Lit)        frontend/ → custom_components/ordnungstracker/frontend/   (Phase 3, fertig)
    │  WebSocket-Befehle + Abo
 Home-Assistant-Schicht (Python)     __init__.py, config_flow.py, … (Phase 2)
    │  gewöhnliche Python-Aufrufe

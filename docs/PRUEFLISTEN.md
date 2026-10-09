@@ -56,7 +56,33 @@ Der Kern hat noch keine Oberfläche; geprüft wird, was du sehen kannst:
 - [ ] *Geräte & Dienste → Ordnungs-Tracker → ⋮ → Diagnose herunterladen*: Die Datei enthält Zahlen, aber **keine Namen**.
 - [ ] Druckansichten und Export liefern erst in Phase 3/5 Knöpfe. Technisch kann man sie jetzt schon in einer angemeldeten Browsersitzung öffnen: `https://<dein-ha>/api/ordnungstracker/print/containers` (nur wenn du angemeldet bist; sonst „401“) – bitte **auch in der Companion-App** probieren (öffnet sich die Seite? lässt sie sich drucken/teilen?). Das Ergebnis bitte zurückmelden, davon hängt die Gestaltung der Druckknöpfe ab (ENTSCHEIDUNGEN A3/A4).
 
-## Text für den Pull Request (Phase 0 bis 2)
+## Phase 3 – Oberfläche (Version 0.4.0)
+
+Nach dem Update (HACS, Home Assistant neu starten, Browser-Cache leeren bzw. Companion-App neu laden) erscheint **Ordnung** in der Seitenleiste.
+
+**Am Handy (Companion-App)**
+- [ ] Seitenleiste öffnen → **Ordnung**; die Übersicht erscheint. Leeres Inventar: **Beispieldaten laden** antippen → Kacheln, Favoriten-Bereich und „zuletzt angesehen“ füllen sich; in den Einstellungen lassen sie sich wieder entfernen.
+- [ ] Raum anlegen (Plus), Regal darin, Kiste darin (Nummer wird vorgeschlagen, nächste freie). Das Tastaturfeld verdeckt nie den Speichern-Knopf.
+- [ ] **Schnell erfassen** in der Kiste: drei Zeilen wie `3x Batterien AA`, Vorschau erscheint, übernehmen → drei Einträge, Menge 3 erkannt.
+- [ ] Suche: `bastel` findet mit Pfad; `14` bzw. `#14` springt zur Kiste.
+- [ ] **Langes Drücken** auf einen Eintrag startet die Mehrfachauswahl; mehrere wählen → Verschieben → Ziel per Suche → Eintrag ist dort, Meldung erscheint oben.
+- [ ] Löschen einer Kiste mit Inhalt: Auswahl „mit Inhalt“ / „Inhalt hochschieben“; danach im **Papierkorb** wiederherstellen.
+- [ ] **Zurück-Taste** des Handys geht Schritt für Schritt zurück (Eintrag → Raum → Übersicht); nichts bleibt „halb offen“.
+- [ ] Favorit (Stern) setzen → erscheint in der Übersicht; Seite einer Kiste öffnen → erscheint bei „zuletzt angesehen“.
+- [ ] Einstellungen: Art anlegen/ändern, Person anlegen (mit Home-Assistant-Person verknüpfbar), Art löschen, die in Gebrauch ist → verständlicher Hinweis mit Ersatz-Auswahl.
+- [ ] **Export** (JSON/Markdown): Datei wird geladen oder – falls die App Downloads blockiert – „In die Zwischenablage“ funktioniert. **Bitte das Ergebnis zurückmelden** (ENTSCHEIDUNGEN D9).
+- [ ] Zweites Gerät/zweiter Browser offen: Eine Änderung am ersten erscheint ohne Neuladen.
+
+**Am Rechner / Aussehen**
+- [ ] Breites Fenster: Baum links, Inhalt rechts. Schmales Fenster: eine Spalte.
+- [ ] Dunkles Design und ein anderes Farbthema in Home Assistant: Lesbarkeit und Kontrast passen.
+- [ ] Mit Tab/Shift+Tab/Enter/Esc bedienbar (Dialoge fangen den Fokus, Esc schließt, Fokus kehrt zurück).
+- [ ] Profil auf Englisch umstellen: Oberfläche ist englisch (Server-Fehlertexte bleiben deutsch, ENTSCHEIDUNGEN D7).
+- [ ] Dashboard → Karte hinzufügen → **Ordnungs-Tracker**: drei Modi (Suche, Kacheln, Eintrag) im Karteneditor; Tippen öffnet die Seitenleiste an der richtigen Stelle.
+- [ ] Adresse `/ordnungstracker/nr/14` direkt im Browser öffnen → Kiste 14 (Lesezeichen/QR-Tauglichkeit).
+- [ ] **Abnahmeprüfung:** Einen Teil des echten Haushalts allein am Handy erfassen (ein Raum, zwei Regale, fünf Kisten) und alles per Suche wiederfinden. Was hakt, bitte notieren.
+
+## Text für den Pull Request (Phase 0 bis 3)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
@@ -67,3 +93,5 @@ Schnellerfassungs-Parser, Laden/Speichern/Sicherungen/Migration/Konflikterkennun
 **Phase 2 – Home-Assistant-Schicht.** Anbindung des Kerns: sicheres Laden (ungültige Datei → Reparaturhinweis statt leerem Inventar), WebSocket-API mit Abo für Änderungen, Dienste mit Antwortdaten (Einträge auch per Nummer ansprechbar), 9 Sensoren und ein Kalender,
 Ereignis „neu fällig“ (einmalig, überlebt Neustarts), Reparaturhinweise, Diagnose ohne Inhalte, Optionen (To-do-Liste, Seitenleiste), geschützte Export-/Druckansichten mit signierter Adresse, Auslieferung des Oberflächen-Bündels (sobald vorhanden). Außerdem:
 Langzeit-Ausleihe (Erinnerung pro Ausleihe abschaltbar). Fertig, wenn: alles über Dienste bedienbar und getestet (≈ 400 Tests gegen Home Assistant 2026.10.0 und 2026.3.1).
+
+**Phase 3 – Oberfläche.** Seitenleiste „Ordnung“ und Dashboard-Karte (Lit/TypeScript, ein eingechecktes Bündel, keine internen `ha-*`-Elemente): Übersicht, Stöbern, Suche mit Filtern und Nummernsprung, Anlegen/Bearbeiten, Verschieben (auch mehrfach, langes Drücken), Papierkorb, Schnellerfassung mit Server-Vorschau, Unsortiert, Favoriten, Arten und Personen, Export/Import, Beispieldaten; Deutsch/Englisch, Zurück-Taste, Live-Aktualisierung. Fertig, wenn: Haushalt am Handy erfassbar und wiederfindbar (Abnahmeprüfung in der Prüfliste); Tests der Oberfläche und Vertragstest gegen die Schnittstelle grün, Bündel von der CI als aktuell bestätigt.

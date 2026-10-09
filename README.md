@@ -3,8 +3,8 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 2 von 6 (Version 0.3.0).** Kern **und** Anbindung an Home Assistant sind fertig: Du kannst über die **Entwicklerwerkzeuge → Aktionen** suchen und Einträge anlegen, ändern, verschieben, entnehmen und löschen;
-> Sensoren, Kalender und Ereignisse stehen bereit. Die **Oberfläche** (Seitenleiste, Karte) folgt in Phase 3, die Sprachabfrage in Phase 5 (`docs/ROADMAP.md`).
+> **Entwicklungsstand: Phase 3 von 6 (Version 0.4.0).** Kern, Anbindung an Home Assistant **und** die Grundfunktionen der Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte) sind fertig: Haushalt am Handy erfassen, stöbern, suchen, verschieben, löschen und wiederfinden.
+> Ausleihen, Mengen, Wartung und Co. in der Oberfläche folgen in Phase 4, Listen/Inventur/Druck/Sprachabfrage in Phase 5 (`docs/ROADMAP.md`); bis dahin gibt es sie als Aktionen.
 
 ## Was es kann (Ziel)
 
@@ -49,14 +49,29 @@ das JSON-Schema in [`docs/inventar.schema.json`](docs/inventar.schema.json) (vie
 Wird die Datei außerhalb verändert, erkennt die Integration das: Gibt es keine ungespeicherten eigenen Änderungen, lädt sie neu; sonst legt sie ihren Stand als `inventar.konflikt-….json` daneben und meldet es. Ein Tippfehler macht die Datei nicht unbrauchbar –
 die Integration nennt dann genau, **was** und **in welchem Knoten** nicht stimmt.
 
-## Erste Schritte (bis die Oberfläche da ist)
+## Oberfläche
+
+Nach der Einrichtung erscheint in der Seitenleiste der Eintrag **Ordnung** (abschaltbar unter *Konfigurieren*).
+
+* **Übersicht:** Suchfeld, Kacheln (Räume, Behälter, Unsortiert, Papierkorb …), Favoriten, zuletzt Angesehenes, leere Behälter, nächste freie Nummer. Ein leeres Inventar bietet **Beispieldaten** an.
+* **Stöbern:** Jeder Eintrag hat eine Seite mit Pfad (antippbar), Inhalt und Angaben. **Plus** legt Neues an, **Schnell erfassen** nimmt eine Zeile pro Ding (`3x Batterien AA`) mit Vorschau.
+* **Suchen:** Eingabe `14` oder `#14` springt zur Kiste 14; Filter nach Klasse, Art, Ort, Besitzer, Schlagwort, Zustand u. a.
+* **Verschieben:** über das Menü ⋮ oder nach **langem Drücken** (Mehrfachauswahl); Ziel per Suche, Nummer oder Stöbern, zuletzt genutzte Ziele zuerst.
+* **Löschen:** landet im **Papierkorb** (30 Tage, wiederherstellbar); bei Behältern mit Inhalt wählst du „mit Inhalt“ oder „Inhalt hochschieben“.
+* **Einstellungen:** Arten, Personen, Export (JSON, Markdown), Import, Beispieldaten.
+* **Dashboard-Karte:** `type: custom:ordnungstracker-card` (Suche, Kacheln oder ein bestimmter Eintrag; Einstellung im Karteneditor).
+* Die Oberfläche folgt der Sprache von Home Assistant (Deutsch, sonst Englisch) und dem gewählten Design (hell/dunkel).
+
+Jeder Eintrag hat eine feste Adresse (`/ordnungstracker/node/<Kennung>`, Kisten auch `/ordnungstracker/nr/14`) – später das Ziel von QR-Codes.
+
+## Aktionen (für Automationen und Entwickler)
 
 *Entwicklerwerkzeuge → Aktionen*, dort `ordnungstracker.…` wählen (die Aktionen sind auf Deutsch beschrieben):
 
 1. **Eintrag anlegen:** `ordnungstracker.create_node` mit `name: Keller` (ohne Ablageort = oberste Ebene, die Art wird vorgeschlagen), dann `name: Regal B`, `parent: Keller-Kennung`, und `name: Basteln`, `kind: kiste`, `number: auto` (kleinste freie Nummer).
    Die Kennung steht in der Antwort. Später genügt für Einträge mit Nummer ihre Nummer: `parent: "#1"`.
 2. **Suchen:** `ordnungstracker.search` mit `query: heißkleb` – du bekommst Treffer mit vollständigem Pfad. Eingaben wie `14` oder `#14` springen zur Kiste mit dieser Nummer.
-3. **Beispieldaten ausprobieren:** `ordnungstracker.load_sample` lädt einen kleinen Beispielhaushalt (nur in ein leeres Inventar), `ordnungstracker.remove_sample` entfernt ihn wieder. (In Phase 3 geht das mit einem Tipp in der Oberfläche.)
+3. **Beispieldaten ausprobieren:** `ordnungstracker.load_sample` lädt einen kleinen Beispielhaushalt (nur in ein leeres Inventar), `ordnungstracker.remove_sample` entfernt ihn wieder. (In der Oberfläche geht das mit einem Tipp auf der Übersicht.)
 
 Alle Aktionen sind in [`docs/API.md`](docs/API.md) beschrieben.
 

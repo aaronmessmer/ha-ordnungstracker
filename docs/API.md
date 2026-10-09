@@ -1,6 +1,6 @@
 # Schnittstellen
 
-Stand: Phase 2 (Version 0.3.0). Die Oberfläche (Phase 3), Dienste, Automationen und Skripte nutzen dieselbe Logik des Kerns und liefern dieselben Ergebnisse.
+Stand: Phase 3 (Version 0.4.0; die Schnittstelle ist seit 0.3.0 unverändert). Die Oberfläche (Phase 3), Dienste, Automationen und Skripte nutzen dieselbe Logik des Kerns und liefern dieselben Ergebnisse.
 
 ## Konventionen
 

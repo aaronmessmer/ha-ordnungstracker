@@ -43,7 +43,7 @@ mypy                                # Kern streng
 python -m custom_components.ordnungstracker.core.sample beispiele/beispiel-haushalt.json
 ```
 
-Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das Ergebnis wird eingecheckt, die CI prüft die Aktualität.
+Oberfläche: im Ordner `frontend/` `npm ci && npm run typecheck && npm test && npm run build`; das Ergebnis (`custom_components/ordnungstracker/frontend/ordnungstracker.js`) wird eingecheckt, die CI prüft die Aktualität. Nach jeder Änderung an `frontend/src` neu bauen und einchecken.
 
 ## Konventionen
 
@@ -62,5 +62,6 @@ Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das E
 | 0 Grundlage | fertig (0.1.0) |
 | 1 Kern | fertig (0.2.0) |
 | 2 Home-Assistant-Schicht | fertig (0.3.0) |
-| 3 Oberfläche, Grundfunktionen | **als Nächstes** |
-| 4–6 | offen (siehe `docs/ROADMAP.md`) |
+| 3 Oberfläche, Grundfunktionen | fertig (0.4.0) |
+| 4 Erweiterungen A | **als Nächstes** |
+| 5–6 | offen (siehe `docs/ROADMAP.md`) |

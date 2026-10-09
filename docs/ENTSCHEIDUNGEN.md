@@ -164,3 +164,17 @@ und gegen 2026.10.0 **und** 2026.3.1 getestet.
 - **C14. Schemata:** `import voluptuous as vol` (siehe A6) läuft auf 2026.3.1 und 2026.10.0; alle Tests der HA-Schicht laufen gegen beide Versionen (`.venv` mit 2026.10.0, `.venv-min` mit 2026.3.1).
 - **C15. mypy:** streng nur im Kern (Pflichtenheft 11); die HA-Schicht wird mitgelesen, ihre Fehler aber nicht gemeldet.
 - **C16. `reload` ist keine Zwangsübernahme.** Der Dienst „Neu laden“ vergleicht wie die regelmäßige Prüfung die Prüfsumme: Ist die Datei seit unserem letzten Schreiben unverändert, geschieht nichts – insbesondere gehen ungespeicherte Änderungen nicht verloren.
+
+## D. Entscheidungen zu Phase 3 (Oberfläche)
+
+- **D1. Technik:** Lit 3 ohne Dekoratoren (`static properties`), esbuild erzeugt eine einzige Datei; keine Laufzeit-Abhängigkeit außer Lit. Eingecheckt, die CI baut neu und vergleicht.
+- **D2. Keine internen `ha-*`-Elemente** außer `ha-icon` (Pflichtenheft 10); Dialoge, Menüs, Auswahlfelder und Schalter sind eigene einfache Elemente, gestaltet nur mit Home-Assistant-Designvariablen. Dadurch brechen sie bei neuen Home-Assistant-Versionen nicht.
+- **D3. Adressen:** `/ordnungstracker`, `/node/<Kennung>`, `/nr/<Nummer>`, `/search?q=…&…`, `/trash`, `/due`, `/settings/<Bereich>` über die History-API; die Zurück-Taste des Handys funktioniert, jede Seite ist als Lesezeichen/QR-Ziel geeignet. Unbekannte Adressen führen zur Übersicht.
+- **D4. Live-Aktualisierung:** Die Oberfläche abonniert `ordnungstracker/subscribe`; Änderungen anderer Geräte laden die sichtbare Seite neu (entprellt). Antworten, die von einer neueren Anfrage überholt wurden, werden verworfen (kein Flackern).
+- **D5. Schnellerfassung:** Die Vorschau kommt vom Server (derselbe Parser wie beim Anlegen), nach 250 ms Pause; so weichen Vorschau und Ergebnis nie voneinander ab. Kommas als Trenner sind ein Schalter.
+- **D6. Langes Drücken (450 ms)** startet die Mehrfachauswahl, ohne Rückfrage. Rückfragen gibt es nur, wo etwas verloren gehen kann (endgültig löschen, Papierkorb leeren, Import, Art mit Ersatz löschen). Alternativ Rechtsklick/Leertaste für Tastaturnutzer.
+- **D7. Meldungen** erscheinen oben (nicht über den Knöpfen), 3 Sekunden, höchstens zwei. Fehlermeldungen des Servers (deutsch, mit Handlungshinweis) werden unverändert angezeigt, auch in der englischen Oberfläche – sie zu übersetzen hieße, jeden Fehlertext doppelt zu pflegen.
+- **D8. Seite „Fällig“** ist in Phase 3 nur eine einfache Liste; die ausgebauten Ansichten Fällig/Entnommen/Nachkaufen gehören laut Phasenplan zu Phase 4.
+- **D9. Export/Import:** Herunterladen als Datei; als Rückfall (Companion-App blockiert Downloads) „In die Zwischenablage kopieren“. Der Import zeigt zuerst die Anzahl und fragt vor dem Ersetzen.
+- **D10. Karte:** drei Modi (Suche, Kacheln, Eintrag); sie öffnet die Seitenleiste mit der passenden Adresse, statt eine zweite Oberfläche zu enthalten.
+- **D11. Prüfung:** Komponententests (Router, Auswahl, Entprellung/Überholen, Parser-Vorschau, Sprachdateien) plus ein Python-Vertragstest gegen die WebSocket-Befehle. Zusätzlich wurde die Oberfläche einmalig gegen eine echte Home-Assistant-Instanz mit Chromium (Playwright) durchgespielt; dieser Aufbau liegt nicht im Repository, weil er eine laufende Instanz braucht.

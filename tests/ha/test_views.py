@@ -103,11 +103,16 @@ async def test_view_without_loaded_entry(
 
 
 # -- Auslieferung der Oberfläche ----------------------------------------------------------
-async def test_nothing_is_registered_without_bundle(
-    hass: HomeAssistant, init_integration: MockConfigEntry
-) -> None:
-    assert not frontend_registration.bundle_path().exists()
-    assert hass.data.get("frontend_panels", {}).get("ordnungstracker") is None
+async def test_nothing_is_registered_without_bundle(hass: HomeAssistant, tmp_path: Path) -> None:
+    entry = MockConfigEntry(domain=DOMAIN, title="Ordnungs-Tracker", data={})
+    entry.add_to_hass(hass)
+    with patch.object(frontend_registration, "FRONTEND_DIR", tmp_path):  # empty folder: no bundle
+        assert not frontend_registration.bundle_path().exists()
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        assert hass.data.get("frontend_panels", {}).get("ordnungstracker") is None
+        await hass.config_entries.async_unload(entry.entry_id)
+        await hass.async_block_till_done()
 
 
 async def test_bundle_is_registered_when_present(hass: HomeAssistant, tmp_path: Path) -> None:

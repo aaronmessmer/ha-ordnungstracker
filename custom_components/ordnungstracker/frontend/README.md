@@ -1,6 +1,4 @@
 # Gebautes Oberflächen-Bündel
 
-Hier landet ab Phase 3 die fertig gebaute JavaScript-Datei der Oberfläche
-(Quelltext: `frontend/` im Wurzelverzeichnis des Repositories). Das Bündel liegt
-absichtlich eingecheckt im Repository, damit die Installation über HACS keinen
-Bauschritt braucht.
+`ordnungstracker.js` ist das fertig gebaute Bündel der Oberfläche (Quelltext: `frontend/` im Wurzelverzeichnis).
+**Nicht von Hand ändern** – mit `npm run build` im Ordner `frontend/` neu erzeugen. Es liegt absichtlich eingecheckt im Repository, damit die Installation über HACS keinen Bauschritt braucht; die CI prüft, dass es zum Quelltext passt.

@@ -2,6 +2,14 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.4.0] – Phase 3: Oberfläche, Grundfunktionen
+
+### Hinzugefügt
+- Seitenleisten-Eintrag „Ordnung“ (Lit/TypeScript, ein einziges eingechecktes Bündel, keine internen `ha-*`-Elemente außer `ha-icon`): Übersicht, Stöbern mit Pfad und Inhalt, Suche mit Filtern und Nummernsprung, Anlegen, Bearbeiten, Verschieben (auch mehrfach), Löschen mit Papierkorb, Schnellerfassung mit Vorschau, Unsortiert, Favoriten und zuletzt Angesehenes, Verwaltung von Arten und Personen, Export/Import, Beispieldaten.
+- Dashboard-Karte `custom:ordnungstracker-card` (Suche, Kacheln, Eintrag) mit Karteneditor.
+- Feste Adressen je Eintrag, Zurück-Taste, Änderungen erscheinen sofort auf allen Geräten, Tastatur- und Screenreader-Bedienung, Deutsch/Englisch, helles/dunkles Design.
+- Tests der Oberfläche (Router, Auswahl, Zustandslogik, Schnellerfassungs-Vorschau, Sprachdateien) und ein Vertragstest, der prüft, dass die Oberfläche nur Befehle und Felder der Schnittstelle benutzt.
+
 ## [0.3.0] – Phase 2: Home-Assistant-Schicht
 
 ### Hinzugefügt
