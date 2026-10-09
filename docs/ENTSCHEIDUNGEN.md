@@ -3,7 +3,7 @@
 Dieses Dokument hält fest, **was bei der Entwicklung nachgeschlagen** und **was entschieden** wurde (Pflichtenheft
 Abschnitte 1, 15). Jede Entscheidung hat einen Satz Begründung. Neue Einträge werden unten ergänzt.
 
-Stand: Phase 0.
+Stand: Phase 0 und Phase 1.
 
 ## A. Ergebnisse der Prüfung aus Abschnitt 15
 
@@ -92,3 +92,53 @@ und gegen 2026.10.0 **und** 2026.3.1 getestet.
 - **B3. Lizenz MIT, Urheber „Aaron Messmer“** (Name des GitHub-Kontos; bitte prüfen).
 - **B4. hassfest und HACS-Validierung laufen in GitHub Actions** (`validate.yml`), nicht lokal – sie benötigen Docker bzw. GitHub. Sie konnten in dieser Umgebung nicht ausgeführt werden; Manifest und Übersetzungen werden zusätzlich durch Tests geprüft (`tests/test_repository.py`).
 - **B5. Phasen als Commits.** Jede Phase ist ein eigener Commit auf dem Entwicklungszweig; Pull Requests werden erst auf Wunsch angelegt. Der Text für den Pull Request steht in `docs/PRUEFLISTEN.md`.
+
+### Datenmodell
+- **B6. Systemknoten haben feste Kennungen** `unsortiert` und `papierkorb` (statt zufälliger), damit Code, Dokumentation und Dateien darauf verweisen können. Beide gehören zur Art „Raum“ und liegen auf oberster Ebene.
+- **B7. Dateiformat gegenüber dem Beispiel im Pflichtenheft ergänzt** (alles optional, nur bei Abweichung vom Standard geschrieben): `settings` (Schwellen `lent_days`, `stale_days`, `trash_days`), `meta.sample` (Merker für Beispieldaten),
+  `trashed` (am obersten gelöschten Knoten: Zeitpunkt, alter Elternknoten, Benutzer), `hidden` an Felddefinitionen (Ausblenden mitgelieferter Felder), `classes` und `kinds` an Felddefinitionen. Der Schlüssel `"$schema"` ist erlaubt (Editor-Unterstützung).
+- **B8. Unbekannte Schlüssel in der Datei sind ein Fehler**, kein stillschweigendes Weglassen: Ein Tippfehler wie `numer` würde sonst Daten verlieren. Die Meldung nennt den Knoten und die erlaubten Schlüssel.
+- **B9. Einstellungen im Inventar, Ziel-To-do-Liste in der Integration.** Schwellen (Ausgeliehenes ohne Datum, „lange nicht bestätigt“, Papierkorb-Dauer) gehören zu den Daten und wandern mit dem Export mit. Die Ziel-To-do-Liste ist eine Entität dieser Installation und liegt in den Optionen des Config-Eintrags (Phase 4).
+- **B10. Dinge, Behälter, Gruppen zählen.** „Dinge“ = Klasse `item`; „Behälter“ = Klasse `container`; Gruppen, Orte und Möbel zählen als weder noch. „Leere Behälter“ umfasst Behälter und Möbel ohne aktiven Inhalt. Archivierte Knoten und der Papierkorb zählen nie.
+- **B11. Preis gilt für den Eintrag als Ganzes**, nicht je Stück (sonst wäre „Wert pro Raum“ nur mit Mengen sinnvoll, die oft fehlen).
+- **B12. Dinge mit Unterpunkten werden Gruppen**, auch beim Verschieben, Wiederherstellen und beim Laden einer von Hand bearbeiteten Datei (dann wird die Normalisierung gespeichert). Eine Art lässt sich nicht auf „Ding“ ändern, solange Einträge dieser Art Unterpunkte haben.
+- **B13. Archivierung wird vererbt:** ist ein Knoten „entsorgt“, gilt sein ganzer Inhalt als archiviert.
+- **B14. Nummern bleiben im Papierkorb reserviert** und werden erst beim endgültigen Löschen frei; so geht beim Wiederherstellen nichts verloren. Die vorgeschlagene Nummer ist die kleinste, die nirgends (auch nicht im Papierkorb) vergeben ist.
+- **B15. Löschen mit „Inhalt eine Ebene hochschieben“:** Nur der Knoten selbst kommt in den Papierkorb (wiederherstellbar), sein Inhalt wird Inhalt des bisherigen Elternknotens (oder oberste Ebene).
+- **B16. Mehrfachauswahl beim Verschieben:** Ist ein ausgewählter Knoten Vorfahre eines anderen ausgewählten, wandert der untere mit ihm mit (Struktur bleibt erhalten).
+- **B17. Wiederherstellen:** nur der oberste gelöschte Knoten; ist sein alter Platz weg oder selbst gelöscht, landet er in „Unsortiert“ (mit Hinweis).
+- **B18. Entnahme für Behälter:** Hinweise zeigen auch die Entnahme eines Vorfahren („Teil von …“). Der Filter „ist entnommen“ und die Übersicht „Entnommen“ zählen nur Knoten mit **eigener** Entnahme, damit ein ausgeliehener Behälter nicht seinen ganzen Inhalt in die Liste spült.
+- **B19. Besitzer vererbt sich beim Lesen, nicht durch Kopieren:** Es wird nichts abgeleitet gespeichert; ändert sich der Besitzer eines Raums, ändert sich der wirksame Besitzer des Inhalts sofort.
+- **B20. Felder:** Werte nicht mehr geltender Felder bleiben erhalten und werden als „nicht mehr zugeordnet“ geliefert (`FieldValue.assigned = False`). Beim Löschen einer Felddefinition (nur nicht mitgelieferte) verschwinden auch alle Werte. Ausgeblendete Felder erinnern nicht.
+- **B21. Wartung:** Die nächste Fälligkeit nach „Erledigt“ wird ab dem **Erledigungsdatum** berechnet; Monate werden am Monatsende begrenzt (31.1. + 1 Monat = 28.2.). Ohne Intervall entfällt die Fälligkeit.
+- **B22. Inventur:** „Vorhanden“ setzt `verified` und macht einen als vermisst markierten Knoten wieder `ok`; „fehlt“ setzt `missing`; „gehört woanders hin“ ist ein normales Verschieben. Der Stand einer begonnenen Inventur liegt pro Benutzer in `benutzer.json`.
+- **B23. Beispieldaten** (67 Knoten) merken sich ihre Kennungen in `meta.sample`; Entfernen löscht genau diese (samt Beispiel-Personen, -Liste, -Vorlage, -Synonymen). Eigene Einträge, die jemand in einen Beispielknoten gelegt hat, wandern vorher nach „Unsortiert“. Laden geht nur in ein leeres Inventar.
+
+### Suche
+- **B24. Falten statt Suchen in Varianten:** Beide Seiten werden gleich gefaltet (klein, `ß`=`ss`, `ss`→`s`, Umlaute und Akzente weg, `ae/oe/ue`→`a/o/u`). So finden `heissklebe`, `heißklebe`, `heisklebe` dasselbe, und `tur`, `tür`, `tuer` finden „Tür“. Folge: sehr selten zusätzliche Treffer (z. B. „Kuehl“ ≈ „Kul“) – akzeptiert, weil nie ein Treffer verloren geht.
+- **B25. Ein Treffer braucht mindestens einen Begriff im Knoten selbst.** Begriffe dürfen zusätzlich im Pfad stehen („schrauben keller“), aber „keller“ allein listet nur den Raum, nicht seinen ganzen Inhalt.
+- **B26. Rangfolge (kleiner = besser):** exakter Name 0 · Namensanfang 10 · Wortanfang im Namen 20 · Wortteil im Namen 30 · weitere Namen 40/42 · Schlagwörter 44/46 · Notiz 50 · Felder 52 · Entnahme 54 · unscharf 70 · Synonym ab 100. Bei mehreren Begriffen zählt der schlechteste eigene Begriff. Gleichstand: Dinge/Gruppen vor Orten/Möbeln/Behältern, dann kürzerer Pfad, dann Name (natürliche Zahlenreihenfolge).
+- **B27. Tippfehler:** nur für Begriffe ab 4 Buchstaben, Editierabstand 1 (bis 7 Buchstaben) bzw. 2 (ab 8), Vertauschung benachbarter Buchstaben zählt als ein Fehler. Unscharfe Treffer erscheinen **nur**, wenn es für den Begriff keinen genauen Treffer gibt – sonst würde jede Suche Rauschen liefern. Verglichen wird mit Wörtern aus Name, weiteren Namen und Schlagwörtern.
+- **B28. Synonyme** gelten, wenn der Begriff (oder die ganze Eingabe) ein Mitglied einer Gruppe ist; ihre Treffer stehen hinter allen direkten Treffern (`matched_in = "synonym"`).
+- **B29. Nummern:** Eine Eingabe `14` oder `#14` liefert den Knoten mit dieser Nummer zuerst (`number_hit`), danach die gewöhnlichen Treffer. In mehrteiligen Eingaben („basteln 14“) ist die Nummer ein gewöhnlicher Begriff.
+- **B30. Leistung:** gemessen auf der Entwicklungsumgebung bei 5.000 Knoten 4–17 ms je Suche (Ziel < 50 ms auf dem Pi 5), Index-Aufbau ≈ 0,12 s. Der Test verlangt großzügig < 0,5 s. Der Index wird über `Inventory.subscribe` gezielt aktualisiert; ein Fuzz-Test stellt sicher, dass er nach zufälligen Änderungen dasselbe liefert wie ein frisch gebauter.
+
+### Fälligkeiten
+- **B31. Grenzen:** „läuft bald ab“ gilt ab `remind_days_before` Tage vor dem Datum einschließlich (30 Tage vorher = fällig, 31 = noch nicht); am Tag selbst ist es fällig, ab dem Folgetag überfällig. Wartung ist fällig am Fälligkeitstag. Unter Mindestbestand heißt **strikt kleiner**; ohne Menge keine Meldung.
+- **B32. Ausgeliehenes ohne Datum** wird nach **mehr als** `lent_days` Tagen gemeldet (Standard 30) und nur für „ausgeliehen“; „entnommen/ausgelagert“ ohne Rückgabedatum ist nie auffällig. Mit Rückgabedatum ist es überfällig ab dem Tag danach.
+- **B33. „Lange nicht bestätigt“:** maßgeblich ist `verified`, sonst das Anlegedatum; Schwelle `stale_days` (Standard 365).
+- **B34. Ereignis-Merker:** Jeder fällige Eintrag hat einen stabilen Schlüssel aus Rubrik, Knoten, Detail und Fälligkeitsdatum. Was nicht mehr fällig ist, fällt aus dem Merker und kann später erneut gemeldet werden; ändert sich das Datum, gilt es als neu.
+
+### Speichern
+- **B35. Jede Änderung läuft durch `InventoryStore.async_mutate`:** Sperre → Zwischenstand sichern → Operation → vollständige Regelprüfung (5.14) → bei Verstoß oder Fehler **zurückrollen** → Protokoll und gebündeltes Speichern. Die Operationen prüfen außerdem vorab, sodass sie in der Regel gar nichts halb ändern.
+- **B36. Formatieren und Schreiben im Thread.** Schon bei 5.000 Knoten dauert das Formatieren etwa 0,15 s; im Event-Loop läuft nur das schnelle `to_dict()`.
+- **B37. Fremdänderung erkennen:** durch Vergleich einer Prüfsumme (SHA-256) der Datei – nicht nur des Änderungsdatums. Ist die Datei danach ungültig, wird **nicht** mehr geschrieben (Meldung mit Handlungshinweis), bis sie wieder gültig ist; ungespeicherte eigene Änderungen werden als `inventar.konflikt-<Zeit>.json` gesichert. Home Assistant ruft die Prüfung regelmäßig und beim Dienst „Neu laden“ auf (Phase 2).
+- **B38. Sicherungen** heißen `inventar-JJJJMMTT-hhmmss[-grund].json`. „Grund“ ist `manuell`, `vor-import`, `vor-wiederherstellung` oder `vor-migration`. Aufbewahrt werden die neuesten 20 sowie die jeweils neueste je Kalendertag der letzten 30 Tage.
+- **B39. Protokoll:** `verlauf.jsonl`, eine Zeile je Änderung; ab 2 MB wird nach `verlauf.1.jsonl` … `verlauf.5.jsonl` rotiert, die älteste fällt weg.
+- **B40. Beschädigte Hilfsdateien** (`benutzer.json`, `zustand.json`) werden als `….kaputt` beiseitegelegt und neu begonnen – anders als `inventar.json`, die nie überschrieben wird.
+
+### Schnellerfassung
+- **B41. Menge:** `3x`, `3 x`, `3×` (mit Leerzeichen dahinter) und `3xName` (x direkt an der Zahl) sind Malzeichen; `3 xylophon` ist Menge 3 mit dem Namen „xylophon“. `2 Rollen Klebeband` → Menge 2, Einheit „Rollen“, Name „Klebeband“ (nur bekannte Einheiten, Liste in `quickadd.UNITS`). `1,5 l Milch` → 1,5 l. Kommas zwischen Ziffern trennen nie.
+
+### Fehler
+- **B42. Fehlerklassen mit Codes.** Jede erwartbare Ablehnung ist ein `InventoryError` mit deutschem Text, Handlungshinweis, stabilem `code` (`not_found`, `number_taken`, `cycle`, …) und `placeholders`; die HA-Schicht kann daraus Übersetzungsschlüssel machen (Phase 2).

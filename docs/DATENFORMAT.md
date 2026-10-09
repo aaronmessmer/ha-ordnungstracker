@@ -1,6 +1,7 @@
-# Datenformat (Entwurf)
+# Datenformat
 
-Beschreibung von `inventar.json` (Pflichtenheft 6.2). **Version 1, Entwurf** – wird in Phase 1 mit dem Kern fertiggestellt und gegen die Umsetzung geprüft. Dazu gehört ein JSON-Schema (`docs/inventar.schema.json`).
+Beschreibung von `inventar.json` (Pflichtenheft 6.2). **Version 1.** Dazu gehören ein JSON-Schema (`docs/inventar.schema.json`, gegen das die Tests alle Dateien in `beispiele/` prüfen) und ein vollständiges
+Beispiel (`beispiele/beispiel-haushalt.json`, 67 Knoten, alle Funktionen).
 
 Die Datei darf von Hand bearbeitet werden. Beim Start und bei Änderungen von außen wird sie geprüft; ist sie ungültig, überschreibt die Integration nichts und meldet, **was** und **in welchem Knoten** nicht stimmt.
 

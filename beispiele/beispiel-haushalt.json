@@ -1,0 +1,738 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "created": "2026-10-10T09:00:00+02:00",
+    "modified": "2026-10-10T09:00:00+02:00",
+    "sample": {
+      "nodes": [
+        "du66go", "t90952", "hafhsg", "oa5unz", "iwwy6e", "xvf98s", "j3jtbx", "l31fz9", "ph165z", "qq0467", "zboid7",
+        "vg14j4", "hh348q", "rzt964", "zz1msr", "acj375", "lmq536", "y519cs", "k3g26q", "ol14er", "pxgm0j", "oafa28",
+        "cmphc8", "iwjau5", "wi8o4i", "t6sf0k", "et60yj", "qmyagy", "cdwwbb", "q4ut2u", "d53kj7", "g1v3oe", "rzcmlc",
+        "u8d2m4", "wbi7n7", "eklyr1", "r0fytl", "llq350", "j3lu74", "oh77rg", "goaf3v", "n8lbwk", "l98nhr", "rnsr9i",
+        "dqg1kg", "vdwlg6", "kresuk", "iqea0q", "nadgpb", "jhg9wu", "y3czun", "t31hx6", "vqyswd", "x1bsvs", "xht0ub",
+        "rvm9dh", "fhhci7", "ltb1iw", "nyyp0o", "yil8b8", "v9zqjo", "abr840", "iuifl9", "b6qv7u", "bap4do", "v6jzxo",
+        "rrvmxw"
+      ],
+      "persons": ["papa", "mama", "mia"],
+      "templates": ["l8qigb"],
+      "lists": ["rntczy"],
+      "synonyms": [
+        ["Tacker", "Hefter", "Klammermaschine"],
+        ["Bohrmaschine", "Bohrer", "Akkuschrauber"]
+      ]
+    }
+  },
+  "kinds": [
+    { "id": "raum", "name": "Raum", "class": "place", "icon": "mdi:door" },
+    { "id": "regal", "name": "Regal", "class": "furniture", "icon": "mdi:bookshelf" },
+    { "id": "schrank", "name": "Schrank", "class": "furniture", "icon": "mdi:wardrobe" },
+    { "id": "kiste", "name": "Kiste", "class": "container", "icon": "mdi:package-variant", "numbered": true },
+    { "id": "tasche", "name": "Tasche", "class": "container", "icon": "mdi:bag-personal", "numbered": true },
+    { "id": "gruppe", "name": "Gruppe", "class": "group", "icon": "mdi:shape" },
+    { "id": "ding", "name": "Ding", "class": "item", "icon": "mdi:circle-small" }
+  ],
+  "persons": [
+    { "id": "papa", "name": "Papa", "ha_person": "person.papa" },
+    { "id": "mama", "name": "Mama", "ha_person": "person.mama" },
+    { "id": "mia", "name": "Mia" }
+  ],
+  "fields": [
+    {
+      "id": "expiry",
+      "name": "Ablaufdatum",
+      "type": "date",
+      "group": "Haltbarkeit",
+      "scope": { "type": "global" },
+      "remind_days_before": 30,
+      "builtin": true
+    },
+    {
+      "id": "purchase_date",
+      "name": "Kaufdatum",
+      "type": "date",
+      "group": "Kauf und Garantie",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "price",
+      "name": "Preis",
+      "type": "number",
+      "group": "Kauf und Garantie",
+      "scope": { "type": "global" },
+      "unit": "€",
+      "builtin": true
+    },
+    {
+      "id": "vendor",
+      "name": "Händler",
+      "type": "text",
+      "group": "Kauf und Garantie",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "warranty_until",
+      "name": "Garantie bis",
+      "type": "date",
+      "group": "Kauf und Garantie",
+      "scope": { "type": "global" },
+      "remind_days_before": 30,
+      "builtin": true
+    },
+    {
+      "id": "manufacturer",
+      "name": "Hersteller",
+      "type": "text",
+      "group": "Gerät",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "model",
+      "name": "Modell",
+      "type": "text",
+      "group": "Gerät",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "serial_number",
+      "name": "Seriennummer",
+      "type": "text",
+      "group": "Gerät",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "manual_url",
+      "name": "Link zur Anleitung",
+      "type": "link",
+      "group": "Gerät",
+      "scope": { "type": "global" },
+      "builtin": true
+    },
+    {
+      "id": "kornung",
+      "name": "Körnung",
+      "type": "number",
+      "group": "Schleifen",
+      "scope": { "type": "local", "node": "wbi7n7" }
+    }
+  ],
+  "synonyms": [
+    ["Tacker", "Hefter", "Klammermaschine"],
+    ["Bohrmaschine", "Bohrer", "Akkuschrauber"]
+  ],
+  "templates": [
+    {
+      "id": "l8qigb",
+      "name": "Werkzeugkoffer",
+      "kind": "kiste",
+      "tags": ["Werkzeug"],
+      "children": [
+        {
+          "name": "Schraubendreher",
+          "kind": "gruppe",
+          "children": [{ "name": "Kreuzschlitz", "kind": "ding" }]
+        },
+        { "name": "Zangen", "kind": "gruppe" },
+        { "name": "Maßband", "kind": "ding" }
+      ]
+    }
+  ],
+  "lists": [
+    {
+      "id": "rntczy",
+      "name": "Campingausrüstung",
+      "entries": [
+        { "id": "r7k6gf", "node": "v9zqjo", "note": "Heringe nicht vergessen" },
+        { "id": "eyv9qt", "node": "cdwwbb", "quantity": 8 },
+        { "id": "bmkss8", "text": "Wasserkanister füllen" },
+        { "id": "jwiyma", "node": "d53kj7" }
+      ]
+    }
+  ],
+  "nodes": {
+    "unsortiert": {
+      "name": "Unsortiert",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "papierkorb": {
+      "name": "Papierkorb",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "du66go": {
+      "name": "Keller",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "t90952": {
+      "name": "Küche",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "hafhsg": {
+      "name": "Wohnzimmer",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "oa5unz": {
+      "name": "Werkstatt",
+      "kind": "raum",
+      "parent": "du66go",
+      "owner": "papa",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "iwwy6e": {
+      "name": "Garage",
+      "kind": "raum",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "xvf98s": {
+      "name": "Regal B",
+      "kind": "regal",
+      "parent": "du66go",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "j3jtbx": {
+      "name": "Basteln",
+      "kind": "kiste",
+      "parent": "xvf98s",
+      "number": 14,
+      "tags": ["Kinder"],
+      "owner": "mia",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00",
+      "verified": "2026-10-10T09:00:00+02:00"
+    },
+    "l31fz9": {
+      "name": "Bastelsachen",
+      "kind": "gruppe",
+      "parent": "j3jtbx",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "ph165z": {
+      "name": "Heißklebepistole",
+      "kind": "ding",
+      "parent": "l31fz9",
+      "aliases": ["Klebepistole"],
+      "checkout": { "type": "lent", "to": "Nachbar Huber", "since": "2026-08-26" },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "qq0467": {
+      "name": "Heißkleber-Patronen",
+      "kind": "ding",
+      "parent": "l31fz9",
+      "quantity": 12,
+      "unit": "Stück",
+      "min_quantity": 5,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "zboid7": {
+      "name": "Buntpapier",
+      "kind": "ding",
+      "parent": "l31fz9",
+      "quantity": 3,
+      "unit": "Pack",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "vg14j4": {
+      "name": "Schere",
+      "kind": "ding",
+      "parent": "l31fz9",
+      "aliases": ["Bastelschere"],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "hh348q": {
+      "name": "Glitzer",
+      "kind": "ding",
+      "parent": "l31fz9",
+      "tags": ["bunt"],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "rzt964": {
+      "name": "Weihnachten",
+      "kind": "kiste",
+      "parent": "xvf98s",
+      "number": 15,
+      "note": "Nur im Dezember öffnen.",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00",
+      "verified": "2026-10-10T09:00:00+02:00"
+    },
+    "zz1msr": {
+      "name": "Christbaumschmuck",
+      "kind": "ding",
+      "parent": "rzt964",
+      "quantity": 48,
+      "unit": "Stück",
+      "checkout": { "type": "out", "to": "hängt am Christbaum", "since": "2026-10-07", "until": "2026-11-09" },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "acj375": {
+      "name": "Lichterkette",
+      "kind": "ding",
+      "parent": "rzt964",
+      "note": "Defekt? Vor Gebrauch testen.",
+      "condition": "defective",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "lmq536": {
+      "name": "Krippe",
+      "kind": "ding",
+      "parent": "rzt964",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "y519cs": {
+      "name": "Winterkleidung",
+      "kind": "kiste",
+      "parent": "xvf98s",
+      "number": 16,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "k3g26q": {
+      "name": "Mützen",
+      "kind": "ding",
+      "parent": "y519cs",
+      "quantity": 4,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "ol14er": {
+      "name": "Handschuhe",
+      "kind": "ding",
+      "parent": "y519cs",
+      "quantity": 3,
+      "unit": "Paar",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "pxgm0j": {
+      "name": "Schal (blau)",
+      "kind": "ding",
+      "parent": "y519cs",
+      "condition": "missing",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "oafa28": {
+      "name": "Campingstuhl",
+      "kind": "ding",
+      "parent": "xvf98s",
+      "condition": "to_sell",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "cmphc8": {
+      "name": "Werkzeugregal",
+      "kind": "regal",
+      "parent": "oa5unz",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "iwjau5": {
+      "name": "Schrauben",
+      "kind": "kiste",
+      "parent": "cmphc8",
+      "number": 20,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "wi8o4i": {
+      "name": "Holzschrauben 4x40",
+      "kind": "ding",
+      "parent": "iwjau5",
+      "quantity": 200,
+      "unit": "Stück",
+      "min_quantity": 50,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "t6sf0k": {
+      "name": "Spanplattenschrauben",
+      "kind": "ding",
+      "parent": "iwjau5",
+      "quantity": 40,
+      "unit": "Stück",
+      "min_quantity": 50,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "et60yj": {
+      "name": "Dübel 8mm",
+      "kind": "ding",
+      "parent": "iwjau5",
+      "quantity": 60,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "qmyagy": {
+      "name": "Elektro",
+      "kind": "kiste",
+      "parent": "cmphc8",
+      "number": 21,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "cdwwbb": {
+      "name": "Batterien AA",
+      "kind": "ding",
+      "parent": "qmyagy",
+      "tags": ["Verbrauch"],
+      "quantity": 2,
+      "unit": "Stück",
+      "min_quantity": 8,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "q4ut2u": {
+      "name": "Isolierband",
+      "kind": "ding",
+      "parent": "qmyagy",
+      "quantity": 3,
+      "unit": "Rollen",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "d53kj7": {
+      "name": "Tacker",
+      "kind": "ding",
+      "parent": "cmphc8",
+      "aliases": ["Handtacker"],
+      "maintenance": [
+        { "id": "q0clft", "title": "Ölen", "next_due": "2026-10-10" }
+      ],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "g1v3oe": {
+      "name": "Schublade Mama",
+      "kind": "regal",
+      "parent": "oa5unz",
+      "owner": "mama",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "rzcmlc": {
+      "name": "Nähzeug",
+      "kind": "ding",
+      "parent": "g1v3oe",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "u8d2m4": {
+      "name": "Knöpfe",
+      "kind": "ding",
+      "parent": "g1v3oe",
+      "quantity": 40,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "wbi7n7": {
+      "name": "Schleifmittel",
+      "kind": "gruppe",
+      "parent": "oa5unz",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "eklyr1": {
+      "name": "Schleifpapier K80",
+      "kind": "ding",
+      "parent": "wbi7n7",
+      "fields": { "kornung": 80 },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "r0fytl": {
+      "name": "Schleifpapier K120",
+      "kind": "ding",
+      "parent": "wbi7n7",
+      "fields": { "kornung": 120 },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "llq350": {
+      "name": "Schleifschwamm",
+      "kind": "ding",
+      "parent": "wbi7n7",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "j3lu74": {
+      "name": "Bohrmaschine",
+      "kind": "ding",
+      "parent": "oa5unz",
+      "aliases": ["Schlagbohrer"],
+      "tags": ["Elektro"],
+      "fields": { "warranty_until": "2026-10-30", "price": 129, "manufacturer": "Bosch", "serial_number": "SN-4711" },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "oh77rg": {
+      "name": "Stichsäge",
+      "kind": "ding",
+      "parent": "oa5unz",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "goaf3v": {
+      "name": "Heizung",
+      "kind": "ding",
+      "parent": "du66go",
+      "note": "Gas-Brennwertgerät im Heizungsraum.",
+      "maintenance": [
+        {
+          "id": "o394tm",
+          "title": "Wartung durch den Installateur",
+          "interval": { "value": 1, "unit": "years" },
+          "next_due": "2026-10-05",
+          "note": "Termin: Fa. Meier, 0123 456789"
+        }
+      ],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "n8lbwk": {
+      "name": "Vorratsschrank",
+      "kind": "schrank",
+      "parent": "t90952",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "l98nhr": {
+      "name": "Vorrat",
+      "kind": "kiste",
+      "parent": "n8lbwk",
+      "number": 30,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "rnsr9i": {
+      "name": "Nudeln",
+      "kind": "ding",
+      "parent": "l98nhr",
+      "quantity": 4,
+      "unit": "Pack",
+      "fields": { "expiry": "2026-10-22", "price": 3.6 },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "dqg1kg": {
+      "name": "Reis",
+      "kind": "ding",
+      "parent": "l98nhr",
+      "quantity": 2,
+      "unit": "kg",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "vdwlg6": {
+      "name": "Tomatensauce",
+      "kind": "ding",
+      "parent": "l98nhr",
+      "quantity": 3,
+      "unit": "Gläser",
+      "min_quantity": 2,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "kresuk": {
+      "name": "Mehl",
+      "kind": "ding",
+      "parent": "n8lbwk",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "iqea0q": {
+      "name": "Kaffeemaschine",
+      "kind": "ding",
+      "parent": "t90952",
+      "aliases": ["Kaffeevollautomat"],
+      "tags": ["Elektro"],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "nadgpb": {
+      "name": "Geschirrschrank",
+      "kind": "schrank",
+      "parent": "t90952",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "jhg9wu": {
+      "name": "Teller",
+      "kind": "ding",
+      "parent": "nadgpb",
+      "quantity": 12,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "y3czun": {
+      "name": "Gläser",
+      "kind": "ding",
+      "parent": "nadgpb",
+      "quantity": 8,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "t31hx6": {
+      "name": "Sideboard",
+      "kind": "schrank",
+      "parent": "hafhsg",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "vqyswd": {
+      "name": "Spiele",
+      "kind": "gruppe",
+      "parent": "t31hx6",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "x1bsvs": {
+      "name": "Fotoalben",
+      "kind": "ding",
+      "parent": "t31hx6",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "xht0ub": {
+      "name": "Fernbedienung Beamer",
+      "kind": "ding",
+      "parent": "hafhsg",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "rvm9dh": {
+      "name": "Alter Röhrenfernseher",
+      "kind": "ding",
+      "parent": "hafhsg",
+      "note": "Zum Wertstoffhof gebracht.",
+      "condition": "disposed",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "fhhci7": {
+      "name": "Rasenmäher",
+      "kind": "ding",
+      "parent": "iwwy6e",
+      "tags": ["Garten"],
+      "fields": { "purchase_date": "2025-09-05", "price": 349 },
+      "maintenance": [
+        {
+          "id": "f0j5aw",
+          "title": "Messer schärfen",
+          "interval": { "value": 6, "unit": "months" },
+          "next_due": "2026-12-09"
+        }
+      ],
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "ltb1iw": {
+      "name": "Reifen (Sommer)",
+      "kind": "ding",
+      "parent": "iwwy6e",
+      "quantity": 4,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "nyyp0o": {
+      "name": "Leiter",
+      "kind": "ding",
+      "parent": "iwwy6e",
+      "checkout": { "type": "lent", "to": "Onkel Bernd", "since": "2026-09-30", "until": "2026-10-08" },
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "yil8b8": {
+      "name": "Camping",
+      "kind": "kiste",
+      "parent": "iwwy6e",
+      "number": 40,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "v9zqjo": {
+      "name": "Zelt (4 Personen)",
+      "kind": "ding",
+      "parent": "yil8b8",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "abr840": {
+      "name": "Schlafsäcke",
+      "kind": "ding",
+      "parent": "yil8b8",
+      "quantity": 4,
+      "unit": "Stück",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "iuifl9": {
+      "name": "Gaskocher",
+      "kind": "ding",
+      "parent": "yil8b8",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "b6qv7u": {
+      "name": "Erste-Hilfe-Tasche",
+      "kind": "tasche",
+      "parent": "iwwy6e",
+      "number": 41,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "bap4do": {
+      "name": "Pflaster",
+      "kind": "ding",
+      "parent": "b6qv7u",
+      "quantity": 20,
+      "unit": "Stück",
+      "min_quantity": 10,
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "v6jzxo": {
+      "name": "Verbandsmaterial",
+      "kind": "ding",
+      "parent": "b6qv7u",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    },
+    "rrvmxw": {
+      "name": "Unbekannter Schlüssel",
+      "kind": "ding",
+      "parent": "unsortiert",
+      "created": "2026-10-10T09:00:00+02:00",
+      "modified": "2026-10-10T09:00:00+02:00"
+    }
+  }
+}

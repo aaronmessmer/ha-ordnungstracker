@@ -17,7 +17,19 @@ Kurze Listen zum Abarbeiten in **deinem** Home Assistant (Pflichtenheft 1). Alle
 - [ ] Integration löschen und wieder hinzufügen funktioniert; Home Assistant läuft danach ohne Fehler weiter.
 - [ ] Die Oberfläche ist auf Deutsch (Dialogtexte), bei englischer Sprache auf Englisch.
 
-## Text für den Pull Request (Phase 0)
+## Phase 1 – Kern (Version 0.2.0)
+
+Der Kern hat noch keine Oberfläche; geprüft wird, was du sehen kannst:
+
+- [ ] Nach dem Update auf 0.2.0 (HACS, Neustart) läuft die Integration weiter ohne Fehler im Protokoll. (Es werden noch keine Daten angelegt – das kommt mit Phase 2.)
+- [ ] `beispiele/beispiel-haushalt.json` in einem Editor öffnen: Die Datei ist lesbar (Räume, Regal B, Kiste 14 „Basteln“, Heißklebepistole an „Nachbar Huber“ ausgeliehen …) und der Aufbau passt zu `docs/DATENFORMAT.md`.
+- [ ] `docs/DATENFORMAT.md` lesen: Fehlt dir eine Angabe, die du pro Ding festhalten möchtest? **Jetzt** ist der richtige Zeitpunkt, denn das Datenformat soll danach nicht mehr umgebaut werden.
+- [ ] In `docs/ENTSCHEIDUNGEN.md` (Abschnitt B) die getroffenen Festlegungen überfliegen, besonders: Preis gilt für den Eintrag als Ganzes (B11), Nummern bleiben im Papierkorb reserviert (B14), „Inhalt hochschieben“ legt den Knoten selbst in den Papierkorb (B15), Ausgeliehenes ohne Datum gilt nach mehr als 30 Tagen als überfällig (B32).
+
+## Text für den Pull Request (Phase 0 und 1)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
+
+**Phase 1 – Kern.** Der gesamte Kern in reinem Python: Datenmodell, Regeln, Baumoperationen, Systemknoten, Papierkorb, Nummern, Vererbung von Besitz, Felder mit Geltungsbereich, Entnahme, Zustand, Menge, Wartung, Listen, Vorlagen, Synonyme, Fälligkeiten, Suche,
+Schnellerfassungs-Parser, Laden/Speichern/Sicherungen/Migration/Konflikterkennung, Protokoll, Exporte (Markdown, HTML für den Druck), Beispielinventar. Fertig, wenn: Abdeckung ≥ 90 % (≈ 97 %), Leistungstest der Suche besteht (≈ 4–17 ms bei 5.000 Knoten), Datenformat-Dokument vollständig.

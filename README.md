@@ -3,7 +3,8 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 0 von 6 (Version 0.1.0).** Das Gerüst steht; der **Kern** (Datenmodell, Suche, Speicherung), die Anbindung an Home Assistant, die **Oberfläche** und die Sprachabfrage folgen in den nächsten Phasen (`docs/ROADMAP.md`).
+> **Entwicklungsstand: Phase 1 von 6 (Version 0.2.0).** Der **Kern** ist fertig und getestet (Datenmodell, Suche, Fälligkeiten, Speicherung, Exporte).
+> Die Anbindung an Home Assistant (Dienste, Sensoren), die **Oberfläche** und die Sprachabfrage folgen in den nächsten Phasen (`docs/ROADMAP.md`).
 > Heute lässt sich die Integration installieren und einrichten, sie tut aber noch nichts Sichtbares.
 
 ## Was es kann (Ziel)
@@ -44,7 +45,8 @@ Alles liegt im Ordner `ordnungstracker` im Konfigurationsverzeichnis (neben `con
 
 ### Bearbeiten von Hand
 
-Die Datei darf mit jedem Editor bearbeitet werden; das Format ist in [`docs/DATENFORMAT.md`](docs/DATENFORMAT.md) (Entwurf) beschrieben, das JSON-Schema in [`docs/inventar.schema.json`](docs/inventar.schema.json) (viele Editoren prüfen damit beim Tippen).
+Die Datei darf mit jedem Editor bearbeitet werden; das Format ist in [`docs/DATENFORMAT.md`](docs/DATENFORMAT.md) beschrieben, ein vollständiges Beispiel liegt in [`beispiele/beispiel-haushalt.json`](beispiele/beispiel-haushalt.json),
+das JSON-Schema in [`docs/inventar.schema.json`](docs/inventar.schema.json) (viele Editoren prüfen damit beim Tippen).
 Wird die Datei außerhalb verändert, erkennt die Integration das: Gibt es keine ungespeicherten eigenen Änderungen, lädt sie neu; sonst legt sie ihren Stand als `inventar.konflikt-….json` daneben und meldet es. Ein Tippfehler macht die Datei nicht unbrauchbar –
 die Integration nennt dann genau, **was** und **in welchem Knoten** nicht stimmt.
 

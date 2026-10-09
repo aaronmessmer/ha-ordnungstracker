@@ -15,10 +15,10 @@ Verbindlicher Auftrag: **`docs/PFLICHTENHEFT.md`** (vollständig lesen, bevor et
 
 ```
 custom_components/ordnungstracker/   Integration (HA-Schicht, dünn)
-  core/                              reines Python, importiert NIE homeassistant (ab Phase 1)
+  core/                              reines Python, importiert NIE homeassistant (Test erzwingt das)
   frontend/                          gebautes Bündel (ab Phase 3)
 frontend/                            Quelltext der Oberfläche (TypeScript, Lit; ab Phase 3)
-tests/ha  tests/test_repository.py  (tests/core ab Phase 1)
+tests/core  tests/ha  tests/test_repository.py
 docs/                                Pflichtenheft, Architektur, Datenformat (+ JSON-Schema), API, Entscheidungen, Fahrplan, Prüflisten
 beispiele/                           Beispielinventar (wird aus dem Code erzeugt, Test prüft Aktualität)
 custom_sentences/                    Beispielsätze für Assist (ab Phase 5)
@@ -38,6 +38,9 @@ pytest                              # alle Tests (Kern ≈ 5 s)
 pytest --cov                        # mit Abdeckung des Kerns (Schwelle 90 %)
 ruff check custom_components tests && ruff format --check custom_components tests
 mypy                                # Kern streng
+
+# Beispielinventar nach Änderungen an sample.py / Datenformat neu erzeugen:
+python -m custom_components.ordnungstracker.core.sample beispiele/beispiel-haushalt.json
 ```
 
 Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das Ergebnis wird eingecheckt, die CI prüft die Aktualität.
@@ -56,5 +59,6 @@ Oberfläche (ab Phase 3): im Ordner `frontend/` `npm ci && npm run build`; das E
 | Phase | Stand |
 |---|---|
 | 0 Grundlage | fertig (0.1.0) |
-| 1 Kern | **als Nächstes** |
-| 2–6 | offen (siehe `docs/ROADMAP.md`) |
+| 1 Kern | fertig (0.2.0) |
+| 2 Home-Assistant-Schicht | **als Nächstes** |
+| 3–6 | offen (siehe `docs/ROADMAP.md`) |
