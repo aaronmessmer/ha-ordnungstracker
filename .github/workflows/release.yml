@@ -1,0 +1,53 @@
+name: Release
+
+# Von Hand auslösen: Actions -> Release -> "Run workflow" und die Version eintragen (z. B. 0.2.0).
+# Vorher muss `version` in custom_components/ordnungstracker/manifest.json auf dieser Version
+# stehen und CHANGELOG.md einen Abschnitt "## [0.2.0]" enthalten.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version ohne v (z. B. 0.2.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - name: Version prüfen
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          manifest=$(python -c "import json; print(json.load(open('custom_components/ordnungstracker/manifest.json'))['version'])")
+          if [ "$manifest" != "$VERSION" ]; then
+            echo "::error::manifest.json hat Version $manifest, angefordert ist $VERSION. Erst die Version im Manifest anheben."
+            exit 1
+          fi
+          if ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md hat keinen Abschnitt für $VERSION."
+            exit 1
+          fi
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Der Tag v$VERSION existiert bereits."
+            exit 1
+          fi
+      - run: pip install -r requirements_test.txt
+      - run: pytest --cov
+      - name: GitHub-Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.md > notes.md
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Ordnungs-Tracker $VERSION" --notes-file notes.md

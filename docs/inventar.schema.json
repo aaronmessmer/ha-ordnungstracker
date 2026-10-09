@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aaronmessmer/ha-ordnungstracker/docs/inventar.schema.json",
+  "title": "Ordnungs-Tracker: inventar.json",
+  "description": "Struktur der Inventardatei (schema_version 1). Prüft die Form; die Regeln aus Pflichtenheft 5.14 (Eindeutigkeit von Nummern, vorhandene Verweise, keine Kreise) prüft der Kern beim Laden.",
+  "type": "object",
+  "required": ["schema_version", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "created": { "$ref": "#/$defs/timestamp" },
+        "modified": { "$ref": "#/$defs/timestamp" },
+        "sample": {
+          "description": "Kennungen der Beispieldaten, damit sie wieder entfernt werden können.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "nodes": { "$ref": "#/$defs/stringList" },
+            "persons": { "$ref": "#/$defs/stringList" },
+            "templates": { "$ref": "#/$defs/stringList" },
+            "lists": { "$ref": "#/$defs/stringList" },
+            "synonyms": { "type": "array", "items": { "$ref": "#/$defs/stringList" } }
+          }
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lent_days": { "type": "integer", "minimum": 1, "description": "Ausgeliehenes ohne Rückgabedatum gilt nach so vielen Tagen als überfällig (Standard 30)." },
+        "stale_days": { "type": "integer", "minimum": 1, "description": "Nach so vielen Tagen ohne Bestätigung gilt ein Eintrag als „lange nicht bestätigt“ (Standard 365)." },
+        "trash_days": { "type": "integer", "minimum": 1, "description": "Aufbewahrung im Papierkorb in Tagen (Standard 30)." }
+      }
+    },
+    "kinds": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/kind" }
+    },
+    "persons": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/person" }
+    },
+    "fields": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fieldDef" }
+    },
+    "synonyms": {
+      "type": "array",
+      "items": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 2 }
+    },
+    "templates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/template" }
+    },
+    "lists": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/packList" }
+    },
+    "nodes": {
+      "type": "object",
+      "minProperties": 0,
+      "propertyNames": { "minLength": 1 },
+      "additionalProperties": { "$ref": "#/$defs/node" }
+    }
+  },
+  "$defs": {
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "Datum JJJJ-MM-TT" },
+    "timestamp": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2})?([+-]\\d{2}:\\d{2}|Z)?)?$", "description": "Zeitstempel JJJJ-MM-TTThh:mm:ss+hh:mm (reine Datumsangabe ist erlaubt)" },
+    "stringList": { "type": "array", "items": { "type": "string" } },
+    "class": { "enum": ["place", "furniture", "container", "group", "item"] },
+    "kind": {
+      "type": "object",
+      "required": ["id", "name", "class"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "class": { "$ref": "#/$defs/class" },
+        "icon": { "type": "string" },
+        "numbered": { "type": "boolean" }
+      }
+    },
+    "person": {
+      "type": "object",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "ha_person": { "type": "string", "pattern": "^person\\..+" }
+      }
+    },
+    "fieldDef": {
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["text", "multiline", "number", "date", "bool", "choice", "link"] },
+        "group": { "type": "string" },
+        "scope": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["global", "local"] },
+            "node": { "type": "string", "minLength": 1 }
+          },
+          "if": { "properties": { "type": { "const": "local" } } },
+          "then": { "required": ["node"] }
+        },
+        "kinds": { "$ref": "#/$defs/stringList" },
+        "classes": { "type": "array", "items": { "$ref": "#/$defs/class" } },
+        "unit": { "type": "string" },
+        "options": { "$ref": "#/$defs/stringList" },
+        "remind_days_before": { "type": "integer", "minimum": 0 },
+        "builtin": { "type": "boolean" },
+        "hidden": { "type": "boolean" }
+      }
+    },
+    "checkout": {
+      "type": "object",
+      "required": ["type", "to", "since"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["lent", "out"] },
+        "to": { "type": "string", "minLength": 1 },
+        "since": { "$ref": "#/$defs/date" },
+        "until": { "$ref": "#/$defs/date" },
+        "note": { "type": "string" }
+      }
+    },
+    "maintenanceTask": {
+      "type": "object",
+      "required": ["id", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "interval": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "additionalProperties": false,
+          "properties": {
+            "value": { "type": "integer", "minimum": 1 },
+            "unit": { "enum": ["days", "weeks", "months", "years"] }
+          }
+        },
+        "next_due": { "$ref": "#/$defs/date" },
+        "note": { "type": "string" },
+        "log": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["date"],
+            "additionalProperties": false,
+            "properties": { "date": { "$ref": "#/$defs/date" }, "note": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["name", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "parent": { "type": "string", "minLength": 1 },
+        "number": { "type": "integer", "minimum": 1 },
+        "aliases": { "$ref": "#/$defs/stringList" },
+        "tags": { "$ref": "#/$defs/stringList" },
+        "note": { "type": "string" },
+        "owner": { "type": "string", "minLength": 1 },
+        "quantity": { "type": "number", "minimum": 0 },
+        "unit": { "type": "string" },
+        "min_quantity": { "type": "number", "minimum": 0 },
+        "condition": { "enum": ["ok", "missing", "defective", "to_sell", "to_give_away", "disposed"] },
+        "checkout": { "$ref": "#/$defs/checkout" },
+        "fields": {
+          "type": "object",
+          "description": "Feldkennung -> Wert; der Typ richtet sich nach der Felddefinition.",
+          "additionalProperties": { "type": ["string", "number", "boolean"] }
+        },
+        "maintenance": { "type": "array", "items": { "$ref": "#/$defs/maintenanceTask" } },
+        "attachments": { "type": "array", "description": "Reserviert (Abschnitt 14 des Pflichtenhefts); ohne Funktion.", "items": { "type": "object" } },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "modified": { "$ref": "#/$defs/timestamp" },
+        "verified": { "$ref": "#/$defs/timestamp" },
+        "trashed": {
+          "type": "object",
+          "required": ["at"],
+          "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/timestamp" },
+            "from": { "type": "string" },
+            "by": { "type": "string" }
+          }
+        }
+      }
+    },
+    "templateNode": {
+      "type": "object",
+      "required": ["name", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "tags": { "$ref": "#/$defs/stringList" },
+        "quantity": { "type": "number", "minimum": 0 },
+        "unit": { "type": "string" },
+        "fields": { "type": "object", "additionalProperties": { "type": ["string", "number", "boolean"] } },
+        "children": { "type": "array", "items": { "$ref": "#/$defs/templateNode" } }
+      }
+    },
+    "template": {
+      "type": "object",
+      "required": ["id", "name", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "tags": { "$ref": "#/$defs/stringList" },
+        "owner": { "type": "string", "minLength": 1 },
+        "fields": { "type": "object", "additionalProperties": { "type": ["string", "number", "boolean"] } },
+        "children": { "type": "array", "items": { "$ref": "#/$defs/templateNode" } }
+      }
+    },
+    "packList": {
+      "type": "object",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "node": { "type": "string", "minLength": 1 },
+              "text": { "type": "string", "minLength": 1 },
+              "quantity": { "type": "number", "minimum": 0 },
+              "note": { "type": "string" },
+              "checked": { "type": "boolean" }
+            },
+            "anyOf": [{ "required": ["node"] }, { "required": ["text"] }]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Ordnungs-Tracker",
+        "description": "The Ordnungs-Tracker keeps track of what is stored where. No input is required. Your data lives in the file `ordnungstracker/inventar.json` in the configuration directory."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Ordnungs-Tracker is already set up. Only one instance is possible."
+    }
+  }
+}

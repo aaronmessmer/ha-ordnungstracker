@@ -1,0 +1,13 @@
+{
+  "domain": "ordnungstracker",
+  "name": "Ordnungs-Tracker",
+  "codeowners": ["@aaronmessmer"],
+  "config_flow": true,
+  "documentation": "https://github.com/aaronmessmer/ha-ordnungstracker",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/aaronmessmer/ha-ordnungstracker/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}

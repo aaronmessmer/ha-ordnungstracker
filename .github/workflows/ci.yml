@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt
+      - run: ruff check custom_components tests
+      - run: ruff format --check custom_components tests
+
+  typecheck:
+    name: Typprüfung (mypy, Kern streng)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt
+      - run: mypy
+
+  tests:
+    name: Tests (Kern und Home-Assistant-Schicht)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt
+      - name: Tests mit Abdeckung (Kern mindestens 90 %)
+        run: pytest --cov --cov-report=term-missing
+
+  frontend:
+    name: Oberfläche (Bau und Aktualität des Bündels)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hinweis
+        if: hashFiles('frontend/package.json') == ''
+        run: echo "Noch keine Oberfläche (kommt in Phase 3); nichts zu bauen."
+      - uses: actions/setup-node@v4
+        if: hashFiles('frontend/package.json') != ''
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Abhängigkeiten, Typprüfung, Tests, Bau
+        if: hashFiles('frontend/package.json') != ''
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run typecheck --if-present
+          npm test --if-present
+          npm run build
+      - name: Eingechecktes Bündel ist aktuell
+        if: hashFiles('frontend/package.json') != ''
+        run: git diff --exit-code -- custom_components/ordnungstracker/frontend

@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ordnungs-Tracker einrichten",
+        "description": "Der Ordnungs-Tracker verwaltet, was wo liegt. Es sind keine Angaben nötig. Deine Daten liegen in der Datei `ordnungstracker/inventar.json` im Konfigurationsverzeichnis."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Der Ordnungs-Tracker ist bereits eingerichtet. Es ist nur eine Instanz möglich."
+    }
+  }
+}

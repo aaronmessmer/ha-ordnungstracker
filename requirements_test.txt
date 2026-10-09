@@ -1,0 +1,6 @@
+# Test- und Entwicklungswerkzeuge (Python >= 3.14, passend zu Home Assistant 2026.x)
+pytest-homeassistant-custom-component
+pytest-cov
+ruff
+mypy
+jsonschema
