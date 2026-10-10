@@ -4,6 +4,7 @@ pytest-cov
 ruff
 mypy
 jsonschema
-# Die Sprachabfrage-Tests brauchen die Bausteine von Assist (Home Assistant lädt sie sonst erst zur Laufzeit)
+# Die Sprachabfrage-Tests brauchen die Bausteine von Assist (Home Assistant lädt sie sonst erst zur Laufzeit; die Liste steht im Manifest von `homeassistant/components/conversation`)
 hassil
 home-assistant-intents
+gazetteer-matcher

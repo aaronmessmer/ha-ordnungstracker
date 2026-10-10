@@ -204,7 +204,7 @@ und gegen 2026.10.0 **und** 2026.3.1 getestet.
 - **F8. Drucken.** Die Oberfläche holt die signierte Adresse (5 Minuten, nur für genau diese Ansicht, siehe C8) und öffnet sie mit `window.open`; blockiert die Umgebung neue Fenster (Companion-App), öffnet sie im selben Fenster. Ob das in der App brauchbar ist, steht in der Prüfliste (offen seit A3/A4).
 - **F9. Protokoll** zeigt 50 Zeilen je Seite, nachladbar; bekannte Aktionen auf Deutsch, unbekannte unverändert. Verschieben mit altem und neuem Pfad, Bearbeiten mit alt → neu. Das globale Protokoll liegt unter den Einstellungen (also nur für Administratoren, wenn die Option an ist), das je Eintrag in dessen Menü.
 - **F10. Sicherungen.** Auflisten, „Jetzt sichern“ und Wiederherstellen mit deutlicher Rückfrage; der Kern sichert vor dem Wiederherstellen den jetzigen Stand (`vor-wiederherstellung`), es gibt also einen Rückweg.
-- **F11. Tests mit Assist** brauchen `hassil` und `home-assistant-intents` (Home Assistant lädt sie sonst erst zur Laufzeit); sie stehen in `requirements_test.txt`. Die Tests führen echte Sätze durch den Standard-Agenten.
+- **F11. Tests mit Assist** brauchen `hassil`, `home-assistant-intents` und `gazetteer-matcher` (Home Assistant lädt sie sonst erst zur Laufzeit); sie stehen in `requirements_test.txt`. Die Tests führen echte Sätze durch den Standard-Agenten.
 
 ## G. Entscheidungen zu Phase 6 (Abschluss)
 

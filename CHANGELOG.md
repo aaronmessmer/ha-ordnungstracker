@@ -25,7 +25,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - **Berechtigungen:** Option „Löschen und Einstellungen nur für Administratoren“ (Oberfläche, WebSocket-API, Aktionen).
 
 ### Geändert
-- `status` nennt `can_admin`; neuer Fehlercode `unauthorized`. Neue Test-Abhängigkeiten `hassil` und `home-assistant-intents`.
+- `status` nennt `can_admin`; neuer Fehlercode `unauthorized`. Neue Test-Abhängigkeiten `hassil`, `home-assistant-intents` und `gazetteer-matcher`.
 
 ## [0.5.0] – Phase 4: Erweiterungen A
 
