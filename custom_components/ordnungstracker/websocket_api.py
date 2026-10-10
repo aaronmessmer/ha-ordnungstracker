@@ -36,6 +36,8 @@ from .core.quickadd import QuickEntry, apply_quickadd, format_preview, parse_qui
 from .core.reminders import calendar_events
 from .core.sample import load_sample, remove_sample
 from .core.search import SearchFilter
+from .permissions import ADMIN_COMMANDS
+from .permissions import MESSAGE as ADMIN_MESSAGE
 from .runtime import OrdnungsTrackerRuntime
 from .views import get_runtime, signed_url
 
@@ -136,6 +138,7 @@ async def _status(rt: OrdnungsTrackerRuntime, conn: Any, msg: dict[str, Any]) ->
         "user_id": _user_id(conn),
         "todo_entity": rt.entry.options.get("todo_entity"),
         "todo_auto": bool(rt.entry.options.get("todo_auto")),
+        "can_admin": rt.can_admin(bool(conn.user and conn.user.is_admin)),
     }
 
 
@@ -875,6 +878,11 @@ def _register(
                 "Der Ordnungs-Tracker ist nicht geladen. Prüfe unter Einstellungen → Reparaturen, ob die "
                 "Datei inventar.json beanstandet wird.",
             )
+            return
+        if name in ADMIN_COMMANDS and not runtime.can_admin(
+            bool(connection.user and connection.user.is_admin)
+        ):
+            connection.send_error(msg["id"], "unauthorized", ADMIN_MESSAGE)
             return
         try:
             result = await run(runtime, connection, msg)

@@ -20,6 +20,7 @@ from homeassistant.helpers.event import async_track_time_interval
 
 from . import repairs
 from .const import (
+    CONF_ADMIN_ONLY,
     CONF_TODO_AUTO,
     CONF_TODO_ENTITY,
     DATA_DIR_NAME,
@@ -234,6 +235,10 @@ class OrdnungsTrackerRuntime:
             self.state.data["initialized"] = True
             await self.state.async_set_reported(reported)
         return 0 if seed else len(new)
+
+    def can_admin(self, is_admin: bool) -> bool:
+        """Darf dieser Benutzer löschen und Einstellungen ändern? (Option „nur Administratoren“)"""
+        return is_admin or not self.entry.options.get(CONF_ADMIN_ONLY)
 
     @callback
     def _auto_transfer_to_todo(self) -> None:

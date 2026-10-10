@@ -23,6 +23,7 @@ from .core.inventory import Inventory
 from .core.model import CheckoutType, Condition
 from .core.sample import load_sample, remove_sample
 from .core.search import SearchFilter
+from .permissions import async_service_allowed
 from .runtime import OrdnungsTrackerRuntime
 from .views import get_runtime
 
@@ -70,6 +71,12 @@ def resolve(inv: Inventory, ref: str | None) -> str:
             return holder.id
     inv.node(str(ref))  # wirft NotFoundError mit deutscher Meldung
     return str(ref)
+
+
+async def _admin_check(call: ServiceCall) -> None:
+    """Löschen und Beispieldaten nur für Administratoren, wenn die Option es verlangt."""
+    runtime = _runtime(call.hass)
+    await async_service_allowed(call.hass, runtime.entry.options, call.context.user_id)
 
 
 async def _run(call: ServiceCall, fn: Any) -> Any:
@@ -159,6 +166,8 @@ def async_register_services(hass: HomeAssistant) -> None:
         return await _run(call, op)  # type: ignore[no-any-return]
 
     async def delete_node(call: ServiceCall) -> ServiceResponse:
+        await _admin_check(call)
+
         def op(inv: Inventory) -> dict[str, Any]:
             node_id = resolve(inv, call.data["node"])
             affected = inv.tree.content_counts(node_id)[1]
@@ -232,10 +241,12 @@ def async_register_services(hass: HomeAssistant) -> None:
 
     async def load_sample_service(call: ServiceCall) -> ServiceResponse:
         """Beispielhaushalt laden (nur in ein leeres Inventar)."""
+        await _admin_check(call)
         return await _run(call, lambda inv: {"created": load_sample(inv)})  # type: ignore[no-any-return]
 
     async def remove_sample_service(call: ServiceCall) -> ServiceResponse:
         """Beispieldaten wieder entfernen; eigene Einträge darin wandern nach „Unsortiert“."""
+        await _admin_check(call)
         return await _run(call, lambda inv: {"removed": remove_sample(inv)})  # type: ignore[no-any-return]
 
     only, optional = SupportsResponse.ONLY, SupportsResponse.OPTIONAL

@@ -18,6 +18,7 @@ from pytest_homeassistant_custom_component.common import (
 )
 
 from custom_components.ordnungstracker.const import (
+    CONF_ADMIN_ONLY,
     CONF_SHOW_SIDEBAR,
     CONF_TODO_AUTO,
     CONF_TODO_ENTITY,
@@ -195,6 +196,7 @@ async def test_options_flow(hass: HomeAssistant, init_integration: MockConfigEnt
         CONF_TODO_ENTITY: "todo.einkauf",
         CONF_SHOW_SIDEBAR: False,
         CONF_TODO_AUTO: True,
+        CONF_ADMIN_ONLY: False,
     }
     assert init_integration.state is ConfigEntryState.LOADED  # wurde neu geladen
 

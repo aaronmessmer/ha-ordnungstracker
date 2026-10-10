@@ -1,0 +1,30 @@
+# Sätze für Assist (Deutsch) – gehört zum Ordnungs-Tracker.
+# Diese Datei wird beim Start nach <config>/custom_sentences/de/ordnungstracker.yaml kopiert und dort
+# bei jeder Aktualisierung überschrieben. Eigene Sätze bitte in eine andere Datei schreiben.
+# Die Felder heißen ding/ort/nummer, nicht name/area: Diese Namen belegt Home Assistant selbst für Entitäten und Bereiche.
+language: "de"
+intents:
+  OrdnungWoIst:
+    data:
+      - sentences:
+          - "wo (ist|sind|liegt|liegen|steht|stehen) [der|die|das|mein|meine|meinen|meinem] {ding}"
+          - "wo finde ich [den|die|das|mein|meine|meinen] {ding}"
+          - "wo habe ich [den|die|das|mein|meine|meinen] {ding} (hingelegt|hingestellt|hingetan)"
+  OrdnungInhalt:
+    data:
+      - sentences:
+          - "was ist in (Kiste|Box|Behälter) {nummer}"
+          - "was (liegt|befindet sich) in (Kiste|Box|Behälter) {nummer}"
+          - "was ist in der (Kiste|Box) {nummer}"
+      - sentences:
+          - "was ist (in|im) [dem|der|den] {ort}"
+          - "was (liegt|befindet sich) (in|im) [dem|der|den] {ort}"
+lists:
+  ding:
+    wildcard: true
+  ort:
+    wildcard: true
+  nummer:
+    range:
+      from: 1
+      to: 9999

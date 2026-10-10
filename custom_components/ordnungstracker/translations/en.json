@@ -18,11 +18,13 @@
         "data": {
           "todo_entity": "To-do list for restocking",
           "todo_auto": "Add restock items to the to-do list automatically",
+          "admin_only": "Deleting and settings for administrators only",
           "show_sidebar": "Show the \"Ordnung\" entry in the sidebar"
         },
         "data_description": {
           "todo_entity": "The service \"Transfer restocking to to-do list\" adds items below their minimum stock here.",
           "todo_auto": "As soon as something falls below its minimum it is added to the chosen list (without duplicates).",
+          "admin_only": "Applies to the interface and the actions. Automations without a user are not affected.",
           "show_sidebar": "Applies once the user interface is installed."
         }
       }
@@ -413,6 +415,9 @@
     },
     "todo_unknown": {
       "message": "The to-do list {entity_id} does not exist."
+    },
+    "admin_required": {
+      "message": "Administrator rights are required. The integration options restrict deleting and settings to administrators."
     }
   }
 }

@@ -18,11 +18,13 @@
         "data": {
           "todo_entity": "To-do-Liste für Nachkäufe",
           "todo_auto": "Nachkäufe selbsttätig auf die To-do-Liste setzen",
+          "admin_only": "Löschen und Einstellungen nur für Administratoren",
           "show_sidebar": "Eintrag „Ordnung“ in der Seitenleiste zeigen"
         },
         "data_description": {
           "todo_entity": "Dorthin überträgt der Dienst „Nachkäufe in To-do-Liste übertragen“, was unter dem Mindestbestand liegt.",
           "todo_auto": "Sobald etwas unter den Mindestbestand fällt, wird es (ohne Doppelte) auf die gewählte Liste gesetzt.",
+          "admin_only": "Gilt für die Oberfläche und die Aktionen. Automationen ohne Benutzer sind nicht betroffen.",
           "show_sidebar": "Gilt, sobald die Oberfläche installiert ist."
         }
       }
@@ -413,6 +415,9 @@
     },
     "todo_unknown": {
       "message": "Die To-do-Liste {entity_id} gibt es nicht."
+    },
+    "admin_required": {
+      "message": "Dafür sind Administratorrechte nötig. In den Optionen der Integration ist eingestellt, dass Löschen und Einstellungen nur Administratoren vorbehalten sind."
     }
   }
 }

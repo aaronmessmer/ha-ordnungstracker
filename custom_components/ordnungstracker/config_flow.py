@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResu
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 
-from .const import CONF_SHOW_SIDEBAR, CONF_TODO_AUTO, CONF_TODO_ENTITY, DOMAIN, NAME
+from .const import CONF_ADMIN_ONLY, CONF_SHOW_SIDEBAR, CONF_TODO_AUTO, CONF_TODO_ENTITY, DOMAIN, NAME
 
 
 class OrdnungsTrackerConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -43,6 +43,7 @@ class OrdnungsTrackerOptionsFlow(OptionsFlow):
                     selector.EntitySelectorConfig(domain="todo")
                 ),
                 vol.Required(CONF_TODO_AUTO, default=False): bool,
+                vol.Required(CONF_ADMIN_ONLY, default=False): bool,
                 vol.Required(CONF_SHOW_SIDEBAR, default=True): bool,
             }
         )

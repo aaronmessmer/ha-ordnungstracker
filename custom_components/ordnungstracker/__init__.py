@@ -16,7 +16,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
-from . import frontend_registration, repairs, services, views, websocket_api
+from . import frontend_registration, repairs, services, views, voice, websocket_api
 from .const import (
     CONF_SHOW_SIDEBAR,
     DOMAIN,
@@ -38,6 +38,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     services.async_register_services(hass)
     websocket_api.async_register_commands(hass)
     views.async_register_views(hass)
+    voice.async_register_intents(hass)
     return True
 
 
@@ -59,6 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: OrdnungsTrackerConfigEnt
         raise ConfigEntryNotReady(err.message) from err
     repairs.clear(hass, ISSUE_INVALID_FILE, ISSUE_NEWER_SCHEMA)
     entry.runtime_data = runtime
+    await voice.async_install_sentences(hass)
 
     async def _flush(_event: Event) -> None:
         await runtime.store.async_stop()
