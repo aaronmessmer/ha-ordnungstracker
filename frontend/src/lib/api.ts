@@ -1,6 +1,7 @@
 import type {
   Brief,
   Catalog,
+  BackupInfo,
   ChangeEvent,
   CheckoutRow,
   Detail,
@@ -8,7 +9,10 @@ import type {
   FieldDef,
   FieldInfo,
   HomeAssistant,
+  JournalEntry,
   Kind,
+  ListEntry,
+  ListView,
   MaintenanceTask,
   OverviewData,
   Person,
@@ -17,6 +21,9 @@ import type {
   SearchFilters,
   SearchResult,
   Status,
+  StocktakeState,
+  Template,
+  TemplateNode,
   TrashEntry,
   UserData,
 } from "../types";
@@ -119,6 +126,38 @@ export class Api {
   synonyms = (groups: string[][]) => this.call<string[][]>("synonyms", { groups });
   settings = (settings: Record<string, number>) => this.call("settings", { settings });
   todoTransfer = () => this.call<{ entity_id: string; added: number; skipped: number }>("todo_transfer");
+
+  list = (listId: string) => this.call<ListView>("list", { list_id: listId });
+  listCreate = (name: string) => this.call<{ id: string; name: string }>("list_create", { name });
+  listRename = (listId: string, name: string) => this.call("list_rename", { list_id: listId, name });
+  listDelete = (listId: string) => this.call("list_delete", { list_id: listId });
+  listEntryAdd = (listId: string, f: { node?: string; text?: string; quantity?: number | null; note?: string }) =>
+    this.call<ListEntry>("list_entry_add", { list_id: listId, ...f });
+  listEntryUpdate = (listId: string, entryId: string, changes: Record<string, unknown>) =>
+    this.call<ListEntry>("list_entry_update", { list_id: listId, entry_id: entryId, changes });
+  listEntryRemove = (listId: string, entryId: string) =>
+    this.call("list_entry_remove", { list_id: listId, entry_id: entryId });
+  listReset = (listId: string) => this.call<{ reset: number }>("list_reset", { list_id: listId });
+
+  stocktakeGet = (nodeId: string) => this.call<StocktakeState | null>("stocktake_get", { node_id: nodeId });
+  stocktakeSet = (nodeId: string, state: StocktakeState | null) =>
+    this.call("stocktake_set", state ? { node_id: nodeId, state } : { node_id: nodeId });
+  stocktakeApply = (results: Record<string, "present" | "missing">) =>
+    this.call<{ verified: number; missing: number }>("stocktake_apply", { results });
+
+  templateAdd = (f: { name: string; kind: string; tags?: string[]; owner?: string | null; children?: TemplateNode[] }) =>
+    this.call<Template>("template_add", f);
+  templateDelete = (templateId: string) => this.call("template_delete", { template_id: templateId });
+  createFromTemplate = (f: { template: string; parent?: string | null; name?: string }) =>
+    this.call<Brief>("create_from_template", f);
+
+  printUrl = (view: string, f: { node?: string; list?: string } = {}) =>
+    this.call<{ url: string; expires_in: number }>("print_url", { view, ...f });
+  journal = (nodeId: string | null, limit: number, offset: number) =>
+    this.call<JournalEntry[]>("journal", nodeId ? { node_id: nodeId, limit, offset } : { limit, offset });
+  backups = () => this.call<BackupInfo[]>("backups");
+  backupCreate = () => this.call<{ name: string }>("backup_create");
+  backupRestore = (name: string) => this.call<{ nodes: number }>("backup_restore", { name });
 
   kindAdd = (f: { name: string; class: string; icon?: string; numbered?: boolean }) =>
     this.call<Kind>("kind_add", f);

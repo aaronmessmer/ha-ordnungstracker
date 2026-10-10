@@ -5,13 +5,17 @@ import { errorMessage } from "../lib/context";
 import { download, iconFor } from "../lib/format";
 import { baseStyles } from "../lib/styles";
 import type { Kind, KindClass, Person } from "../types";
+import { canAdmin, openPrint } from "../lib/print";
+import "./ot-journal";
+import "./ot-settings-backups";
 import "./ot-settings-fields";
+import "./ot-settings-templates";
 import "./ot-settings-reminders";
 import "./ot-settings-synonyms";
 
 declare const __OT_VERSION__: string;
 const CLASSES: KindClass[] = ["place", "furniture", "container", "group", "item"];
-const SECTIONS = ["kinds", "persons", "fields", "synonyms", "reminders", "data"] as const;
+const SECTIONS = ["kinds", "persons", "fields", "templates", "synonyms", "reminders", "backups", "journal", "data"] as const;
 
 interface KindDraft {
   id: string | null;
@@ -301,6 +305,14 @@ export class OtSettingsPage extends LitElement {
           </div>
         </div>
         <div class="card block">
+          <h2>${t("print.title")}</h2>
+          <p class="muted small" style="margin:0">${t("print.help")}</p>
+          <div class="row wrap">
+            <button class="btn" @click=${() => openPrint(this.ctx, "tree")}><ha-icon icon="mdi:file-tree"></ha-icon>${t("print.tree")}</button>
+            <button class="btn" @click=${() => openPrint(this.ctx, "containers")}><ha-icon icon="mdi:package-variant"></ha-icon>${t("print.containers")}</button>
+          </div>
+        </div>
+        <div class="card block">
           <h2>${t("data.import")}</h2>
           <p class="muted small" style="margin:0">${t("data.importHelp")}</p>
           <input type="file" accept="application/json,.json" aria-label=${t("data.import")} @change=${this._pickFile} />
@@ -349,6 +361,9 @@ export class OtSettingsPage extends LitElement {
     const t = this.ctx.t;
     const s = this._section;
     const cat = this.ctx.catalog;
+    if (!canAdmin(this.ctx)) {
+      return html`<div class="empty"><ha-icon icon="mdi:lock-outline"></ha-icon><p>${t("settings.adminOnly")}</p></div>`;
+    }
     return html`
       <h1 style="font-size:1.5rem;font-weight:500;margin:4px 0">${t("nav.settings")}</h1>
       <div class="tabs" role="tablist">
@@ -377,6 +392,9 @@ export class OtSettingsPage extends LitElement {
       ${s === "fields" ? html`<ot-settings-fields .ctx=${this.ctx}></ot-settings-fields>` : nothing}
       ${s === "synonyms" ? html`<ot-settings-synonyms .ctx=${this.ctx}></ot-settings-synonyms>` : nothing}
       ${s === "reminders" ? html`<ot-settings-reminders .ctx=${this.ctx}></ot-settings-reminders>` : nothing}
+      ${s === "templates" ? html`<ot-settings-templates .ctx=${this.ctx}></ot-settings-templates>` : nothing}
+      ${s === "backups" ? html`<ot-settings-backups .ctx=${this.ctx}></ot-settings-backups>` : nothing}
+      ${s === "journal" ? html`<p class="muted small" style="margin:0 4px 10px">${t("journal.help")}</p><ot-journal .ctx=${this.ctx} nodeId=""></ot-journal>` : nothing}
       ${s === "data" ? this._data() : nothing}
       ${this._kindDialog()} ${this._personDialog()}
     `;

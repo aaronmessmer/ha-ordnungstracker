@@ -107,7 +107,33 @@ Nach dem Update Browser-Cache leeren bzw. Companion-App neu laden (sonst läuft 
 - [ ] **Erinnerungen:** Schwellen ändern, speichern, danach lädt die Seite die neuen Werte.
 - [ ] Obere Leiste scrollt am Handy waagerecht; beim Öffnen von `/ordnungstracker/restock` ist „Nachkaufen“ sichtbar.
 
-## Text für den Pull Request (Phase 0 bis 4)
+## Phase 5 – Erweiterungen B (Version 0.6.0)
+
+Nach dem Update Home Assistant neu starten (die Satzdatei für Assist wird beim Start angelegt) und den Browser-Cache leeren bzw. die Companion-App neu laden.
+
+**Listen, Inventur, Vorlagen**
+- [ ] **Listen → Neue Liste** „Campingausrüstung“. **Eintrag** → Ding aus dem Inventar suchen (Name oder Nummer) → Speichern; dann **Freier Text** „Wasserkanister füllen“. Die Liste gruppiert nach Raum, freier Text steht unter „Ohne Ort“.
+- [ ] Haken setzen/entfernen (Daumen!), „x von y abgehakt“ stimmt; ⋮ → **Alle Haken zurücksetzen**.
+- [ ] Auf der Seite eines Dings: ⋮ → **Auf eine Liste setzen**, auch mit „neue Liste anlegen“.
+- [ ] Bei einer Kiste ⋮ → **Inventur starten**: einen Eintrag **✓**, einen **✕**, einen **→ woanders** (öffnet Verschieben). Seite verlassen und über das Menü zurückkehren: Zwischenstand ist noch da. **Gefundenes ergänzen** legt einen Eintrag an. **Abschließen** → Meldung „x bestätigt, y vermisst“; der fehlende Eintrag steht unter **Fällig → Vermisst**.
+- [ ] **Einstellungen → Vorlagen → Neue Vorlage** mit eingerückten Unterpunkten; danach beim Anlegen **Aus Vorlage**: Eintrag samt Unterpunkten, Nummer wird vergeben.
+
+**Drucken, Protokoll, Sicherungen**
+- [ ] Bei einer Kiste ⋮ → **Inhaltsblatt drucken**, außerdem *Einstellungen → Daten → Drucken* (Gesamtliste, Behälterliste) und bei einer Liste ⋮ → **Packliste drucken**: Die Seite öffnet sich, ist lesbar und lässt sich drucken (Strg+P / Teilen). **In der Companion-App ausprobieren und das Ergebnis zurückmelden** (öffnet sie im selben Fenster? Gibt es einen Weg zurück? Lässt sich drucken oder teilen?) – davon hängt ab, ob die Druckknöpfe dort bleiben (ENTSCHEIDUNGEN A3/A4/F8).
+- [ ] Ohne Anmeldung (privates Fenster) liefert die kopierte Druckadresse „401“.
+- [ ] ⋮ → **Verlauf anzeigen** zeigt die letzten Änderungen des Eintrags; *Einstellungen → Protokoll* alle (Verschieben mit „alter → neuer Pfad“, Bearbeiten mit „alt → neu“). **Mehr laden** funktioniert.
+- [ ] *Einstellungen → Sicherungen*: **Jetzt sichern** legt eine Zeile an; **Wiederherstellen** fragt deutlich nach; danach ist der alte Stand da, und es gibt eine Sicherung „vor einer Wiederherstellung“.
+
+**Sprachabfrage (Assist, Deutsch)**
+- [ ] Nach dem Neustart liegt `custom_sentences/de/ordnungstracker.yaml` im Konfigurationsordner (Datei-Editor).
+- [ ] Im Assist-Dialog (Text) oder per Sprache: „**Wo ist die Heißklebepistole?**“ → „… liegt in Bastelsachen, Kiste 14 Basteln, Regal B, Keller. Aber es ist ausgeliehen an Nachbar Huber.“ Dasselbe mit „Wo finde ich …“, „Wo liegt meine …“.
+- [ ] „**Was ist in Kiste 14?**“ und „**Was ist in Basteln?**“ → Inhalt; „Was ist in Kiste 999?“ → „… gibt es nicht.“
+- [ ] Wird die Zahl **gesprochen** („Kiste vierzehn“) erkannt? Bitte melden – davon hängt ab, ob wir Zahlwörter ergänzen. Kommen Verwechslungen mit Bereichen oder Geräten von Home Assistant vor („Was ist im Keller?“ bei einem Bereich „Keller“)? Auch das bitte melden.
+
+**Berechtigungen**
+- [ ] *Konfigurieren* → **Löschen und Einstellungen nur für Administratoren** einschalten. Als Nicht-Administrator: kein Zahnrad, kein „Löschen“, im Papierkorb nur „Wiederherstellen“; Anlegen, Verschieben, Entnehmen, Listen, Inventur gehen weiter. Als Administrator ist alles wie vorher. Eine Automation ohne Benutzer darf weiter löschen.
+
+## Text für den Pull Request (Phase 0 bis 5)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
@@ -122,3 +148,5 @@ Langzeit-Ausleihe (Erinnerung pro Ausleihe abschaltbar). Fertig, wenn: alles üb
 **Phase 3 – Oberfläche.** Seitenleiste „Ordnung“ und Dashboard-Karte (Lit/TypeScript, ein eingechecktes Bündel, keine internen `ha-*`-Elemente): Übersicht, Stöbern, Suche mit Filtern und Nummernsprung, Anlegen/Bearbeiten, Verschieben (auch mehrfach, langes Drücken), Papierkorb, Schnellerfassung mit Server-Vorschau, Unsortiert, Favoriten, Arten und Personen, Export/Import, Beispieldaten; Deutsch/Englisch, Zurück-Taste, Live-Aktualisierung. Fertig, wenn: Haushalt am Handy erfassbar und wiederfindbar (Abnahmeprüfung in der Prüfliste); Tests der Oberfläche und Vertragstest gegen die Schnittstelle grün, Bündel von der CI als aktuell bestätigt.
 
 **Phase 4 – Erweiterungen A.** Entnehmen/Zurücklegen (auch Langzeit-Ausleihe) und Ansicht „Entnommen“, Menge mit Plus/Minus und Ansicht „Nachkaufen“ samt To-do-Übertragung (neu: wahlweise selbsttätig), „Fällig“ mit fünf Rubriken und Abkürzungen, Wartung, eigene Angaben und Zustand beim Bearbeiten, Felder-Editor, Synonyme, Schwellen in den Einstellungen. Fertig, wenn: alles in der Oberfläche bedienbar, Tests der Oberfläche (44) und der HA-Schicht (413) grün, Prüfliste Phase 4 abgearbeitet.
+
+**Phase 5 – Erweiterungen B.** Listen und Packlisten, Inventur mit gemerktem Zwischenstand, Vorlagen, Druckansichten aus der Oberfläche, Änderungsprotokoll und Sicherungen in der Oberfläche, Sprachabfrage über Assist („Wo ist …?“, „Was ist in Kiste …?“, nur lesend, Satzdatei wird selbst eingerichtet), Berechtigungen („Löschen und Einstellungen nur für Administratoren“, auch in Schnittstelle und Aktionen). Fertig, wenn: alles in der Oberfläche bedienbar, Tests der Oberfläche (57) und der HA-Schicht grün, Sprachsätze gegen den echten Assist-Agenten getestet, Prüfliste Phase 5 abgearbeitet.

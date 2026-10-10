@@ -154,6 +154,77 @@ export interface SearchFilters {
   include_archived?: boolean;
 }
 
+export interface ListSummary {
+  id: string;
+  name: string;
+  entries: number;
+}
+
+export interface ListEntry {
+  id: string;
+  node?: string;
+  text?: string;
+  quantity?: number;
+  note?: string;
+  checked?: boolean;
+  /** Name des Knotens oder der freie Text. */
+  name: string;
+  path: string[];
+}
+
+export interface ListGroup {
+  place_id: string | null;
+  place_name: string;
+  entries: ListEntry[];
+}
+
+export interface ListView {
+  id: string;
+  name: string;
+  groups: ListGroup[];
+}
+
+export interface TemplateNode {
+  name: string;
+  kind: string;
+  tags?: string[];
+  quantity?: number;
+  unit?: string;
+  fields?: Record<string, unknown>;
+  children?: TemplateNode[];
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  kind: string;
+  tags?: string[];
+  owner?: string;
+  fields?: Record<string, unknown>;
+  children?: TemplateNode[];
+}
+
+export interface JournalEntry {
+  time: string;
+  user: string;
+  action: string;
+  node?: string;
+  name?: string;
+  details?: Record<string, unknown>;
+}
+
+export interface BackupInfo {
+  name: string;
+  time: string;
+  reason: string;
+}
+
+/** Zwischenstand einer Inventur (je Benutzer und Knoten auf dem Server gemerkt). */
+export interface StocktakeState {
+  present?: string[];
+  missing?: string[];
+}
+
 export interface Kind {
   id: string;
   name: string;
@@ -173,8 +244,8 @@ export interface Catalog {
   persons: Person[];
   fields: FieldDef[];
   synonyms: string[][];
-  templates: unknown[];
-  lists: { id: string; name: string; entries: number }[];
+  templates: Template[];
+  lists: ListSummary[];
   settings: { lent_days: number; stale_days: number; trash_days: number };
   sample_loaded: boolean;
 }
@@ -190,6 +261,8 @@ export interface Status {
   user_id: string | null;
   todo_entity: string | null;
   todo_auto: boolean;
+  /** Darf der Benutzer löschen und Einstellungen ändern? (Option „nur Administratoren“) */
+  can_admin: boolean;
 }
 
 export interface OverviewData {

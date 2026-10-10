@@ -27,6 +27,7 @@ Kern (reines Python)                custom_components/ordnungstracker/core/     
 | `tree.py` | `Tree`: Kinder-Index, Pfad, Vorfahren, Nachkommen, wirksamer Besitzer und Entnahme, Papierkorb/Archiv, Sortierung, Zählung, Art-Vorschlag für neue Knoten |
 | `inventory.py` | `Inventory`: **alle ändernden Operationen** (anlegen, ändern, verschieben, löschen, Papierkorb, Arten, Personen, Felder, Entnahme, Menge, Wartung, Inventur, Listen, Vorlagen, Synonyme, Einstellungen) |
 | `fields.py` | Geltungsbereich eigener Felder, Feldansicht inklusive „nicht mehr zugeordnet“ |
+| `voice.py` | Antworttexte der Sprachabfrage (nur lesend, nutzt dieselbe Suche) |
 | `search.py` | `SearchIndex`: Suchindex, Filter, Rangfolge, Hinweise |
 | `reminders.py` | Fälligkeiten in fünf Rubriken, Entnommen-Übersicht, Kalendertermine, Ereignis-Merker, „lange nicht bestätigt“, Hinweise je Knoten |
 | `overview.py` | Kennzahlen der Startseite und der Sensoren; anonyme Zusammenfassung für die Diagnose |
@@ -73,6 +74,8 @@ Sie übersetzt nur zwischen Home Assistant und Kern. Entscheidungen: `docs/ENTSC
 | `sensor.py`, `calendar.py` | Entitäten, aktualisiert über ein Dispatcher-Signal bei jeder Änderung |
 | `views.py` | geschützte Export-/Druckansichten und signierte Adressen |
 | `frontend_registration.py` | statischer Pfad, Karten-Ressource, Seitenleisten-Eintrag (sobald das Bündel existiert) |
+| `voice.py`, `sentences/de.yaml` | Absichten für Assist („Wo ist …?“, „Was ist in …?“), Satzdatei wird nach `<config>/custom_sentences/de/` kopiert; die Antworten bildet `core/voice.py` |
+| `permissions.py` | Option „Löschen und Einstellungen nur für Administratoren“: Liste der betroffenen Befehle und Dienste |
 | `repairs.py`, `diagnostics.py`, `todo_transfer.py`, `config_flow.py` | Hinweise, Diagnose, To-do-Übertragung, Einrichtung und Optionen |
 
 ```

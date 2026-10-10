@@ -3,8 +3,8 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 4 von 6 (Version 0.5.0).** Kern, Anbindung an Home Assistant, Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte) **und** die Erweiterungen A sind fertig: eigene Felder, Ausleihen/Entnehmen, Mengen mit Nachkaufen, Zustand, Wartung, Synonyme und die Ansichten Fällig, Entnommen und Nachkaufen.
-> Listen, Inventur, Druck, Protokoll, Sicherungen und Sprachabfrage in der Oberfläche folgen in Phase 5 (`docs/ROADMAP.md`); bis dahin gibt es sie teils als Aktionen.
+> **Entwicklungsstand: Phase 5 von 6 (Version 0.6.0).** Alles Wesentliche ist da: Kern, Anbindung an Home Assistant, Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte), Erweiterungen A (Felder, Ausleihen, Mengen, Wartung …) **und** Erweiterungen B: Listen, Inventur, Vorlagen, Druckansichten, Änderungsprotokoll, Sicherungen, Sprachabfrage über Assist und Berechtigungen.
+> Phase 6 (Abschlussprüfung, Version 1.0.0) folgt (`docs/ROADMAP.md`).
 
 ## Was es kann (Ziel)
 
@@ -39,7 +39,7 @@ Alles liegt im Ordner `ordnungstracker` im Konfigurationsverzeichnis (neben `con
 ### Sicherung und Wiederherstellung
 
 * Vor dem ersten Schreiben nach einem Start und danach höchstens stündlich kopiert der Ordnungs-Tracker `inventar.json` nach `sicherungen/`. Aufbewahrt werden die letzten 20 Kopien und je eine pro Tag der letzten 30 Tage.
-* **Wiederherstellen von Hand:** Home Assistant beenden (oder den Ordner im Datei-Editor öffnen), die gewünschte Datei aus `sicherungen/` über `inventar.json` kopieren, Home Assistant neu starten. (Ab Phase 5 geht das auch in der Oberfläche.)
+* **Wiederherstellen von Hand:** Home Assistant beenden (oder den Ordner im Datei-Editor öffnen), die gewünschte Datei aus `sicherungen/` über `inventar.json` kopieren, Home Assistant neu starten. (Einfacher: *Einstellungen → Sicherungen* in der Oberfläche; vor dem Wiederherstellen wird der jetzige Stand gesichert.)
 * Ist `inventar.json` beschädigt, startet die Integration **nicht mit leerem Inventar** und überschreibt nichts. Stattdessen zeigt Home Assistant einen Reparaturhinweis (ab Phase 2) mit der Ursache und der letzten gültigen Sicherung.
 
 ### Bearbeiten von Hand
@@ -63,11 +63,25 @@ Nach der Einrichtung erscheint in der Seitenleiste der Eintrag **Ordnung** (absc
 * **Fällig:** fünf Rubriken (läuft ab, Rückgabe überfällig, unter Mindestbestand, Wartung fällig, vermisst) mit Abkürzungen („Zurücklegen“, „Erledigt“, Plus/Minus).
 * **Wartung:** pro Eintrag beliebig viele Aufgaben mit Intervall und nächster Fälligkeit; „Erledigt“ trägt das Protokoll ein und rechnet den nächsten Termin aus.
 * **Eigene Angaben:** Beim Bearbeiten stehen die Felder, die für den Eintrag gelten (Ablaufdatum, Preis, Garantie, Seriennummer … oder eigene). Zustand (defekt, vermisst, zu verkaufen …) wählst du dort unter „Weitere Angaben“.
-* **Einstellungen:** Arten, Personen, **Felder** (anlegen, überall oder nur in einem Eintrag und darunter, mitgelieferte ausblenden), **Synonyme**, **Erinnerungen** (Schwellen, To-do-Stand), Export (JSON, Markdown), Import, Beispieldaten.
+* **Listen:** Packlisten quer durch den Haushalt („Campingausrüstung“): Einträge aus dem Inventar (auf der Seite des Eintrags: ⋮ → „Auf eine Liste setzen“) oder freie Zeilen, abhaken, nach Raum gruppiert, Haken zurücksetzen, als Packliste drucken.
+* **Inventur:** ⋮ → „Inventur starten“ bei einem Behälter oder Ort: Eintrag für Eintrag *da* / *fehlt* / *gehört woanders hin*, Gefundenes ergänzen. Der Zwischenstand bleibt erhalten. Beim Abschließen bekommen Bestätigte das Datum der Prüfung, Fehlende den Zustand „vermisst“.
+* **Vorlagen:** Voreinstellung für neue Einträge (Art, Schlagwörter, Besitzer, vorgegebene Unterpunkte); beim Anlegen „Aus Vorlage“.
+* **Drucken:** Inhaltsblatt eines Behälters (⋮ → „Inhaltsblatt drucken“), Gesamtliste und Behälterliste (*Einstellungen → Daten*), Packliste. Die Seite öffnet sich in einem neuen Fenster; gedruckt wird mit dem Browser.
+* **Protokoll:** pro Eintrag (⋮ → „Verlauf anzeigen“) und insgesamt (*Einstellungen → Protokoll*): wer hat wann was geändert, bei Verschiebungen mit altem und neuem Pfad.
+* **Einstellungen:** Arten, Personen, **Felder** (anlegen, überall oder nur in einem Eintrag und darunter, mitgelieferte ausblenden), **Vorlagen**, **Synonyme**, **Erinnerungen** (Schwellen, To-do-Stand), **Sicherungen**, **Protokoll**, Export (JSON, Markdown), Import, Beispieldaten.
 * **Dashboard-Karte:** `type: custom:ordnungstracker-card` (Suche, Kacheln oder ein bestimmter Eintrag; Einstellung im Karteneditor).
 * Die Oberfläche folgt der Sprache von Home Assistant (Deutsch, sonst Englisch) und dem gewählten Design (hell/dunkel).
 
 Jeder Eintrag hat eine feste Adresse (`/ordnungstracker/node/<Kennung>`, Kisten auch `/ordnungstracker/nr/14`) – später das Ziel von QR-Codes.
+
+## Sprachabfrage (Assist)
+
+Zwei Fragen auf Deutsch, nur lesend – die Sätze richtet die Integration selbst ein (Datei `<config>/custom_sentences/de/ordnungstracker.yaml`, wird bei Aktualisierungen erneuert; entfernst du die erste Zeile, pflegst du sie selbst):
+
+* „Wo ist / sind / liegt / finde ich **die Heißklebepistole**?“ → bester Treffer mit Pfad („… liegt in Bastelsachen, Kiste 14 Basteln, Regal B, Keller“), bei mehreren die ersten drei, bei Ausleihe der Hinweis.
+* „Was ist in **Kiste 14**?“ und „Was ist in **Basteln**?“ → der Inhalt, bei langen Listen gekürzt mit Anzahl.
+
+Voraussetzung: ein Sprachassistent mit deutscher Sprache. Die Antworten nutzen dieselbe Suche wie die Oberfläche. Schreibende Sprachbefehle gibt es bewusst nicht.
 
 ## Aktionen (für Automationen und Entwickler)
 
@@ -93,7 +107,7 @@ Vollständige Listen liefern die Aktionen (`ordnungstracker.search`, `get_node`)
 
 ## Optionen
 
-*Einstellungen → Geräte & Dienste → Ordnungs-Tracker → Konfigurieren*: **To-do-Liste für Nachkäufe**, **Nachkäufe selbsttätig auf die To-do-Liste setzen** (sobald etwas unter den Mindestbestand fällt, ohne Doppelte; wer es von der Liste streicht und weiter unter dem Minimum bleibt, bekommt es nicht erneut) und **Eintrag „Ordnung“ in der Seitenleiste**.
+*Einstellungen → Geräte & Dienste → Ordnungs-Tracker → Konfigurieren*: **Löschen und Einstellungen nur für Administratoren** (gilt für die Oberfläche und die Aktionen; Automationen ohne Benutzer sind nicht betroffen), **To-do-Liste für Nachkäufe**, **Nachkäufe selbsttätig auf die To-do-Liste setzen** (sobald etwas unter den Mindestbestand fällt, ohne Doppelte; wer es von der Liste streicht und weiter unter dem Minimum bleibt, bekommt es nicht erneut) und **Eintrag „Ordnung“ in der Seitenleiste**.
 Die Schwellen für Erinnerungen (z. B. „Ausgeliehenes ohne Datum gilt nach 30 Tagen als überfällig“) gehören zu deinen Daten (`settings` in `inventar.json`).
 
 **Langzeit-Ausleihe:** Ist etwas für lange Zeit bei jemandem, schaltest du die Erinnerung für genau diese Ausleihe ab (`no_reminder: true` bei `check_out`) und bei Bedarf wieder ein.

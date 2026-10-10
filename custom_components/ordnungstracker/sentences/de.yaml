@@ -1,6 +1,7 @@
+# ordnungstracker-managed: Diese Zeile entfernen, wenn du die Datei selbst pflegen willst (sie wird dann nie überschrieben).
 # Sätze für Assist (Deutsch) – gehört zum Ordnungs-Tracker.
-# Diese Datei wird beim Start nach <config>/custom_sentences/de/ordnungstracker.yaml kopiert und dort
-# bei jeder Aktualisierung überschrieben. Eigene Sätze bitte in eine andere Datei schreiben.
+# Beim Start wird diese Datei nach <config>/custom_sentences/de/ordnungstracker.yaml kopiert und bei
+# Aktualisierungen erneuert. Eigene Sätze am besten in eine andere Datei im selben Ordner schreiben.
 # Die Felder heißen ding/ort/nummer, nicht name/area: Diese Namen belegt Home Assistant selbst für Entitäten und Bereiche.
 language: "de"
 intents:

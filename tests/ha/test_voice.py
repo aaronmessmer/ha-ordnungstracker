@@ -43,8 +43,12 @@ def test_sentences_are_installed_and_updated(tmp_path: Path) -> None:
     target = tmp_path.joinpath(*voice.SENTENCES_TARGET)
     assert target.read_text(encoding="utf-8") == voice.SENTENCES_SOURCE.read_text(encoding="utf-8")
     assert voice._install_sentences(tmp_path) is False  # unchanged: nothing is touched
-    target.write_text("veraltet", encoding="utf-8")
-    assert voice._install_sentences(tmp_path) is True
+    target.write_text(voice.MARKER + " veraltet", encoding="utf-8")
+    assert voice._install_sentences(tmp_path) is True  # ours and outdated: renewed
+    assert target.read_text(encoding="utf-8") == voice.SENTENCES_SOURCE.read_text(encoding="utf-8")
+    target.write_text("# meine eigenen Sätze\n", encoding="utf-8")
+    assert voice._install_sentences(tmp_path) is False  # taken over by the user: left alone
+    assert target.read_text(encoding="utf-8") == "# meine eigenen Sätze\n"
 
 
 async def test_sentences_land_in_the_config_folder(
@@ -93,6 +97,7 @@ def test_sentence_lists_do_not_clash_with_home_assistant_names() -> None:
     import yaml
 
     data = yaml.safe_load(voice.SENTENCES_SOURCE.read_text(encoding="utf-8"))
+    assert voice.SENTENCES_SOURCE.read_text(encoding="utf-8").startswith(voice.MARKER)
     assert set(data["lists"]) == {"ding", "ort", "nummer"}
     assert not set(data["lists"]) & {"name", "area", "floor", "domain", "device_class", "state"}
     assert set(data["intents"]) == {voice.INTENT_WHERE, voice.INTENT_CONTENTS}

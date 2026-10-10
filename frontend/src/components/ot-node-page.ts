@@ -7,13 +7,16 @@ import { rowFromBrief } from "../lib/rows";
 import { Selection } from "../lib/selection";
 import { baseStyles } from "../lib/styles";
 import type { Detail, MaintenanceTask, RootView } from "../types";
+import { canAdmin, openPrint } from "../lib/print";
 import "./ot-checkout";
+import "./ot-list-add";
+import "./ot-template-create";
 import "./ot-maintenance";
 import "./ot-stepper";
 
 const SYSTEM = ["unsortiert", "papierkorb"];
 
-type Dialog = "create" | "edit" | "quick" | "move" | "delete" | "lent" | "out" | "task" | null;
+type Dialog = "create" | "edit" | "quick" | "move" | "delete" | "lent" | "out" | "task" | "template" | "list" | null;
 
 /** Knotenseite (Stöbern, Pflichtenheft 8.1): Pfad, Angaben, Inhalt – und alles zum Anlegen, Ändern, Verschieben, Löschen. */
 export class OtNodePage extends LitElement {
@@ -316,6 +319,7 @@ export class OtNodePage extends LitElement {
     const d = e.detail;
     this._dialog = null;
     if (d.kind === "created") this.ctx.toast(t("form.created", { name: d.name ?? "" }));
+    else if (d.kind === "list-added") this.ctx.toast(t("lists.addedTo", { list: d.name ?? "" }));
     else if (d.kind === "checkout") this.ctx.toast(t("checkout.done", { name: d.name ?? "" }));
     else if (d.kind === "maintenance") this.ctx.toast(t("maintenance.saved"));
     else if (d.kind === "maintenance-removed") this.ctx.toast(t("maintenance.removed"));
@@ -346,6 +350,7 @@ export class OtNodePage extends LitElement {
       ${canAdd ? html`
         <div class="actions">
           <button class="btn primary" @click=${() => (this._dialog = "create")}><ha-icon icon="mdi:plus"></ha-icon>${t("node.new")}</button>
+          ${(this.ctx.catalog?.templates.length ?? 0) > 0 ? html`<button class="btn" @click=${() => (this._dialog = "template")}><ha-icon icon="mdi:file-tree-outline"></ha-icon>${t("templates.fromTemplate")}</button>` : nothing}
           ${d ? html`<button class="btn" @click=${() => (this._dialog = "quick")}><ha-icon icon="mdi:text-box-plus-outline"></ha-icon>${t("node.quick")}</button>` : nothing}
           ${rows.length > 1 ? html`<button class="btn text" @click=${() => { this._selection.selectAll(rows.map((r) => r.id)); this.requestUpdate(); }}><ha-icon icon="mdi:select-all"></ha-icon>${t("node.selectAll")}</button>` : nothing}
         </div>` : nothing}
@@ -389,7 +394,13 @@ export class OtNodePage extends LitElement {
               ${this._menu ? html`<div class="pop" role="menu">
                 <button role="menuitem" @click=${() => { this._menu = false; this._dialog = "edit"; }}><ha-icon icon="mdi:pencil"></ha-icon>${t("common.edit")}</button>
                 <button role="menuitem" @click=${() => { this._menu = false; this._moveIds = [d.id]; this._dialog = "move"; }}><ha-icon icon="mdi:folder-move-outline"></ha-icon>${t("common.move")}</button>
-                <button role="menuitem" @click=${() => { this._menu = false; this._deleteMode = "trash"; this._dialog = "delete"; }}><ha-icon icon="mdi:delete-outline"></ha-icon>${t("common.delete")}</button>
+                <button role="menuitem" @click=${() => { this._menu = false; this._dialog = "list"; }}><ha-icon icon="mdi:format-list-checks"></ha-icon>${t("lists.addToList")}</button>
+                ${d.class !== "item"
+                  ? html`<button role="menuitem" @click=${() => { this._menu = false; this.ctx.go({ page: "stocktake", id: d.id }); }}><ha-icon icon="mdi:clipboard-check-outline"></ha-icon>${t("stocktake.start")}</button>
+                    <button role="menuitem" @click=${() => { this._menu = false; void openPrint(this.ctx, "sheet", { node: d.id }); }}><ha-icon icon="mdi:printer"></ha-icon>${t("print.sheet")}</button>`
+                  : nothing}
+                <button role="menuitem" @click=${() => { this._menu = false; this.ctx.go({ page: "journal", node: d.id }); }}><ha-icon icon="mdi:history"></ha-icon>${t("journal.node")}</button>
+                ${canAdmin(this.ctx) ? html`<button role="menuitem" @click=${() => { this._menu = false; this._deleteMode = "trash"; this._dialog = "delete"; }}><ha-icon icon="mdi:delete-outline"></ha-icon>${t("common.delete")}</button>` : nothing}
               </div>` : nothing}
             </div>`
           : nothing}
@@ -513,7 +524,7 @@ export class OtNodePage extends LitElement {
     return html`<div class="selbar" role="toolbar" aria-label=${t("node.selection")}>
       <span class="grow">${t("node.selected", { n })}</span>
       <button class="btn" @click=${() => { this._moveIds = this._selection.values(); this._dialog = "move"; }}><ha-icon icon="mdi:folder-move-outline"></ha-icon>${t("common.move")}</button>
-      <button class="btn danger" @click=${this._deleteSelected}><ha-icon icon="mdi:delete-outline"></ha-icon>${t("common.delete")}</button>
+      ${canAdmin(this.ctx) ? html`<button class="btn danger" @click=${this._deleteSelected}><ha-icon icon="mdi:delete-outline"></ha-icon>${t("common.delete")}</button>` : nothing}
       <button class="icon-btn" aria-label=${t("common.cancel")} @click=${() => { this._selection.clear(); this.requestUpdate(); }}><ha-icon icon="mdi:close"></ha-icon></button>
     </div>`;
   }
@@ -534,6 +545,10 @@ export class OtNodePage extends LitElement {
       case "lent":
       case "out":
         return d ? html`<ot-checkout .ctx=${this.ctx} .nodeId=${d.id} .itemName=${d.name} .kind=${this._dialog} @saved=${this._saved} @close=${this._closeDialog}></ot-checkout>` : nothing;
+      case "template":
+        return html`<ot-template-create .ctx=${this.ctx} .parentId=${d?.id ?? null} @saved=${this._saved} @close=${this._closeDialog}></ot-template-create>`;
+      case "list":
+        return d ? html`<ot-list-add .ctx=${this.ctx} .nodeId=${d.id} .itemName=${d.name} @saved=${this._saved} @close=${this._closeDialog}></ot-list-add>` : nothing;
       case "task":
         return d ? html`<ot-maintenance .ctx=${this.ctx} .nodeId=${d.id} .task=${this._task} @saved=${this._saved} @close=${this._closeDialog}></ot-maintenance>` : nothing;
       default:

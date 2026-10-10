@@ -1,6 +1,6 @@
 # Schnittstellen
 
-Stand: Phase 4 (Version 0.5.0; seit 0.3.0 nur um die genannten Felder von `due` und `status` erweitert). Die Oberfläche (Phase 3), Dienste, Automationen und Skripte nutzen dieselbe Logik des Kerns und liefern dieselben Ergebnisse.
+Stand: Phase 5 (Version 0.6.0; seit 0.3.0 nur um die genannten Felder von `due` und `status` und den Fehlercode `unauthorized` erweitert). Die Oberfläche (Phase 3), Dienste, Automationen und Skripte nutzen dieselbe Logik des Kerns und liefern dieselben Ergebnisse.
 
 ## Konventionen
 
@@ -94,7 +94,7 @@ Antworten der wichtigsten Befehle (Auswahl):
 
 * `node` → Knotenseite: `path`, Angaben, `effective_owner` (mit `inherited`), `checkout`, `effective_checkout` (auch die eines Behälters, in dem der Eintrag liegt), `fields` (mit `assigned: false` für „nicht mehr zugeordnet“), `maintenance`, `contents` (sortiert, mit `children`/`descendants`), `suggested_kinds`. Ohne `node_id`: oberste Ebene.
 * `search` → `{"total", "number_hit", "hits": [{id, name, path, owner, hints, matched_in, …}]}`. `filters`: `kinds`, `classes`, `within`, `owner`, `tag`, `condition`, `checked_out`, `has_number`, `empty`, `stale`, `include_archived`.
-* `overview` → Kennzahlen, `favorites`, `recent` des aufrufenden Benutzers. `due` → die fünf Rubriken (bei „unter Mindestbestand“ zusätzlich `quantity`, `min_quantity`, `unit`, damit die Ansicht „Nachkaufen“ die Menge ändern kann). `status` nennt auch `todo_entity` und `todo_auto`. `checkouts` → alles, was nicht an seinem Platz ist, längste Dauer zuerst.
+* `overview` → Kennzahlen, `favorites`, `recent` des aufrufenden Benutzers. `due` → die fünf Rubriken (bei „unter Mindestbestand“ zusätzlich `quantity`, `min_quantity`, `unit`, damit die Ansicht „Nachkaufen“ die Menge ändern kann). `status` nennt auch `todo_entity`, `todo_auto` und `can_admin` (darf der Benutzer löschen und Einstellungen ändern?). Ist die Option „nur Administratoren“ an, antworten `delete`, `purge`, `trash_empty`, `import`, `backup_restore`, `sample_load/remove`, `kind_*`, `person_*`, `field_def_*`, `template_*`, `synonyms`, `settings` und `list_delete` Nicht-Administratoren mit dem Fehler `unauthorized`; die Dienste `delete_node`, `load_sample`, `remove_sample` mit einem Dienstfehler. `checkouts` → alles, was nicht an seinem Platz ist, längste Dauer zuerst.
 * `print_url` → `{"url", "expires_in"}`: signierte Adresse (5 Minuten) für `GET /api/ordnungstracker/print/<ansicht>` mit `tree`, `containers`, `sheet` (`node`), `packlist` (`list`), `markdown`, `json`. Ohne Anmeldung oder Signatur antwortet die Adresse mit 401.
 * `import` ersetzt das Inventar nach Prüfung (vorher Sicherung `…-vor-import.json`); bei ungültigem Text `load_failed` und **keine** Änderung. `backup_restore` ebenso (`…-vor-wiederherstellung.json`).
 * `reload` liest `inventar.json` neu: `unchanged`, `reloaded`, `conflict` (eigene ungespeicherte Änderungen liegen dann in `inventar.konflikt-….json`) oder `invalid`.

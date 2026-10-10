@@ -10,6 +10,10 @@ export type Route =
   | { page: "due" }
   | { page: "out" }
   | { page: "restock" }
+  | { page: "lists" }
+  | { page: "list"; id: string }
+  | { page: "stocktake"; id: string }
+  | { page: "journal"; node: string | null }
   | { page: "settings"; section: string };
 
 export const BASE = "/ordnungstracker";
@@ -76,6 +80,14 @@ export function routeToPath(route: Route): string {
       return `${BASE}/out`;
     case "restock":
       return `${BASE}/restock`;
+    case "lists":
+      return `${BASE}/lists`;
+    case "list":
+      return `${BASE}/list/${encodeURIComponent(route.id)}`;
+    case "stocktake":
+      return `${BASE}/stocktake/${encodeURIComponent(route.id)}`;
+    case "journal":
+      return route.node ? `${BASE}/journal?node=${encodeURIComponent(route.node)}` : `${BASE}/journal`;
     case "settings":
       return route.section ? `${BASE}/settings/${route.section}` : `${BASE}/settings`;
   }
@@ -104,6 +116,14 @@ export function parseRoute(url: string): Route {
       return { page: "out" };
     case "restock":
       return { page: "restock" };
+    case "lists":
+      return { page: "lists" };
+    case "list":
+      return parts[1] ? { page: "list", id: parts[1] } : { page: "lists" };
+    case "stocktake":
+      return parts[1] ? { page: "stocktake", id: parts[1] } : { page: "overview" };
+    case "journal":
+      return { page: "journal", node: params.get("node") };
     case "settings":
       return { page: "settings", section: parts[1] ?? "" };
     default:

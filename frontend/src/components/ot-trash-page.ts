@@ -1,4 +1,5 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
+import { canAdmin } from "../lib/print";
 import type { AppContext } from "../lib/context";
 import { errorMessage } from "../lib/context";
 import { formatDate, iconFor } from "../lib/format";
@@ -108,7 +109,7 @@ export class OtTrashPage extends LitElement {
     return html`
       <div class="row" style="margin:4px 0 8px">
         <h1 class="grow" style="font-size:1.5rem;font-weight:500">${t("nav.trash")}</h1>
-        <button class="btn danger" ?disabled=${!this._entries?.length} @click=${this._empty}><ha-icon icon="mdi:delete-forever-outline"></ha-icon>${t("trash.empty")}</button>
+        ${canAdmin(this.ctx) ? html`<button class="btn danger" ?disabled=${!this._entries?.length} @click=${this._empty}><ha-icon icon="mdi:delete-forever-outline"></ha-icon>${t("trash.empty")}</button>` : nothing}
       </div>
       <p class="muted small" style="margin:0 4px 12px">${t("trash.info", { days })}</p>
       ${this._error ? html`<div class="error-text" role="alert">${this._error}</div>` : ""}
@@ -125,7 +126,7 @@ export class OtTrashPage extends LitElement {
                     <span class="small muted">${e.kind_name}${e.descendants ? ` · ${t("trash.withContent", { n: e.descendants })}` : ""}${e.trashed ? ` · ${t("trash.deletedOn", { date: formatDate(e.trashed.at.slice(0, 10), this.ctx.lang) })}` : ""}</span>
                   </span>
                   <button class="icon-btn" aria-label=${t("trash.restore")} title=${t("trash.restore")} @click=${() => this._restore(e)}><ha-icon icon="mdi:restore"></ha-icon></button>
-                  <button class="icon-btn" aria-label=${t("trash.purge")} title=${t("trash.purge")} @click=${() => this._purge(e)}><ha-icon icon="mdi:delete-forever-outline"></ha-icon></button>
+                  ${canAdmin(this.ctx) ? html`<button class="icon-btn" aria-label=${t("trash.purge")} title=${t("trash.purge")} @click=${() => this._purge(e)}><ha-icon icon="mdi:delete-forever-outline"></ha-icon></button>` : nothing}
                 </div>`,
               )}
             </div>`}

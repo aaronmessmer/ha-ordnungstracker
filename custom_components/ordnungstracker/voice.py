@@ -21,6 +21,7 @@ INTENT_WHERE = "OrdnungWoIst"
 INTENT_CONTENTS = "OrdnungInhalt"
 SENTENCES_SOURCE = Path(__file__).parent / "sentences" / "de.yaml"
 SENTENCES_TARGET = ("custom_sentences", "de", "ordnungstracker.yaml")
+MARKER = "# ordnungstracker-managed:"
 NOT_LOADED = "Der Ordnungs-Tracker ist gerade nicht geladen."
 
 
@@ -75,8 +76,13 @@ def _install_sentences(config_dir: Path) -> bool:
     """Sätze nach ``custom_sentences/de/`` kopieren, wenn sie neu oder geändert sind (blockierend)."""
     target = config_dir.joinpath(*SENTENCES_TARGET)
     text = SENTENCES_SOURCE.read_text(encoding="utf-8")
-    if target.exists() and target.read_text(encoding="utf-8") == text:
-        return False
+    if target.exists():
+        current = target.read_text(encoding="utf-8")
+        if current == text:
+            return False
+        if not current.startswith(MARKER):  # the user took the file over: never overwrite it
+            _LOGGER.debug("Die Satzdatei %s wird selbst gepflegt und nicht überschrieben", target)
+            return False
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(text, encoding="utf-8")
     return True

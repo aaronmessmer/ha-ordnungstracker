@@ -9,7 +9,7 @@
 | 2 | Home-Assistant-Schicht: WebSocket-API, Dienste, Sensoren, Kalender, Ereignisse, Reparaturen, Diagnose, Auslieferung | **fertig** |
 | 3 | Oberfläche, Grundfunktionen (Panel und Karte) | **fertig** |
 | 4 | Erweiterungen A: Felder, Entnahme, Menge/To-do, Zustand, Ansichten Fällig/Entnommen/Nachkaufen, Wartung, Synonyme, Wert | **fertig** |
-| 5 | Erweiterungen B: Listen, Inventur, Vorlagen, Druck, Protokoll, Sicherungen, Sprachabfrage, Berechtigungen | offen |
+| 5 | Erweiterungen B: Listen, Inventur, Vorlagen, Druck, Protokoll, Sicherungen, Sprachabfrage, Berechtigungen | **fertig** |
 | 6 | Abschluss: Prüfung gegen das Pflichtenheft, Dokumentation, Version 1.0.0 | offen |
 
 Der **Kern ist vollständig** (auch für Funktionen, deren Oberfläche erst später kommt), damit das Datenformat nicht mehr umgebaut werden muss.
@@ -20,6 +20,8 @@ Der **Kern ist vollständig** (auch für Funktionen, deren Oberfläche erst spä
 |---|---|
 | Dokumente und Fotos anhängen | `attachments` pro Knoten im Format reserviert (wird gelesen, geprüft und unverändert zurückgeschrieben); Ordner `anhaenge/` wird angelegt. Kein Hochladen, keine Anzeige. |
 | Schreibende Sprachbefehle | Sprachabfrage (Phase 5) so aufbauen, dass weitere Absichten ergänzbar sind. |
+| Englische Sprachabfrage | Satzdatei `sentences/en.yaml` nach demselben Muster (F3); die Antworttexte des Kerns müssten übersetzbar werden. |
+| Vorlagen bearbeiten | Heute nur anlegen und löschen (F7); ein `template_update` im Kern plus Editor. |
 | Etiketten und QR-Codes | Jeder Knoten bekommt in der Oberfläche eine stabile Adresse (Phase 3), später Ziel des QR-Codes. |
 | Allgemeines Rückgängig | Änderungen sind abgegrenzte Operationen (`Change`) mit Protokoll inklusive alter Werte. |
 | NFC-Tags an Kisten | wie QR: stabile Adresse pro Knoten. |

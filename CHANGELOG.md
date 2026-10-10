@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.0] – Phase 5: Erweiterungen B
+
+### Hinzugefügt
+- **Listen** (Packlisten): anlegen, umbenennen, löschen, Einträge aus dem Inventar oder freier Text, abhaken, nach Raum gruppiert, Haken zurücksetzen; ein Eintrag lässt sich von seiner Seite aus auf eine Liste setzen.
+- **Inventur** pro Behälter oder Ort mit gemerktem Zwischenstand (je Benutzer), „da“ / „fehlt“ / „gehört woanders hin“, Gefundenes ergänzen, Abschließen (Datum der Prüfung bzw. „vermisst“).
+- **Vorlagen** anlegen, ansehen, löschen und beim Anlegen nutzen („Aus Vorlage“).
+- **Druckansichten** aus der Oberfläche: Inhaltsblatt, Gesamtliste, Behälterliste, Packliste (signierte Adresse, neues Fenster).
+- **Änderungsprotokoll** in der Oberfläche (pro Eintrag und insgesamt, nachladbar) und **Sicherungen** ansehen, anlegen, wiederherstellen.
+- **Sprachabfrage über Assist** (Deutsch, nur lesend): „Wo ist …?“ und „Was ist in Kiste …/in …?“; die Satzdatei wird nach `custom_sentences/de/` installiert.
+- **Berechtigungen:** Option „Löschen und Einstellungen nur für Administratoren“ (Oberfläche, WebSocket-API, Aktionen).
+
+### Geändert
+- `status` nennt `can_admin`; neuer Fehlercode `unauthorized`. Neue Test-Abhängigkeiten `hassil` und `home-assistant-intents`.
+
 ## [0.5.0] – Phase 4: Erweiterungen A
 
 ### Hinzugefügt

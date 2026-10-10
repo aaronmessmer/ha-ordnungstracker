@@ -372,7 +372,9 @@ export class OtPanel extends LitElement {
           }}
           @keydown=${(e: KeyboardEvent) => e.key === "Enter" && this._enter()}
         />
-        <button class="icon-btn" aria-label=${t("nav.settings")} @click=${() => this._nav.navigate({ page: "settings", section: "" })}><ha-icon icon="mdi:cog-outline"></ha-icon></button>
+        ${this._status?.can_admin !== false
+          ? html`<button class="icon-btn" aria-label=${t("nav.settings")} @click=${() => this._nav.navigate({ page: "settings", section: "" })}><ha-icon icon="mdi:cog-outline"></ha-icon></button>`
+          : nothing}
       </header>
       ${this._booting
         ? html`<main><div class="empty muted">${t("common.loading")}</div></main>`
@@ -411,6 +413,7 @@ export class OtPanel extends LitElement {
         ${tab("due", t("nav.due"), { page: "due" }, "mdi:calendar-alert")}
         ${tab("out", t("nav.out"), { page: "out" }, "mdi:package-up")}
         ${tab("restock", t("nav.restock"), { page: "restock" }, "mdi:cart-outline")}
+        ${tab("lists", t("nav.lists"), { page: "lists" }, "mdi:format-list-checks")}
         ${tab("trash", t("nav.trash"), { page: "trash" }, "mdi:delete-outline")}
       </nav>
       <div class="layout">
@@ -439,6 +442,14 @@ export class OtPanel extends LitElement {
         return html`<ot-due-page .ctx=${ctx}></ot-due-page>`;
       case "restock":
         return html`<ot-due-page .ctx=${ctx} only="below_min"></ot-due-page>`;
+      case "lists":
+        return html`<ot-lists-page .ctx=${ctx} .listId=${""}></ot-lists-page>`;
+      case "list":
+        return html`<ot-lists-page .ctx=${ctx} .listId=${r.id}></ot-lists-page>`;
+      case "stocktake":
+        return html`<ot-stocktake-page .ctx=${ctx} .nodeId=${r.id}></ot-stocktake-page>`;
+      case "journal":
+        return html`<h1 style="font-size:1.5rem;font-weight:500;margin:4px 0 12px">${ctx.t("journal.title")}</h1><ot-journal .ctx=${ctx} .nodeId=${r.node ?? ""}></ot-journal>`;
       case "out":
         return html`<ot-out-page .ctx=${ctx}></ot-out-page>`;
       case "settings":

@@ -21,7 +21,7 @@ frontend/                            Quelltext der Oberfläche (TypeScript, Lit;
 tests/core  tests/ha  tests/test_repository.py
 docs/                                Pflichtenheft, Architektur, Datenformat (+ JSON-Schema), API, Entscheidungen, Fahrplan, Prüflisten
 beispiele/                           Beispielinventar (wird aus dem Code erzeugt, Test prüft Aktualität)
-custom_sentences/                    Beispielsätze für Assist (ab Phase 5)
+custom_sentences/                    nur ein Hinweis; die Sätze für Assist liegen in custom_components/ordnungstracker/sentences/
 ```
 
 Daten des Nutzers: `/config/ordnungstracker/` (`inventar.json` = einzige Quelle der Wahrheit, `benutzer.json`, `verlauf.jsonl`, `zustand.json`, `sicherungen/`, `anhaenge/`).
@@ -64,5 +64,5 @@ Oberfläche: im Ordner `frontend/` `npm ci && npm run typecheck && npm test && n
 | 2 Home-Assistant-Schicht | fertig (0.3.0) |
 | 3 Oberfläche, Grundfunktionen | fertig (0.4.0) |
 | 4 Erweiterungen A | fertig (0.5.0) |
-| 5 Erweiterungen B | **als Nächstes** |
-| 6 | offen (siehe `docs/ROADMAP.md`) |
+| 5 Erweiterungen B | fertig (0.6.0) |
+| 6 Abschluss | **als Nächstes** | (siehe `docs/ROADMAP.md`) |
