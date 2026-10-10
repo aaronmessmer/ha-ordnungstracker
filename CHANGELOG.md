@@ -2,6 +2,20 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.5.0] – Phase 4: Erweiterungen A
+
+### Hinzugefügt
+- **Entnehmen und Zurücklegen** in der Oberfläche („Ausleihen an …“, „Entnehmen / auslagern“, „Zurücklegen“, Erinnerung pro Ausleihe abschaltbar) und die Ansicht **Entnommen** (längste Dauer zuerst).
+- **Menge:** Plus und Minus in Listen und auf der Seite; Ansicht **Nachkaufen** mit Knopf „Auf die To-do-Liste“. Neue Option **Nachkäufe selbsttätig auf die To-do-Liste setzen** (einmal, wenn etwas unter den Mindestbestand fällt; ohne Doppelte; Fehler landen nur im Protokoll).
+- **Fällig** mit fünf Rubriken und Abkürzungen („Zurücklegen“, „Erledigt“, Menge ändern).
+- **Wartung** pro Eintrag: anlegen, ändern, löschen, „Erledigt“ mit einem Tipp, Fälligkeit hervorgehoben.
+- **Eigene Angaben** beim Bearbeiten (alle Feldtypen) und **Zustand** (ok, vermisst, defekt, zu verkaufen, zu verschenken, entsorgt).
+- **Einstellungen:** Felder-Editor (global oder lokal, Einschränkung auf Klassen/Arten, Erinnerung vorher, mitgelieferte Felder aus-/einblenden, löschen), Synonyme, Erinnerungen (Schwellen) und Stand der To-do-Anbindung.
+- `ordnungstracker/due` liefert bei „unter Mindestbestand“ Menge, Mindestbestand und Einheit; `status` nennt `todo_auto`.
+
+### Geändert
+- Obere Navigationsleiste scrollt waagerecht und hält den aktiven Reiter sichtbar.
+
 ## [0.4.0] – Phase 3: Oberfläche, Grundfunktionen
 
 ### Hinzugefügt

@@ -17,10 +17,12 @@
         "description": "Reminder thresholds (e.g. \"lent items are overdue after 30 days\") are set in the app; they are part of your data.",
         "data": {
           "todo_entity": "To-do list for restocking",
+          "todo_auto": "Add restock items to the to-do list automatically",
           "show_sidebar": "Show the \"Ordnung\" entry in the sidebar"
         },
         "data_description": {
           "todo_entity": "The service \"Transfer restocking to to-do list\" adds items below their minimum stock here.",
+          "todo_auto": "As soon as something falls below its minimum it is added to the chosen list (without duplicates).",
           "show_sidebar": "Applies once the user interface is installed."
         }
       }

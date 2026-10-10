@@ -82,7 +82,32 @@ Nach dem Update (HACS, Home Assistant neu starten, Browser-Cache leeren bzw. Com
 - [ ] Adresse `/ordnungstracker/nr/14` direkt im Browser öffnen → Kiste 14 (Lesezeichen/QR-Tauglichkeit).
 - [ ] **Abnahmeprüfung:** Einen Teil des echten Haushalts allein am Handy erfassen (ein Raum, zwei Regale, fünf Kisten) und alles per Suche wiederfinden. Was hakt, bitte notieren.
 
-## Text für den Pull Request (Phase 0 bis 3)
+## Phase 4 – Erweiterungen A (Version 0.5.0)
+
+Nach dem Update Browser-Cache leeren bzw. Companion-App neu laden (sonst läuft noch die alte Oberfläche).
+
+**Entnehmen und Menge**
+- [ ] Bei einem Ding: **Ausleihen an …** → „Nachbar Huber“, speichern. Die Seite zeigt „ausgeliehen an … seit heute“, **Zurücklegen** steht bereit. Zurücklegen → Hinweis verschwindet.
+- [ ] **Entnehmen / auslagern** mit „zurück bis“ in der Vergangenheit → unter **Fällig → Rückgabe überfällig** und in **Entnommen** mit „überfällig“.
+- [ ] Langzeit-Ausleihe: bei der Ausleihe „nicht an die Rückgabe erinnern“ ankreuzen (oder auf der Seite **Erinnerung aus**). Der Eintrag erscheint nicht unter „Rückgabe überfällig“; **Erinnerung an** schaltet es zurück.
+- [ ] Ding mit Menge und Mindestbestand: **−** und **+** in der Liste (Daumen!) – Zahl springt sofort, unter dem Minimum erscheint er unter **Nachkaufen**.
+- [ ] Nachkaufen → **Auf die To-do-Liste**: nur sichtbar, wenn in den Optionen eine Liste gewählt ist; ein zweiter Tipp legt nichts doppelt an.
+- [ ] Optionen der Integration: **Nachkäufe selbsttätig …** einschalten. Menge eines Dings unter den Mindestbestand senken → der Eintrag steht kurz danach auf der To-do-Liste (einmal).
+
+**Wartung, Felder, Zustand**
+- [ ] Bei einem Eintrag **Aufgabe** → „Filter wechseln“, alle 6 Monate, Termin gestern. Die Seite zeigt „überfällig“; **Erledigt** → Meldung, nächster Termin in 6 Monaten, „zuletzt heute“.
+- [ ] Bearbeiten → **Eigene Angaben** (klappt auf, wenn schon Werte da sind): Ablaufdatum setzen → Eintrag erscheint (bei „30 Tage vorher“) unter **Fällig**. Datum am Handy: Der Datumswähler des Handys erscheint.
+- [ ] Bearbeiten → Weitere Angaben → Zustand **defekt** → Hinweis „defekt“; **vermisst** → erscheint unter Fällig → Vermisst.
+- [ ] Ein Feld ohne Geltung (z. B. Hersteller bei einer Kiste) erscheint gar nicht; ein Wert, der nach dem Verschieben nicht mehr gilt, bleibt ausgegraut „nicht mehr zugeordnet“.
+
+**Einstellungen**
+- [ ] **Felder → Neues Feld** „Körnung“ (Auswahl: 80, 120, 240), „Nur in diesem Eintrag und darunter“: Schleifmittel. Das Feld erscheint nur dort beim Bearbeiten.
+- [ ] Mitgeliefertes Feld **Ausblenden**/**Einblenden**; ein eigenes Feld löschen warnt vor dem Verlust der Werte.
+- [ ] **Synonyme:** „Tacker, Hefter, Klammermaschine“ → Suche nach „Hefter“ findet den Tacker.
+- [ ] **Erinnerungen:** Schwellen ändern, speichern, danach lädt die Seite die neuen Werte.
+- [ ] Obere Leiste scrollt am Handy waagerecht; beim Öffnen von `/ordnungstracker/restock` ist „Nachkaufen“ sichtbar.
+
+## Text für den Pull Request (Phase 0 bis 4)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
@@ -95,3 +120,5 @@ Ereignis „neu fällig“ (einmalig, überlebt Neustarts), Reparaturhinweise, D
 Langzeit-Ausleihe (Erinnerung pro Ausleihe abschaltbar). Fertig, wenn: alles über Dienste bedienbar und getestet (≈ 400 Tests gegen Home Assistant 2026.10.0 und 2026.3.1).
 
 **Phase 3 – Oberfläche.** Seitenleiste „Ordnung“ und Dashboard-Karte (Lit/TypeScript, ein eingechecktes Bündel, keine internen `ha-*`-Elemente): Übersicht, Stöbern, Suche mit Filtern und Nummernsprung, Anlegen/Bearbeiten, Verschieben (auch mehrfach, langes Drücken), Papierkorb, Schnellerfassung mit Server-Vorschau, Unsortiert, Favoriten, Arten und Personen, Export/Import, Beispieldaten; Deutsch/Englisch, Zurück-Taste, Live-Aktualisierung. Fertig, wenn: Haushalt am Handy erfassbar und wiederfindbar (Abnahmeprüfung in der Prüfliste); Tests der Oberfläche und Vertragstest gegen die Schnittstelle grün, Bündel von der CI als aktuell bestätigt.
+
+**Phase 4 – Erweiterungen A.** Entnehmen/Zurücklegen (auch Langzeit-Ausleihe) und Ansicht „Entnommen“, Menge mit Plus/Minus und Ansicht „Nachkaufen“ samt To-do-Übertragung (neu: wahlweise selbsttätig), „Fällig“ mit fünf Rubriken und Abkürzungen, Wartung, eigene Angaben und Zustand beim Bearbeiten, Felder-Editor, Synonyme, Schwellen in den Einstellungen. Fertig, wenn: alles in der Oberfläche bedienbar, Tests der Oberfläche (44) und der HA-Schicht (413) grün, Prüfliste Phase 4 abgearbeitet.

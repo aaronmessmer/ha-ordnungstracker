@@ -63,5 +63,6 @@ Oberfläche: im Ordner `frontend/` `npm ci && npm run typecheck && npm test && n
 | 1 Kern | fertig (0.2.0) |
 | 2 Home-Assistant-Schicht | fertig (0.3.0) |
 | 3 Oberfläche, Grundfunktionen | fertig (0.4.0) |
-| 4 Erweiterungen A | **als Nächstes** |
-| 5–6 | offen (siehe `docs/ROADMAP.md`) |
+| 4 Erweiterungen A | fertig (0.5.0) |
+| 5 Erweiterungen B | **als Nächstes** |
+| 6 | offen (siehe `docs/ROADMAP.md`) |

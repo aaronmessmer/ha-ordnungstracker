@@ -3,8 +3,8 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 3 von 6 (Version 0.4.0).** Kern, Anbindung an Home Assistant **und** die Grundfunktionen der Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte) sind fertig: Haushalt am Handy erfassen, stöbern, suchen, verschieben, löschen und wiederfinden.
-> Ausleihen, Mengen, Wartung und Co. in der Oberfläche folgen in Phase 4, Listen/Inventur/Druck/Sprachabfrage in Phase 5 (`docs/ROADMAP.md`); bis dahin gibt es sie als Aktionen.
+> **Entwicklungsstand: Phase 4 von 6 (Version 0.5.0).** Kern, Anbindung an Home Assistant, Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte) **und** die Erweiterungen A sind fertig: eigene Felder, Ausleihen/Entnehmen, Mengen mit Nachkaufen, Zustand, Wartung, Synonyme und die Ansichten Fällig, Entnommen und Nachkaufen.
+> Listen, Inventur, Druck, Protokoll, Sicherungen und Sprachabfrage in der Oberfläche folgen in Phase 5 (`docs/ROADMAP.md`); bis dahin gibt es sie teils als Aktionen.
 
 ## Was es kann (Ziel)
 
@@ -58,7 +58,12 @@ Nach der Einrichtung erscheint in der Seitenleiste der Eintrag **Ordnung** (absc
 * **Suchen:** Eingabe `14` oder `#14` springt zur Kiste 14; Filter nach Klasse, Art, Ort, Besitzer, Schlagwort, Zustand u. a.
 * **Verschieben:** über das Menü ⋮ oder nach **langem Drücken** (Mehrfachauswahl); Ziel per Suche, Nummer oder Stöbern, zuletzt genutzte Ziele zuerst.
 * **Löschen:** landet im **Papierkorb** (30 Tage, wiederherstellbar); bei Behältern mit Inhalt wählst du „mit Inhalt“ oder „Inhalt hochschieben“.
-* **Einstellungen:** Arten, Personen, Export (JSON, Markdown), Import, Beispieldaten.
+* **Entnehmen und Zurücklegen:** Auf jeder Seite „Ausleihen an …“ (freier Text oder Person) oder „Entnehmen / auslagern“ (wo es jetzt ist), mit „seit“, „zurück bis“ und Notiz; Zurücklegen ist ein Tipp, der Stammplatz bleibt. **Entnommen** zeigt alles, was nicht an seinem Platz ist, längste Dauer zuerst. Bei Dauerleihgaben schaltest du die Erinnerung ab.
+* **Menge:** Plus und Minus direkt in der Liste und auf der Seite; fällt sie unter den Mindestbestand, erscheint der Eintrag unter **Nachkaufen** (mit Knopf „Auf die To-do-Liste“, wahlweise selbsttätig).
+* **Fällig:** fünf Rubriken (läuft ab, Rückgabe überfällig, unter Mindestbestand, Wartung fällig, vermisst) mit Abkürzungen („Zurücklegen“, „Erledigt“, Plus/Minus).
+* **Wartung:** pro Eintrag beliebig viele Aufgaben mit Intervall und nächster Fälligkeit; „Erledigt“ trägt das Protokoll ein und rechnet den nächsten Termin aus.
+* **Eigene Angaben:** Beim Bearbeiten stehen die Felder, die für den Eintrag gelten (Ablaufdatum, Preis, Garantie, Seriennummer … oder eigene). Zustand (defekt, vermisst, zu verkaufen …) wählst du dort unter „Weitere Angaben“.
+* **Einstellungen:** Arten, Personen, **Felder** (anlegen, überall oder nur in einem Eintrag und darunter, mitgelieferte ausblenden), **Synonyme**, **Erinnerungen** (Schwellen, To-do-Stand), Export (JSON, Markdown), Import, Beispieldaten.
 * **Dashboard-Karte:** `type: custom:ordnungstracker-card` (Suche, Kacheln oder ein bestimmter Eintrag; Einstellung im Karteneditor).
 * Die Oberfläche folgt der Sprache von Home Assistant (Deutsch, sonst Englisch) und dem gewählten Design (hell/dunkel).
 
@@ -88,7 +93,7 @@ Vollständige Listen liefern die Aktionen (`ordnungstracker.search`, `get_node`)
 
 ## Optionen
 
-*Einstellungen → Geräte & Dienste → Ordnungs-Tracker → Konfigurieren*: **To-do-Liste für Nachkäufe** und **Eintrag „Ordnung“ in der Seitenleiste** (wirkt, sobald die Oberfläche installiert ist).
+*Einstellungen → Geräte & Dienste → Ordnungs-Tracker → Konfigurieren*: **To-do-Liste für Nachkäufe**, **Nachkäufe selbsttätig auf die To-do-Liste setzen** (sobald etwas unter den Mindestbestand fällt, ohne Doppelte; wer es von der Liste streicht und weiter unter dem Minimum bleibt, bekommt es nicht erneut) und **Eintrag „Ordnung“ in der Seitenleiste**.
 Die Schwellen für Erinnerungen (z. B. „Ausgeliehenes ohne Datum gilt nach 30 Tagen als überfällig“) gehören zu deinen Daten (`settings` in `inventar.json`).
 
 **Langzeit-Ausleihe:** Ist etwas für lange Zeit bei jemandem, schaltest du die Erinnerung für genau diese Ausleihe ab (`no_reminder: true` bei `check_out`) und bei Bedarf wieder ein.

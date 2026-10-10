@@ -223,9 +223,12 @@ async def test_lists_and_stocktake(sample: Any) -> None:
     assert (await ok(sample, "stocktake_get", node_id=kiste)) is None
 
 
-async def test_due_calendar_overview(sample: Any) -> None:
+async def test_due_calendar_overview(sample: Any, init_integration: MockConfigEntry) -> None:
     due = await ok(sample, "due")
     assert due["counts"]["missing"] == 1 and due["categories"]["below_min"]
+    for item in due["categories"]["below_min"]:  # the restock view changes the amount in place
+        assert item["quantity"] < item["min_quantity"] and "unit" in item
+    assert all("quantity" not in i for i in init_integration.runtime_data.snapshot.by_category["below_min"])
     events = await ok(sample, "calendar", start="2026-01-01", end="2027-12-31")
     assert (
         events

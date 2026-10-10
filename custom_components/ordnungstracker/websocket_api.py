@@ -135,6 +135,7 @@ async def _status(rt: OrdnungsTrackerRuntime, conn: Any, msg: dict[str, Any]) ->
         "inventory_empty": set(rt.inventory.data.nodes) <= {"unsortiert", "papierkorb"},
         "user_id": _user_id(conn),
         "todo_entity": rt.entry.options.get("todo_entity"),
+        "todo_auto": bool(rt.entry.options.get("todo_auto")),
     }
 
 
@@ -181,7 +182,13 @@ async def _search(rt: OrdnungsTrackerRuntime, conn: Any, msg: dict[str, Any]) ->
 
 async def _due(rt: OrdnungsTrackerRuntime, conn: Any, msg: dict[str, Any]) -> Any:
     assert rt.snapshot is not None
-    return {"categories": rt.snapshot.by_category, "counts": rt.snapshot.overview.due}
+    categories = {name: [dict(i) for i in items] for name, items in rt.snapshot.by_category.items()}
+    nodes = rt.inventory.data.nodes
+    for item in categories.get("below_min", []):
+        node = nodes.get(item["node_id"])
+        if node is not None:  # the restock view shows and changes the amount
+            item.update(quantity=node.quantity, min_quantity=node.min_quantity, unit=node.unit)
+    return {"categories": categories, "counts": rt.snapshot.overview.due}
 
 
 async def _checkouts(rt: OrdnungsTrackerRuntime, conn: Any, msg: dict[str, Any]) -> Any:

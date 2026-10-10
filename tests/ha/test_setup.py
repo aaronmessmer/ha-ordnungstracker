@@ -19,6 +19,7 @@ from pytest_homeassistant_custom_component.common import (
 
 from custom_components.ordnungstracker.const import (
     CONF_SHOW_SIDEBAR,
+    CONF_TODO_AUTO,
     CONF_TODO_ENTITY,
     DOMAIN,
     ISSUE_CONFLICT,
@@ -186,11 +187,15 @@ async def test_options_flow(hass: HomeAssistant, init_integration: MockConfigEnt
     result = await hass.config_entries.options.async_init(init_integration.entry_id)
     assert result["type"] == "form" and result["step_id"] == "init"
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {CONF_TODO_ENTITY: "todo.einkauf", CONF_SHOW_SIDEBAR: False}
+        result["flow_id"], {CONF_TODO_ENTITY: "todo.einkauf", CONF_SHOW_SIDEBAR: False, CONF_TODO_AUTO: True}
     )
     assert result["type"] == "create_entry"
     await hass.async_block_till_done()
-    assert init_integration.options == {CONF_TODO_ENTITY: "todo.einkauf", CONF_SHOW_SIDEBAR: False}
+    assert init_integration.options == {
+        CONF_TODO_ENTITY: "todo.einkauf",
+        CONF_SHOW_SIDEBAR: False,
+        CONF_TODO_AUTO: True,
+    }
     assert init_integration.state is ConfigEntryState.LOADED  # wurde neu geladen
 
 

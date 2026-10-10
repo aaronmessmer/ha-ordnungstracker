@@ -5,10 +5,13 @@ import { errorMessage } from "../lib/context";
 import { download, iconFor } from "../lib/format";
 import { baseStyles } from "../lib/styles";
 import type { Kind, KindClass, Person } from "../types";
+import "./ot-settings-fields";
+import "./ot-settings-reminders";
+import "./ot-settings-synonyms";
 
 declare const __OT_VERSION__: string;
 const CLASSES: KindClass[] = ["place", "furniture", "container", "group", "item"];
-const SECTIONS = ["kinds", "persons", "data"] as const;
+const SECTIONS = ["kinds", "persons", "fields", "synonyms", "reminders", "data"] as const;
 
 interface KindDraft {
   id: string | null;
@@ -371,6 +374,9 @@ export class OtSettingsPage extends LitElement {
               : html`<div class="empty small">${t("settings.noPersons")}</div>`}
             <div style="margin-top:12px"><button class="btn primary" @click=${() => this._editPerson(null)}><ha-icon icon="mdi:plus"></ha-icon>${t("settings.personNew")}</button></div>`
         : nothing}
+      ${s === "fields" ? html`<ot-settings-fields .ctx=${this.ctx}></ot-settings-fields>` : nothing}
+      ${s === "synonyms" ? html`<ot-settings-synonyms .ctx=${this.ctx}></ot-settings-synonyms>` : nothing}
+      ${s === "reminders" ? html`<ot-settings-reminders .ctx=${this.ctx}></ot-settings-reminders>` : nothing}
       ${s === "data" ? this._data() : nothing}
       ${this._kindDialog()} ${this._personDialog()}
     `;

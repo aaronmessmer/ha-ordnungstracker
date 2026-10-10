@@ -3,6 +3,8 @@ import { hintTone } from "../lib/format";
 import type { Row } from "../lib/rows";
 import { baseStyles } from "../lib/styles";
 import type { Selection } from "../lib/selection";
+import type { AppContext } from "../lib/context";
+import "./ot-stepper";
 
 export const LONG_PRESS_MS = 450;
 const MOVE_TOLERANCE = 10;
@@ -14,6 +16,7 @@ const BATCH = 100;
  */
 export class OtNodeList extends LitElement {
   static properties = {
+    ctx: { attribute: false },
     rows: { attribute: false },
     selection: { attribute: false },
     selectable: { type: Boolean },
@@ -21,6 +24,8 @@ export class OtNodeList extends LitElement {
     label: { type: String },
     _limit: { state: true },
   };
+  /** Mit Kontext zeigen Zeilen mit Menge Plus und Minus. */
+  declare ctx: AppContext | undefined;
   declare rows: Row[];
   declare selection: Selection | null;
   declare selectable: boolean;
@@ -64,6 +69,24 @@ export class OtNodeList extends LitElement {
       .check {
         color: var(--primary-color);
       }
+      .rowbox {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--divider-color);
+        content-visibility: auto;
+        contain-intrinsic-size: auto 60px;
+      }
+      .rowbox:last-child {
+        border-bottom: none;
+      }
+      .rowbox .item {
+        border-bottom: none;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        content-visibility: visible;
+      }
+
     `,
   ];
 
@@ -166,10 +189,11 @@ export class OtNodeList extends LitElement {
   private _row(r: Row) {
     const selected = this.selection?.has(r.id) ?? false;
     const selecting = this.selection?.active ?? false;
+    const stepper = r.stepper && this.ctx && !selecting ? r.stepper : null;
     return html`
+      <div class="rowbox" role="listitem">
       <button
         class="item ${selected ? "selected" : ""}"
-        role="listitem"
         aria-label=${`${r.number !== null ? `${r.number} ` : ""}${r.name}${selected ? `, ${this.texts.selected}` : ""}`}
         @pointerdown=${(e: PointerEvent) => this._down(e, r.id)}
         @pointermove=${this._move}
@@ -196,8 +220,12 @@ export class OtNodeList extends LitElement {
         ${this.showCounts && r.counts
           ? html`<span class="counts" title=${`${r.counts[0]} / ${r.counts[1]}`}>${r.counts[0]}${r.counts[1] !== r.counts[0] ? ` · ${r.counts[1]}` : ""}</span>`
           : nothing}
-        ${selecting ? nothing : html`<ha-icon class="icon" icon="mdi:chevron-right"></ha-icon>`}
+        ${selecting || stepper ? nothing : html`<ha-icon class="icon" icon="mdi:chevron-right"></ha-icon>`}
       </button>
+      ${stepper
+        ? html`<ot-stepper .ctx=${this.ctx} .nodeId=${r.id} .itemName=${r.name} .quantity=${stepper.quantity} .unit=${stepper.unit}></ot-stepper>`
+        : nothing}
+      </div>
     `;
   }
 }

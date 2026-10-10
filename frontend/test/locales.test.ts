@@ -35,6 +35,19 @@ describe("locales", () => {
     expect(missing).toEqual([]);
   });
 
+  it("defines the keys that are built at runtime", () => {
+    const keys = new Set(Object.keys(de));
+    const wanted = [
+      ...["days", "weeks", "months", "years"].map((u) => `maintenance.unit.${u}`),
+      ...["text", "multiline", "number", "date", "bool", "choice", "link"].map((x) => `fields.type.${x}`),
+      ...["lent_days", "stale_days", "trash_days"].flatMap((k) => [`reminders.${k}`, `reminders.${k}Help`]),
+      ...["ok", "missing", "defective", "to_sell", "to_give_away", "disposed"].map((c) => `condition.${c}`),
+      ...["expiring", "checkout_overdue", "below_min", "maintenance_due", "missing"].map((c) => `due.${c}`),
+      ...["kinds", "persons", "fields", "synonyms", "reminders", "data"].map((x) => `settings.tab.${x}`),
+    ];
+    expect(wanted.filter((k) => !keys.has(k))).toEqual([]);
+  });
+
   it("defines the dynamic key families", () => {
     for (const cls of ["place", "furniture", "container", "group", "item"]) {
       expect(de, cls).toHaveProperty(`class.${cls}`);

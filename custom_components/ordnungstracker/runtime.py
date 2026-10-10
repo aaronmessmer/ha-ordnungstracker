@@ -14,11 +14,14 @@ from typing import Any, TypeVar
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_track_time_interval
 
 from . import repairs
 from .const import (
+    CONF_TODO_AUTO,
+    CONF_TODO_ENTITY,
     DATA_DIR_NAME,
     DOMAIN,
     EVENT_DUE,
@@ -225,10 +228,28 @@ class OrdnungsTrackerRuntime:
         if not seed:
             for item in new:
                 self.hass.bus.async_fire(EVENT_DUE, due_dict(inv, item))
+            if any(item.category is Category.BELOW_MIN for item in new):
+                self._auto_transfer_to_todo()
         if seed or reported != self.state.reported or not self.state.data.get("initialized"):
             self.state.data["initialized"] = True
             await self.state.async_set_reported(reported)
         return 0 if seed else len(new)
+
+    @callback
+    def _auto_transfer_to_todo(self) -> None:
+        """Nachkäufe selbsttätig auf die gewählte To-do-Liste setzen (Pflichtenheft 8.7, wahlweise)."""
+        options = self.entry.options
+        if not options.get(CONF_TODO_AUTO) or not options.get(CONF_TODO_ENTITY):
+            return
+        self.hass.async_create_task(self._async_auto_transfer())
+
+    async def _async_auto_transfer(self) -> None:
+        from .todo_transfer import async_transfer
+
+        try:
+            await async_transfer(self.hass, self, None)
+        except HomeAssistantError as err:
+            _LOGGER.warning("Automatische Übertragung auf die To-do-Liste fehlgeschlagen: %s", err)
 
     @callback
     def _hourly_tick(self, _now: Any) -> None:

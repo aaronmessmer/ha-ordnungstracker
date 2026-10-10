@@ -11,6 +11,7 @@ DATA_DIR_NAME: Final = "ordnungstracker"
 # Optionen (Pflichtenheft 9.1)
 CONF_TODO_ENTITY: Final = "todo_entity"
 CONF_SHOW_SIDEBAR: Final = "show_sidebar"
+CONF_TODO_AUTO: Final = "todo_auto"
 
 # Ereignis, wenn ein Eintrag neu fällig wird (Pflichtenheft 9.6)
 EVENT_DUE: Final = "ordnungstracker_due"

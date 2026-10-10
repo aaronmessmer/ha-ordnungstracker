@@ -52,6 +52,46 @@ export interface FieldInfo {
   assigned: boolean;
 }
 
+export interface MaintenanceTask {
+  id: string;
+  title: string;
+  interval?: { value: number; unit: "days" | "weeks" | "months" | "years" };
+  next_due?: string;
+  note?: string;
+  log?: { date: string; note?: string }[];
+}
+
+export type FieldType = FieldInfo["type"];
+
+/** Felddefinition aus dem Katalog (Einstellungen). */
+export interface FieldDef {
+  id: string;
+  name: string;
+  type: FieldType;
+  group?: string;
+  scope: { type: "global" | "local"; node?: string };
+  kinds?: string[];
+  classes?: KindClass[];
+  unit?: string;
+  options?: string[];
+  remind_days_before?: number;
+  builtin?: boolean;
+  hidden?: boolean;
+}
+
+/** Eine Entnahme in der Ansicht „Entnommen“. */
+export interface CheckoutRow {
+  id: string;
+  name: string;
+  type: "lent" | "out";
+  to: string;
+  since: string;
+  until: string | null;
+  days_out: number;
+  overdue: boolean;
+  path: string[];
+}
+
 export interface Detail extends Brief {
   parent: string | null;
   path: PathPart[];
@@ -63,7 +103,7 @@ export interface Detail extends Brief {
   checkout: Checkout | null;
   effective_checkout: (Checkout & { source: string; inherited: boolean }) | null;
   fields: FieldInfo[];
-  maintenance: unknown[];
+  maintenance: MaintenanceTask[];
   attachments: unknown[];
   created: string;
   modified: string;
@@ -131,7 +171,7 @@ export interface Person {
 export interface Catalog {
   kinds: Kind[];
   persons: Person[];
-  fields: unknown[];
+  fields: FieldDef[];
   synonyms: string[][];
   templates: unknown[];
   lists: { id: string; name: string; entries: number }[];
@@ -149,6 +189,7 @@ export interface Status {
   inventory_empty: boolean;
   user_id: string | null;
   todo_entity: string | null;
+  todo_auto: boolean;
 }
 
 export interface OverviewData {
@@ -178,6 +219,10 @@ export interface DueItem {
   days: number | null;
   overdue: boolean;
   key: string;
+  /** Nur bei „Nachkaufen“: Menge, Mindestbestand, Einheit. */
+  quantity?: number | null;
+  min_quantity?: number | null;
+  unit?: string;
 }
 
 export interface TrashEntry extends Brief {

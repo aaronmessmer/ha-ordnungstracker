@@ -117,7 +117,8 @@ export class OtPanel extends LitElement {
       nav.top {
         display: flex;
         gap: 8px;
-        flex-wrap: wrap;
+        overflow-x: auto;
+        scrollbar-width: none;
         padding: 10px 16px 0;
         max-width: 1200px;
         margin: 0 auto;
@@ -302,6 +303,12 @@ export class OtPanel extends LitElement {
     }
   }
 
+  protected updated(): void {
+    // Auf dem Handy kann die Leiste scrollen: den aktiven Reiter sichtbar halten.
+    const active = this.renderRoot.querySelector<HTMLElement>("nav.top .chip[aria-pressed=true]");
+    active?.scrollIntoView?.({ inline: "center", block: "nearest" });
+  }
+
   protected firstUpdated(): void {
     void this._onRoute(this._route);
   }
@@ -402,6 +409,8 @@ export class OtPanel extends LitElement {
         ${tab("overview", t("nav.overview"), { page: "overview" }, "mdi:view-dashboard-outline")}
         ${tab("node", t("nav.browse"), { page: "node", id: null }, "mdi:folder-outline")}
         ${tab("due", t("nav.due"), { page: "due" }, "mdi:calendar-alert")}
+        ${tab("out", t("nav.out"), { page: "out" }, "mdi:package-up")}
+        ${tab("restock", t("nav.restock"), { page: "restock" }, "mdi:cart-outline")}
         ${tab("trash", t("nav.trash"), { page: "trash" }, "mdi:delete-outline")}
       </nav>
       <div class="layout">
@@ -428,6 +437,10 @@ export class OtPanel extends LitElement {
         return html`<ot-trash-page .ctx=${ctx}></ot-trash-page>`;
       case "due":
         return html`<ot-due-page .ctx=${ctx}></ot-due-page>`;
+      case "restock":
+        return html`<ot-due-page .ctx=${ctx} only="below_min"></ot-due-page>`;
+      case "out":
+        return html`<ot-out-page .ctx=${ctx}></ot-out-page>`;
       case "settings":
         return html`<ot-settings-page .ctx=${ctx} .section=${r.section}></ot-settings-page>`;
     }

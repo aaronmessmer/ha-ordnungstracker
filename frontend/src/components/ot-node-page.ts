@@ -1,16 +1,19 @@
 import { LitElement, css, html, nothing } from "lit";
 import type { AppContext } from "../lib/context";
 import { errorMessage } from "../lib/context";
-import { fieldValueText, formatDate, hintTone, iconFor, quantityText } from "../lib/format";
+import { daysBetween, fieldValueText, formatDate, hintTone, iconFor, quantityText, today } from "../lib/format";
 import { Latest } from "../lib/latest";
 import { rowFromBrief } from "../lib/rows";
 import { Selection } from "../lib/selection";
 import { baseStyles } from "../lib/styles";
-import type { Detail, RootView } from "../types";
+import type { Detail, MaintenanceTask, RootView } from "../types";
+import "./ot-checkout";
+import "./ot-maintenance";
+import "./ot-stepper";
 
 const SYSTEM = ["unsortiert", "papierkorb"];
 
-type Dialog = "create" | "edit" | "quick" | "move" | "delete" | null;
+type Dialog = "create" | "edit" | "quick" | "move" | "delete" | "lent" | "out" | "task" | null;
 
 /** Knotenseite (Stöbern, Pflichtenheft 8.1): Pfad, Angaben, Inhalt – und alles zum Anlegen, Ändern, Verschieben, Löschen. */
 export class OtNodePage extends LitElement {
@@ -24,6 +27,7 @@ export class OtNodePage extends LitElement {
     _deleteMode: { state: true },
     _favorite: { state: true },
     _menu: { state: true },
+    _task: { state: true },
   };
   declare ctx: AppContext;
   declare nodeId: string | null;
@@ -34,6 +38,7 @@ export class OtNodePage extends LitElement {
   declare _deleteMode: "trash" | "lift";
   declare _favorite: boolean;
   declare _menu: boolean;
+  declare _task: MaintenanceTask | null;
 
   private _selection = new Selection();
   private _latest = new Latest();
@@ -49,6 +54,7 @@ export class OtNodePage extends LitElement {
     this._deleteMode = "trash";
     this._favorite = false;
     this._menu = false;
+    this._task = null;
   }
 
   static styles = [
@@ -235,6 +241,39 @@ export class OtNodePage extends LitElement {
     }
   }
 
+  private async _return(): Promise<void> {
+    const d = this._detail;
+    if (!d) return;
+    try {
+      await this.ctx.api.returnNode(d.id);
+      this.ctx.toast(this.ctx.t("checkout.returned", { name: d.name }));
+    } catch (err) {
+      this.ctx.toast(errorMessage(err), "error");
+    }
+  }
+
+  private async _toggleReminder(): Promise<void> {
+    const d = this._detail;
+    if (!d?.checkout) return;
+    try {
+      await this.ctx.api.checkoutReminder(d.id, !!d.checkout.no_reminder);
+      this.ctx.toast(this.ctx.t(d.checkout.no_reminder ? "checkout.reminderOn" : "checkout.reminderOff"));
+    } catch (err) {
+      this.ctx.toast(errorMessage(err), "error");
+    }
+  }
+
+  private async _taskDone(task: MaintenanceTask): Promise<void> {
+    const d = this._detail;
+    if (!d) return;
+    try {
+      await this.ctx.api.maintenanceDone(d.id, task.id);
+      this.ctx.toast(this.ctx.t("maintenance.doneToast", { title: task.title }));
+    } catch (err) {
+      this.ctx.toast(errorMessage(err), "error");
+    }
+  }
+
   private async _deleteSelected(): Promise<void> {
     const ids = this._selection.values();
     const t = this.ctx.t;
@@ -277,6 +316,9 @@ export class OtNodePage extends LitElement {
     const d = e.detail;
     this._dialog = null;
     if (d.kind === "created") this.ctx.toast(t("form.created", { name: d.name ?? "" }));
+    else if (d.kind === "checkout") this.ctx.toast(t("checkout.done", { name: d.name ?? "" }));
+    else if (d.kind === "maintenance") this.ctx.toast(t("maintenance.saved"));
+    else if (d.kind === "maintenance-removed") this.ctx.toast(t("maintenance.removed"));
     else if (d.kind === "saved") this.ctx.toast(t("form.saved"));
     else if (d.target !== undefined) {
       this.ctx.toast(t("move.done", { n: d.count ?? 0, name: d.target }));
@@ -307,10 +349,13 @@ export class OtNodePage extends LitElement {
           ${d ? html`<button class="btn" @click=${() => (this._dialog = "quick")}><ha-icon icon="mdi:text-box-plus-outline"></ha-icon>${t("node.quick")}</button>` : nothing}
           ${rows.length > 1 ? html`<button class="btn text" @click=${() => { this._selection.selectAll(rows.map((r) => r.id)); this.requestUpdate(); }}><ha-icon icon="mdi:select-all"></ha-icon>${t("node.selectAll")}</button>` : nothing}
         </div>` : nothing}
+      ${d && !system && !inTrash ? this._checkoutActions(d) : nothing}
       ${d ? this._info(d) : nothing}
+      ${d && !system && !inTrash ? this._maintenance(d) : nothing}
       <div class="section-title">${t("node.contents")}${rows.length ? ` (${rows.length})` : ""}</div>
       ${rows.length
         ? html`<ot-node-list
+            .ctx=${this.ctx}
             .rows=${rows}
             .selection=${this._selection}
             .selectable=${!inTrash}
@@ -400,6 +445,61 @@ export class OtNodePage extends LitElement {
     `;
   }
 
+  /** „Ausleihen“, „Entnehmen“ oder „Zurücklegen“ (Pflichtenheft 8.6) und die Menge mit Plus/Minus. */
+  private _checkoutActions(d: Detail) {
+    const t = this.ctx.t;
+    const co = d.checkout;
+    return html`
+      <div class="actions">
+        ${co
+          ? html`<button class="btn primary" @click=${this._return}><ha-icon icon="mdi:keyboard-return"></ha-icon>${t("checkout.return")}</button>
+              ${co.type === "lent"
+                ? html`<button class="btn text" @click=${this._toggleReminder}><ha-icon icon=${co.no_reminder ? "mdi:bell-outline" : "mdi:bell-off-outline"}></ha-icon>${co.no_reminder ? t("checkout.reminderOnShort") : t("checkout.reminderOffShort")}</button>`
+                : nothing}`
+          : html`<button class="btn" @click=${() => (this._dialog = "lent")}><ha-icon icon="mdi:account-arrow-right-outline"></ha-icon>${t("checkout.lend")}</button>
+              <button class="btn" @click=${() => (this._dialog = "out")}><ha-icon icon="mdi:package-up"></ha-icon>${t("checkout.takeOut")}</button>`}
+        ${d.quantity !== null
+          ? html`<span class="grow"></span><ot-stepper .ctx=${this.ctx} .nodeId=${d.id} .itemName=${d.name} .quantity=${d.quantity} .unit=${d.unit}></ot-stepper>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  /** Wartungsaufgaben (Pflichtenheft 5.9): fällig, „Erledigt“ mit einem Tipp, Protokoll. */
+  private _maintenance(d: Detail) {
+    const t = this.ctx.t;
+    const tasks = d.maintenance;
+    const now = today();
+    return html`
+      <div class="section-title row">
+        <span class="grow">${t("maintenance.section")}</span>
+        <button class="btn text" @click=${() => { this._task = null; this._dialog = "task"; }}><ha-icon icon="mdi:plus"></ha-icon>${t("maintenance.add")}</button>
+      </div>
+      ${tasks.length
+        ? html`<div class="list">${tasks.map((k) => {
+            const days = k.next_due ? daysBetween(now, k.next_due) : null;
+            const overdue = days !== null && days < 0;
+            const unit = k.interval ? t(`maintenance.unit.${k.interval.unit}` as never) : "";
+            const meta = [
+              k.interval ? t("maintenance.everyText", { n: k.interval.value, unit }) : t("maintenance.once"),
+              k.next_due ? `${t("maintenance.due")} ${formatDate(k.next_due, this.ctx.lang)}` : t("maintenance.noDate"),
+              k.log?.length ? t("maintenance.last", { date: formatDate(k.log[k.log.length - 1].date, this.ctx.lang) }) : "",
+            ].filter(Boolean);
+            return html`<div class="rowbox" style="display:flex;align-items:center;border-bottom:1px solid var(--divider-color)">
+              <button class="item" style="border:none;flex:1;min-width:0;width:auto" @click=${() => { this._task = k; this._dialog = "task"; }} aria-label=${`${t("maintenance.edit")}: ${k.title}`}>
+                <span class="grow">
+                  <span class="title">${k.title}</span>
+                  <span class="small muted" style="display:block">${meta.join(" · ")}</span>
+                  ${overdue ? html`<span class="chip error" style="margin-top:4px">${t("due.overdue")}</span>` : days !== null && days <= 14 ? html`<span class="chip warning" style="margin-top:4px">${t("maintenance.soon", { n: days })}</span>` : nothing}
+                </span>
+              </button>
+              <button class="btn" style="margin-right:8px" aria-label=${`${t("maintenance.done")}: ${k.title}`} @click=${() => this._taskDone(k)}><ha-icon icon="mdi:check"></ha-icon>${t("maintenance.done")}</button>
+            </div>`;
+          })}</div>`
+        : html`<div class="small muted" style="padding:0 4px">${t("maintenance.none")}</div>`}
+    `;
+  }
+
   private _empty(d: Detail | null) {
     const t = this.ctx.t;
     if (d?.in_trash) return html`<div class="empty small">${t("node.emptyTrashed")}</div>`;
@@ -431,6 +531,11 @@ export class OtNodePage extends LitElement {
         return html`<ot-move .ctx=${this.ctx} .ids=${this._moveIds} .startAt=${d?.id ?? ""} @saved=${this._saved} @close=${this._closeDialog}></ot-move>`;
       case "delete":
         return d ? this._deleteDialog(d, t) : nothing;
+      case "lent":
+      case "out":
+        return d ? html`<ot-checkout .ctx=${this.ctx} .nodeId=${d.id} .itemName=${d.name} .kind=${this._dialog} @saved=${this._saved} @close=${this._closeDialog}></ot-checkout>` : nothing;
+      case "task":
+        return d ? html`<ot-maintenance .ctx=${this.ctx} .nodeId=${d.id} .task=${this._task} @saved=${this._saved} @close=${this._closeDialog}></ot-maintenance>` : nothing;
       default:
         return nothing;
     }

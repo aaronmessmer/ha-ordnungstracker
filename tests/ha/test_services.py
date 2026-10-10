@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 from homeassistant.exceptions import ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.ordnungstracker.const import CONF_TODO_ENTITY, DOMAIN
+from custom_components.ordnungstracker.const import CONF_TODO_AUTO, CONF_TODO_ENTITY, DOMAIN
 from custom_components.ordnungstracker.core.sample import load_sample
 
 
@@ -198,6 +198,47 @@ async def test_transfer_to_todo_avoids_duplicates(hass: HomeAssistant, sample: M
     assert again["entity_id"] == "todo.einkauf"
     with pytest.raises(ServiceValidationError, match=r"existiert nicht|gibt es nicht"):
         await call(hass, "transfer_to_todo", {"todo_entity": "todo.nirgends"})
+
+
+async def test_automatic_todo_transfer_when_falling_below_minimum(
+    hass: HomeAssistant, init_integration: MockConfigEntry
+) -> None:
+    added: list[str] = []
+
+    async def get_items(call: ServiceCall) -> dict[str, Any]:
+        return {call.data["entity_id"]: {"items": [{"summary": s, "status": "needs_action"} for s in added]}}
+
+    async def add_item(call: ServiceCall) -> None:
+        added.append(call.data["item"])
+
+    hass.services.async_register("todo", "get_items", get_items, supports_response=SupportsResponse.ONLY)
+    hass.services.async_register("todo", "add_item", add_item)
+    hass.states.async_set("todo.einkauf", "0")
+    entry = init_integration
+    runtime = entry.runtime_data
+    node_id = (await call(hass, "create_node", {"name": "Batterien", "quantity": 5, "min_quantity": 3}))["id"]
+
+    # automatic transfer is off by default: falling below the minimum adds nothing
+    await call(hass, "adjust_quantity", {"node": node_id, "delta": -3})
+    await hass.async_block_till_done()
+    assert added == []
+    await call(hass, "adjust_quantity", {"node": node_id, "delta": 5})
+
+    hass.config_entries.async_update_entry(
+        entry, options={CONF_TODO_ENTITY: "todo.einkauf", CONF_TODO_AUTO: True}
+    )
+    await hass.async_block_till_done()
+    runtime = entry.runtime_data
+    assert runtime.entry.options[CONF_TODO_AUTO] is True
+    await call(hass, "adjust_quantity", {"node": node_id, "delta": -6})
+    await hass.async_block_till_done()
+    assert added == ["Batterien"]
+    # a broken list is logged, never raised
+    hass.states.async_remove("todo.einkauf")
+    await call(hass, "adjust_quantity", {"node": node_id, "delta": 10})
+    await call(hass, "adjust_quantity", {"node": node_id, "delta": -10})
+    await hass.async_block_till_done()
+    assert added == ["Batterien"]
 
 
 async def test_transfer_without_list_explains_what_to_do(

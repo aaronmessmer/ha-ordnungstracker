@@ -153,9 +153,9 @@ export class OtOverview extends LitElement {
         ${this._tile(String(o.containers), t("overview.containers"), () => this.ctx.go({ page: "search", query: "", filters: { classes: ["container"] } }))}
         ${this._tile(String(o.items), t("overview.items"), () => this.ctx.go({ page: "search", query: "", filters: { classes: ["item"] } }))}
         ${this._tile(String(o.unsorted), t("overview.unsorted"), () => this._open("unsortiert"), o.unsorted > 0 ? "alert" : "")}
-        ${this._tile(String(o.checked_out), t("overview.checkedOut"), () => this.ctx.go({ page: "search", query: "", filters: { checked_out: true } }), o.checked_out_overdue > 0 ? "alert" : "")}
+        ${this._tile(String(o.checked_out), t("overview.checkedOut"), () => this.ctx.go({ page: "out" }), o.checked_out_overdue > 0 ? "alert" : "")}
         ${this._tile(String(dueTotal), t("overview.due"), () => this.ctx.go({ page: "due" }), dueTotal > 0 ? "alert" : "")}
-        ${this._tile(String(o.due.below_min ?? 0), t("overview.restock"), () => this.ctx.go({ page: "due" }), (o.due.below_min ?? 0) > 0 ? "alert" : "")}
+        ${this._tile(String(o.due.below_min ?? 0), t("overview.restock"), () => this.ctx.go({ page: "restock" }), (o.due.below_min ?? 0) > 0 ? "alert" : "")}
       </div>
       <div class="row wrap muted small" style="margin:12px 4px 0;gap:16px">
         <span><ha-icon icon="mdi:numeric" style="--mdc-icon-size:18px"></ha-icon> ${t("overview.nextNumber", { n: o.next_free_number })}</span>

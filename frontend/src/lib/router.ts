@@ -8,6 +8,8 @@ export type Route =
   | { page: "search"; query: string; filters: SearchFilters }
   | { page: "trash" }
   | { page: "due" }
+  | { page: "out" }
+  | { page: "restock" }
   | { page: "settings"; section: string };
 
 export const BASE = "/ordnungstracker";
@@ -70,6 +72,10 @@ export function routeToPath(route: Route): string {
       return `${BASE}/trash`;
     case "due":
       return `${BASE}/due`;
+    case "out":
+      return `${BASE}/out`;
+    case "restock":
+      return `${BASE}/restock`;
     case "settings":
       return route.section ? `${BASE}/settings/${route.section}` : `${BASE}/settings`;
   }
@@ -94,6 +100,10 @@ export function parseRoute(url: string): Route {
       return { page: "trash" };
     case "due":
       return { page: "due" };
+    case "out":
+      return { page: "out" };
+    case "restock":
+      return { page: "restock" };
     case "settings":
       return { page: "settings", section: parts[1] ?? "" };
     default:

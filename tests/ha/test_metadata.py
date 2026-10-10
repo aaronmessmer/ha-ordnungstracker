@@ -47,7 +47,9 @@ def test_entities_and_issues_are_translated() -> None:
         assert set(data["entity"]["sensor"]) == set(SENSOR_KEYS), lang
         assert set(data["issues"]) == issue_ids, lang
         assert {"not_loaded", "no_todo_entity", "todo_unknown"} <= set(data["exceptions"]), lang
-        assert {"todo_entity", "show_sidebar"} == set(data["options"]["step"]["init"]["data"]), lang
+        assert {"todo_entity", "todo_auto", "show_sidebar"} == set(data["options"]["step"]["init"]["data"]), (
+            lang
+        )
     assert set(_load("icons.json")["entity"]["sensor"]) == set(SENSOR_KEYS)
 
 

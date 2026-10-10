@@ -11,6 +11,7 @@ import "./components/ot-overview";
 import "./components/ot-search-page";
 import "./components/ot-trash-page";
 import "./components/ot-due-page";
+import "./components/ot-out-page";
 import "./components/ot-settings-page";
 import "./components/ot-tree";
 import "./components/ot-panel";

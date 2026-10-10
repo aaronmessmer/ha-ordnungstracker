@@ -17,10 +17,12 @@
         "description": "Die Schwellen für Erinnerungen (z. B. „Ausgeliehenes gilt nach 30 Tagen als überfällig“) stellst du in der Oberfläche ein; sie gehören zu deinen Daten.",
         "data": {
           "todo_entity": "To-do-Liste für Nachkäufe",
+          "todo_auto": "Nachkäufe selbsttätig auf die To-do-Liste setzen",
           "show_sidebar": "Eintrag „Ordnung“ in der Seitenleiste zeigen"
         },
         "data_description": {
           "todo_entity": "Dorthin überträgt der Dienst „Nachkäufe in To-do-Liste übertragen“, was unter dem Mindestbestand liegt.",
+          "todo_auto": "Sobald etwas unter den Mindestbestand fällt, wird es (ohne Doppelte) auf die gewählte Liste gesetzt.",
           "show_sidebar": "Gilt, sobald die Oberfläche installiert ist."
         }
       }

@@ -25,6 +25,20 @@ export function quantityText(b: Pick<Brief, "quantity" | "unit">): string {
   return b.unit ? `${n} ${b.unit}` : `${n}×`;
 }
 
+/** Heutiges Datum als `JJJJ-MM-TT` in der Ortszeit des Geräts. */
+export function today(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Tage von `from` bis `to` (beide `JJJJ-MM-TT`); negativ, wenn `to` früher liegt. */
+export function daysBetween(from: string, to: string): number {
+  const a = new Date(`${from}T12:00:00`).getTime();
+  const b = new Date(`${to}T12:00:00`).getTime();
+  return Math.round((b - a) / 86_400_000);
+}
+
 export type Tone = "error" | "warning" | "info";
 
 /** Farbe eines Hinweises (vermisst und abgelaufen sind Fehler, entnommen nur Information). */

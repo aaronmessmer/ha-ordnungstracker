@@ -4,6 +4,9 @@ import { errorMessage } from "../lib/context";
 import { parseList, parseNumber } from "../lib/format";
 import { baseStyles } from "../lib/styles";
 import type { Detail } from "../types";
+import "./ot-field-input";
+
+const CONDITIONS = ["ok", "missing", "defective", "to_sell", "to_give_away", "disposed"] as const;
 
 /**
  * Anlegen und Bearbeiten in einem Dialog. Pflicht ist nur der Name; die Art wird vorgeschlagen,
@@ -25,6 +28,8 @@ export class OtNodeForm extends LitElement {
     _unit: { state: true },
     _minQuantity: { state: true },
     _note: { state: true },
+    _condition: { state: true },
+    _fieldValues: { state: true },
     _error: { state: true },
     _busy: { state: true },
   };
@@ -42,6 +47,8 @@ export class OtNodeForm extends LitElement {
   declare _unit: string;
   declare _minQuantity: string;
   declare _note: string;
+  declare _condition: string;
+  declare _fieldValues: Record<string, unknown>;
   declare _error: string;
   declare _busy: boolean;
 
@@ -63,6 +70,8 @@ export class OtNodeForm extends LitElement {
     this._unit = "";
     this._minQuantity = "";
     this._note = "";
+    this._condition = "ok";
+    this._fieldValues = {};
     this._error = "";
     this._busy = false;
   }
@@ -109,6 +118,8 @@ export class OtNodeForm extends LitElement {
       this._unit = n.unit;
       this._minQuantity = n.min_quantity !== null ? String(n.min_quantity) : "";
       this._note = n.note;
+      this._condition = n.condition;
+      this._fieldValues = Object.fromEntries(n.fields.map((x) => [x.id, x.value ?? null]));
     } else {
       try {
         const s = await this.ctx.api.suggest(this.parentId);
@@ -187,7 +198,12 @@ export class OtNodeForm extends LitElement {
           quantity,
           unit: this._unit,
           min_quantity: minQuantity,
+          ...(this._condition !== this.node.condition ? { condition: this._condition } : {}),
         });
+        for (const x of this.node.fields) {
+          const now = this._fieldValues[x.id] ?? null;
+          if (JSON.stringify(now) !== JSON.stringify(x.value ?? null)) await this.ctx.api.fieldValue(this.node.id, x.id, now);
+        }
         this._done("saved", this.node.id, name);
       }
     } catch (err) {
@@ -199,6 +215,33 @@ export class OtNodeForm extends LitElement {
 
   private _done(kind: "created" | "saved", id: string, name: string): void {
     this.dispatchEvent(new CustomEvent("saved", { detail: { kind, id, name }, bubbles: true, composed: true }));
+  }
+
+  /** Eigene Felder dieses Eintrags (nur beim Bearbeiten; die geltenden Felder stehen erst dann fest). */
+  private _fields() {
+    const fields = this.mode === "edit" ? (this.node?.fields ?? []) : [];
+    if (!fields.length) return nothing;
+    const t = this.ctx.t;
+    let last = "\u0000";
+    const filled = fields.some((f) => f.value !== null && f.value !== undefined && f.value !== "");
+    return html`<details ?open=${filled}>
+      <summary>${t("form.fields")}</summary>
+      <div class="stack" style="margin-top:8px">
+        ${fields.map((f) => {
+          const header = f.group !== last ? html`<div class="section-title" style="margin:8px 0 0">${f.group || t("form.fieldsOther")}</div>` : nothing;
+          last = f.group;
+          return html`${header}<ot-field-input
+            .ctx=${this.ctx}
+            .field=${f}
+            .value=${this._fieldValues[f.id] ?? null}
+            .dim=${!f.assigned}
+            @value-changed=${(e: CustomEvent<{ id: string; value: unknown }>) => {
+              this._fieldValues = { ...this._fieldValues, [e.detail.id]: e.detail.value };
+            }}
+          ></ot-field-input>`;
+        })}
+      </div>
+    </details>`;
   }
 
   render() {
@@ -265,9 +308,18 @@ export class OtNodeForm extends LitElement {
                 <label class="field">${t("form.unit")}<input .value=${this._unit} @input=${this._input("_unit")} /></label>
               </div>
               <label class="field">${t("form.minQuantity")}<input inputmode="decimal" .value=${this._minQuantity} @input=${this._input("_minQuantity")} /></label>
+              ${this.mode === "edit"
+                ? html`<label class="field">
+                    ${t("node.condition")}
+                    <select .value=${this._condition} @change=${(e: Event) => (this._condition = (e.target as HTMLSelectElement).value)}>
+                      ${CONDITIONS.map((c) => html`<option value=${c} ?selected=${c === this._condition}>${t(`condition.${c}` as never)}</option>`)}
+                    </select>
+                  </label>`
+                : nothing}
               <label class="field">${t("form.note")}<textarea rows="3" .value=${this._note} @input=${this._input("_note")}></textarea></label>
             </div>
           </details>
+          ${this._fields()}
           ${this._error ? html`<div class="error-text" role="alert">${this._error}</div>` : nothing}
         </form>
         <button slot="footer" class="btn text" @click=${() => this.dispatchEvent(new CustomEvent("close", { bubbles: true, composed: true }))}>${t("common.cancel")}</button>
