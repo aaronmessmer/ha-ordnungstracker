@@ -79,6 +79,7 @@ def test_changelog_mentions_manifest_version() -> None:
         "ENTSCHEIDUNGEN.md",
         "ROADMAP.md",
         "PRUEFLISTEN.md",
+        "ABNAHME.md",
     ],
 )
 def test_documents_exist(doc: str) -> None:

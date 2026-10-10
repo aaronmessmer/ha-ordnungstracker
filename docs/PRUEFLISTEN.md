@@ -133,7 +133,15 @@ Nach dem Update Home Assistant neu starten (die Satzdatei für Assist wird beim 
 **Berechtigungen**
 - [ ] *Konfigurieren* → **Löschen und Einstellungen nur für Administratoren** einschalten. Als Nicht-Administrator: kein Zahnrad, kein „Löschen“, im Papierkorb nur „Wiederherstellen“; Anlegen, Verschieben, Entnehmen, Listen, Inventur gehen weiter. Als Administrator ist alles wie vorher. Eine Automation ohne Benutzer darf weiter löschen.
 
-## Text für den Pull Request (Phase 0 bis 5)
+## Phase 6 – Abschluss (Version 1.0.0)
+
+- [ ] `docs/ABNAHME.md` durchlesen: Stimmt jede Zeile mit deinem Eindruck überein? Alle ◐-Punkte stehen in den Prüflisten oben; **die drei wichtigsten:** Druck und Download in der Companion-App, Sprachabfrage mit gesprochener Zahl, selbsttätige To-do-Übertragung.
+- [ ] Bei einem Behälter: ⋮ → **Als Markdown-Liste exportieren** → Datei mit dem Inhalt als verschachtelte Liste (oder, wo Downloads gesperrt sind, bitte melden).
+- [ ] Dashboard-Karte (alle drei Betriebsarten) im hellen **und** dunklen Design: Rahmen, Hintergrund und Rundung sehen aus wie die anderen Karten.
+- [ ] **Abnahmeprüfung des Gesamtziels:** Einen Teil des echten Haushalts am Handy erfassen (Raum, Regal, mehrere Kisten mit Nummern), nach einer Woche fünf Dinge per Suche **und** per Assist wiederfinden. Was hakt, bitte notieren.
+- [ ] Release: GitHub → Actions → „Release“ von Hand starten (Version aus `manifest.json`), danach in HACS aktualisieren.
+
+## Text für den Pull Request (Phase 0 bis 6)
 
 **Phase 0 – Grundlage.** Repository-Gerüst, CI (Lint, Typprüfung, Tests, Oberfläche, hassfest, HACS), Release-Ablauf zum manuellen Auslösen, leere Integration (Config Flow, genau eine Instanz, Deutsch/Englisch, Symbol),
 `CLAUDE.md`, `docs/ENTSCHEIDUNGEN.md` mit den Ergebnissen der Plattform-Recherche (Abschnitt 15 des Pflichtenhefts), `docs/ARCHITEKTUR.md`, `docs/DATENFORMAT.md` (Entwurf) und JSON-Schema. Fertig, wenn: CI grün, Integration lässt sich in einer Testinstanz einrichten (getestet mit Home Assistant 2026.3.1 und 2026.10.0).
@@ -150,3 +158,6 @@ Langzeit-Ausleihe (Erinnerung pro Ausleihe abschaltbar). Fertig, wenn: alles üb
 **Phase 4 – Erweiterungen A.** Entnehmen/Zurücklegen (auch Langzeit-Ausleihe) und Ansicht „Entnommen“, Menge mit Plus/Minus und Ansicht „Nachkaufen“ samt To-do-Übertragung (neu: wahlweise selbsttätig), „Fällig“ mit fünf Rubriken und Abkürzungen, Wartung, eigene Angaben und Zustand beim Bearbeiten, Felder-Editor, Synonyme, Schwellen in den Einstellungen. Fertig, wenn: alles in der Oberfläche bedienbar, Tests der Oberfläche (44) und der HA-Schicht (413) grün, Prüfliste Phase 4 abgearbeitet.
 
 **Phase 5 – Erweiterungen B.** Listen und Packlisten, Inventur mit gemerktem Zwischenstand, Vorlagen, Druckansichten aus der Oberfläche, Änderungsprotokoll und Sicherungen in der Oberfläche, Sprachabfrage über Assist („Wo ist …?“, „Was ist in Kiste …?“, nur lesend, Satzdatei wird selbst eingerichtet), Berechtigungen („Löschen und Einstellungen nur für Administratoren“, auch in Schnittstelle und Aktionen). Fertig, wenn: alles in der Oberfläche bedienbar, Tests der Oberfläche (57) und der HA-Schicht grün, Sprachsätze gegen den echten Assist-Agenten getestet, Prüfliste Phase 5 abgearbeitet.
+
+**Phase 6 – Abschluss.** Abnahme gegen das Pflichtenheft (`docs/ABNAHME.md`: jede Funktion aus 8 und 9 mit Umsetzung und Nachweis), Markdown-Export eines Teilbaums in der Oberfläche, Karte ohne `ha-card`, „Erste Schritte“ im README, Version 1.0.0. Fertig, wenn: alle Tests grün (Kern 97,5 %, HA-Schicht auf 2026.10.0 und 2026.3.1, Oberfläche 58), CI-Bündel aktuell, ◐-Punkte der Prüflisten abgearbeitet.
+

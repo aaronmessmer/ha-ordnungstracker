@@ -1,7 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import type { AppContext } from "../lib/context";
 import { errorMessage } from "../lib/context";
-import { daysBetween, fieldValueText, formatDate, hintTone, iconFor, quantityText, today } from "../lib/format";
+import { daysBetween, download, fieldValueText, formatDate, hintTone, iconFor, quantityText, today } from "../lib/format";
 import { Latest } from "../lib/latest";
 import { rowFromBrief } from "../lib/rows";
 import { Selection } from "../lib/selection";
@@ -244,6 +244,19 @@ export class OtNodePage extends LitElement {
     }
   }
 
+  /** Lesbarer Export dieses Teilbaums (Pflichtenheft 8.10) als Markdown-Datei. */
+  private async _exportSubtree(): Promise<void> {
+    const d = this._detail;
+    if (!d) return;
+    try {
+      const res = await this.ctx.api.exportData("markdown", d.id);
+      download(res.filename, res.text, "text/markdown");
+      this.ctx.toast(this.ctx.t("data.exported", { name: res.filename }));
+    } catch (err) {
+      this.ctx.toast(errorMessage(err), "error");
+    }
+  }
+
   private async _return(): Promise<void> {
     const d = this._detail;
     if (!d) return;
@@ -399,6 +412,7 @@ export class OtNodePage extends LitElement {
                   ? html`<button role="menuitem" @click=${() => { this._menu = false; this.ctx.go({ page: "stocktake", id: d.id }); }}><ha-icon icon="mdi:clipboard-check-outline"></ha-icon>${t("stocktake.start")}</button>
                     <button role="menuitem" @click=${() => { this._menu = false; void openPrint(this.ctx, "sheet", { node: d.id }); }}><ha-icon icon="mdi:printer"></ha-icon>${t("print.sheet")}</button>`
                   : nothing}
+                ${d.class !== "item" ? html`<button role="menuitem" @click=${() => { this._menu = false; void this._exportSubtree(); }}><ha-icon icon="mdi:language-markdown-outline"></ha-icon>${t("export.subtree")}</button>` : nothing}
                 <button role="menuitem" @click=${() => { this._menu = false; this.ctx.go({ page: "journal", node: d.id }); }}><ha-icon icon="mdi:history"></ha-icon>${t("journal.node")}</button>
                 ${canAdmin(this.ctx) ? html`<button role="menuitem" @click=${() => { this._menu = false; this._deleteMode = "trash"; this._dialog = "delete"; }}><ha-icon icon="mdi:delete-outline"></ha-icon>${t("common.delete")}</button>` : nothing}
               </div>` : nothing}

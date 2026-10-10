@@ -205,3 +205,10 @@ und gegen 2026.10.0 **und** 2026.3.1 getestet.
 - **F9. Protokoll** zeigt 50 Zeilen je Seite, nachladbar; bekannte Aktionen auf Deutsch, unbekannte unverändert. Verschieben mit altem und neuem Pfad, Bearbeiten mit alt → neu. Das globale Protokoll liegt unter den Einstellungen (also nur für Administratoren, wenn die Option an ist), das je Eintrag in dessen Menü.
 - **F10. Sicherungen.** Auflisten, „Jetzt sichern“ und Wiederherstellen mit deutlicher Rückfrage; der Kern sichert vor dem Wiederherstellen den jetzigen Stand (`vor-wiederherstellung`), es gibt also einen Rückweg.
 - **F11. Tests mit Assist** brauchen `hassil` und `home-assistant-intents` (Home Assistant lädt sie sonst erst zur Laufzeit); sie stehen in `requirements_test.txt`. Die Tests führen echte Sätze durch den Standard-Agenten.
+
+## G. Entscheidungen zu Phase 6 (Abschluss)
+
+- **G1. Abnahme als Dokument** (`docs/ABNAHME.md`) statt als Haken im Pflichtenheft: Das Pflichtenheft bleibt der unveränderte Auftrag; die Abnahme nennt je Funktion Umsetzung und Nachweis und trennt streng zwischen „automatisch geprüft“ und „braucht echtes Home Assistant“ (◐).
+- **G2. Karte ohne `ha-card`.** Auch dieses Element ist nicht von uns; die Karte baut ein eigenes Element mit den Design-Variablen nach (Hintergrund, Rundung, Rahmen, Schatten). Ein Test sucht in allen Quelldateien nach Elementen `ha-…` außer `ha-icon`.
+- **G3. Markdown-Teilbaum-Export** wurde in der Oberfläche nachgetragen (die Schnittstelle konnte es seit Phase 2).
+- **G4. Version 1.0.0** heißt: alle Funktionen des Pflichtenhefts sind umgesetzt und automatisch geprüft; die Punkte, die nur ein echtes Home Assistant klären kann (Companion-App: Download und Druck, gesprochene Zahlen, To-do-Übertragung), stehen offen in den Prüflisten. Sie ändern am Datenformat nichts und können in 1.0.x behoben werden.

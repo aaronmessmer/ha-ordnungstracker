@@ -2,6 +2,17 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.0.0] – Phase 6: Abschluss
+
+### Hinzugefügt
+- `docs/ABNAHME.md`: jede Funktion aus Abschnitt 8 und 9 des Pflichtenhefts (sowie 10 bis 12) mit Umsetzung und Nachweis.
+- Markdown-Export eines **Teilbaums** in der Oberfläche (Menü ⋮ eines Behälters oder Ortes).
+- „Erste Schritte“ im README; Test, der Home-Assistant-Elemente außer `ha-icon` in der Oberfläche verbietet.
+
+### Geändert
+- Die Dashboard-Karte nutzt ein eigenes Element statt `ha-card` (Pflichtenheft 10.3).
+- README und Dokumentation auf den Stand 1.0.0 gebracht.
+
 ## [0.6.0] – Phase 5: Erweiterungen B
 
 ### Hinzugefügt

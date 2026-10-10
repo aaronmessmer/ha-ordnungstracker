@@ -517,4 +517,5 @@ export const de = {
   "journal.action.purge": "Endgültig gelöscht",
   "journal.action.quantity": "Menge geändert",
   "journal.action.trash_empty": "Papierkorb geleert",
+  "export.subtree": "Als Markdown-Liste exportieren",
 } as const;

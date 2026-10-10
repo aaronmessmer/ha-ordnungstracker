@@ -501,4 +501,5 @@ export const en: Record<keyof typeof de, string> = {
   "journal.action.purge": "Deleted for good",
   "journal.action.quantity": "Amount changed",
   "journal.action.trash_empty": "Trash emptied",
+  "export.subtree": "Export as Markdown list",
 };

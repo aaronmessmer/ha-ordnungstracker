@@ -83,9 +83,14 @@ export class OtCard extends LitElement {
       :host {
         display: block;
       }
-      ha-card {
+      .ot-card {
         display: block;
         padding: 12px 16px 16px;
+        background: var(--ha-card-background, var(--card-background-color, #fff));
+        border-radius: var(--ha-card-border-radius, 12px);
+        border: var(--ha-card-border-width, 1px) solid var(--ha-card-border-color, var(--divider-color));
+        box-shadow: var(--ha-card-box-shadow, none);
+        color: var(--primary-text-color);
       }
       h2 {
         margin: 0 0 8px;
@@ -204,11 +209,11 @@ export class OtCard extends LitElement {
     const t = makeT(this.hass?.language);
     const mode = this._config.mode;
     return html`
-      <ha-card>
+      <div class="ot-card">
         ${this._config.title ? html`<h2>${this._config.title}</h2>` : nothing}
         ${mode === "node" ? this._nodeView(t) : html`${this._searchBox(t)}${this._results(t)}${mode === "tiles" ? this._tiles(t) : nothing}`}
         ${this._error ? html`<div class="error-text small" role="alert">${this._error}</div>` : nothing}
-      </ha-card>
+      </div>
     `;
   }
 

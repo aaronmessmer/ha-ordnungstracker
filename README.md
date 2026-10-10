@@ -3,10 +3,9 @@
 Ein Inventar für den Haushalt, das sich wie ein Teil von Home Assistant anfühlt: gleiche Anmeldung, gleiches Erscheinungsbild, ein eigener Eintrag in der Seitenleiste.
 Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Nummer, die außen draufsteht, und hat einen Ort. Keine Strichcodes.
 
-> **Entwicklungsstand: Phase 5 von 6 (Version 0.6.0).** Alles Wesentliche ist da: Kern, Anbindung an Home Assistant, Oberfläche (Seitenleiste „Ordnung“, Dashboard-Karte), Erweiterungen A (Felder, Ausleihen, Mengen, Wartung …) **und** Erweiterungen B: Listen, Inventur, Vorlagen, Druckansichten, Änderungsprotokoll, Sicherungen, Sprachabfrage über Assist und Berechtigungen.
-> Phase 6 (Abschlussprüfung, Version 1.0.0) folgt (`docs/ROADMAP.md`).
+> **Version 1.0.0.** Alle Funktionen des Pflichtenhefts sind umgesetzt; was daran noch von einem echten Home Assistant und der Companion-App abhängt, steht in [`docs/PRUEFLISTEN.md`](docs/PRUEFLISTEN.md), der Abgleich mit dem Pflichtenheft in [`docs/ABNAHME.md`](docs/ABNAHME.md).
 
-## Was es kann (Ziel)
+## Was es kann
 
 * **Finden:** „Wo ist X?“ in Sekunden, mit vollständigem Pfad (Ding → Gruppe → Kiste 14 → Regal B → Keller).
 * **Nachschauen:** „Was ist in diesem Raum, Regal, dieser Kiste?“
@@ -24,6 +23,14 @@ Ordnungsprinzip sind **nummerierte Behälter** – jede Kiste bekommt eine Numme
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen → „Ordnungs-Tracker“.** Es sind keine Angaben nötig; es gibt genau eine Instanz.
 
 Voraussetzung: Home Assistant **2026.3.0** oder neuer.
+
+## Erste Schritte
+
+1. In der Seitenleiste **Ordnung** öffnen. Ein leeres Inventar bietet **Beispieldaten** an – gut zum Ausprobieren, in den Einstellungen mit einem Tipp wieder zu entfernen.
+2. Einen **Raum** anlegen („Plus“), darin ein **Regal**, darin eine **Kiste**: Die Kiste bekommt die nächste freie **Nummer** – schreib sie außen drauf.
+3. In der Kiste **Schnell erfassen**: eine Zeile pro Ding (`3x Batterien AA`), mit Vorschau. Grob anfangen genügt („Bastelsachen“); das Genaue trägst du später nach.
+4. Wiederfinden: oben ins Suchfeld tippen, oder die Nummer der Kiste (`14`). Jeder Treffer zeigt den vollständigen Pfad.
+5. Optional: eine **Dashboard-Karte** hinzufügen (Karte „Ordnungs-Tracker“, Betriebsart im Karteneditor), eine **To-do-Liste** für Nachkäufe wählen (*Konfigurieren*), Fragen an **Assist** stellen („Wo ist die Schere?“).
 
 ## Deine Daten
 
@@ -155,5 +162,5 @@ actions:
 
 ## Entwicklung
 
-Siehe [`CLAUDE.md`](CLAUDE.md), [`docs/ARCHITEKTUR.md`](docs/ARCHITEKTUR.md) und das [Pflichtenheft](docs/PFLICHTENHEFT.md). Entscheidungen und die Ergebnisse der Plattform-Recherche: [`docs/ENTSCHEIDUNGEN.md`](docs/ENTSCHEIDUNGEN.md).
+Siehe [`CLAUDE.md`](CLAUDE.md), [`docs/ARCHITEKTUR.md`](docs/ARCHITEKTUR.md) und das [Pflichtenheft](docs/PFLICHTENHEFT.md). Entscheidungen und die Ergebnisse der Plattform-Recherche: [`docs/ENTSCHEIDUNGEN.md`](docs/ENTSCHEIDUNGEN.md). Datenformat: [`docs/DATENFORMAT.md`](docs/DATENFORMAT.md), Schnittstellen: [`docs/API.md`](docs/API.md), Abnahme: [`docs/ABNAHME.md`](docs/ABNAHME.md), Prüflisten: [`docs/PRUEFLISTEN.md`](docs/PRUEFLISTEN.md), Zurückgestelltes: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 Lizenz: MIT.

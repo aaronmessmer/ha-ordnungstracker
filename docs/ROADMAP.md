@@ -10,7 +10,7 @@
 | 3 | Oberfläche, Grundfunktionen (Panel und Karte) | **fertig** |
 | 4 | Erweiterungen A: Felder, Entnahme, Menge/To-do, Zustand, Ansichten Fällig/Entnommen/Nachkaufen, Wartung, Synonyme, Wert | **fertig** |
 | 5 | Erweiterungen B: Listen, Inventur, Vorlagen, Druck, Protokoll, Sicherungen, Sprachabfrage, Berechtigungen | **fertig** |
-| 6 | Abschluss: Prüfung gegen das Pflichtenheft, Dokumentation, Version 1.0.0 | offen |
+| 6 | Abschluss: Prüfung gegen das Pflichtenheft, Dokumentation, Version 1.0.0 (`ABNAHME.md`) | **fertig** |
 
 Der **Kern ist vollständig** (auch für Funktionen, deren Oberfläche erst später kommt), damit das Datenformat nicht mehr umgebaut werden muss.
 

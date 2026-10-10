@@ -10,6 +10,16 @@ function sources(dir: string): string[] {
   );
 }
 
+describe("sources", () => {
+  it("use no Home Assistant element except ha-icon (Pflichtenheft 10.3)", () => {
+    const offenders: string[] = [];
+    for (const file of sources(join(__dirname, "../src"))) {
+      for (const m of readFileSync(file, "utf8").matchAll(/<(ha-[a-z-]+)/g)) if (m[1] !== "ha-icon") offenders.push(`${file}: ${m[1]}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("locales", () => {
   it("has the same keys in German and English", () => {
     expect(Object.keys(en).sort()).toEqual(Object.keys(de).sort());

@@ -65,4 +65,4 @@ Oberfläche: im Ordner `frontend/` `npm ci && npm run typecheck && npm test && n
 | 3 Oberfläche, Grundfunktionen | fertig (0.4.0) |
 | 4 Erweiterungen A | fertig (0.5.0) |
 | 5 Erweiterungen B | fertig (0.6.0) |
-| 6 Abschluss | **als Nächstes** | (siehe `docs/ROADMAP.md`) |
+| 6 Abschluss | fertig (1.0.0) – weiter nur nach `docs/ROADMAP.md` oder auf Wunsch | (siehe `docs/ROADMAP.md`) |
