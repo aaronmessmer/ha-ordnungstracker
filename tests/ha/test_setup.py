@@ -204,10 +204,14 @@ async def test_options_flow(hass: HomeAssistant, init_integration: MockConfigEnt
 async def test_diagnostics_contain_numbers_but_no_names(
     hass: HomeAssistant, init_integration: MockConfigEntry, hass_client, hass_ws_client
 ) -> None:
+    # The diagnostics component registers a view and must be set up before the first client starts the
+    # HTTP server (afterwards the router is frozen); otherwise the result depends on the test order.
+    from homeassistant.setup import async_setup_component
     from pytest_homeassistant_custom_component.components.diagnostics import (
         get_diagnostics_for_config_entry,
     )
 
+    assert await async_setup_component(hass, "diagnostics", {})
     client = await hass_ws_client(hass)
     await ok(client, "sample_load")
     diag = await get_diagnostics_for_config_entry(hass, hass_client, init_integration)
