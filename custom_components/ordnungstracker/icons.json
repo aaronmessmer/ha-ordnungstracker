@@ -1,0 +1,85 @@
+{
+  "entity": {
+    "sensor": {
+      "items_total": {
+        "default": "mdi:cube-outline"
+      },
+      "containers_total": {
+        "default": "mdi:package-variant"
+      },
+      "empty_containers": {
+        "default": "mdi:package-variant-closed-remove"
+      },
+      "unsorted": {
+        "default": "mdi:inbox-full"
+      },
+      "checked_out": {
+        "default": "mdi:account-arrow-right"
+      },
+      "below_min": {
+        "default": "mdi:cart-arrow-down"
+      },
+      "expiring": {
+        "default": "mdi:calendar-alert"
+      },
+      "maintenance_due": {
+        "default": "mdi:wrench-clock"
+      },
+      "missing": {
+        "default": "mdi:help-box"
+      }
+    },
+    "calendar": {
+      "dates": {
+        "default": "mdi:calendar-check"
+      }
+    }
+  },
+  "services": {
+    "search": {
+      "service": "mdi:magnify"
+    },
+    "get_node": {
+      "service": "mdi:file-find"
+    },
+    "create_node": {
+      "service": "mdi:plus-box"
+    },
+    "update_node": {
+      "service": "mdi:pencil"
+    },
+    "move_node": {
+      "service": "mdi:arrow-right-bold-box"
+    },
+    "delete_node": {
+      "service": "mdi:delete"
+    },
+    "check_out": {
+      "service": "mdi:account-arrow-right"
+    },
+    "return_node": {
+      "service": "mdi:undo-variant"
+    },
+    "adjust_quantity": {
+      "service": "mdi:plus-minus-variant"
+    },
+    "transfer_to_todo": {
+      "service": "mdi:cart-plus"
+    },
+    "load_sample": {
+      "service": "mdi:home-import-outline"
+    },
+    "remove_sample": {
+      "service": "mdi:home-remove-outline"
+    },
+    "reload": {
+      "service": "mdi:reload"
+    },
+    "create_backup": {
+      "service": "mdi:content-save"
+    },
+    "export": {
+      "service": "mdi:export"
+    }
+  }
+}

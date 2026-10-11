@@ -1,0 +1,423 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ordnungs-Tracker einrichten",
+        "description": "Der Ordnungs-Tracker verwaltet, was wo liegt. Es sind keine Angaben nötig. Deine Daten liegen in der Datei `ordnungstracker/inventar.json` im Konfigurationsverzeichnis."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Der Ordnungs-Tracker ist bereits eingerichtet. Es ist nur eine Instanz möglich."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Einstellungen des Ordnungs-Trackers",
+        "description": "Die Schwellen für Erinnerungen (z. B. „Ausgeliehenes gilt nach 30 Tagen als überfällig“) stellst du in der Oberfläche ein; sie gehören zu deinen Daten.",
+        "data": {
+          "todo_entity": "To-do-Liste für Nachkäufe",
+          "todo_auto": "Nachkäufe selbsttätig auf die To-do-Liste setzen",
+          "admin_only": "Löschen und Einstellungen nur für Administratoren",
+          "show_sidebar": "Eintrag „Ordnung“ in der Seitenleiste zeigen"
+        },
+        "data_description": {
+          "todo_entity": "Dorthin überträgt der Dienst „Nachkäufe in To-do-Liste übertragen“, was unter dem Mindestbestand liegt.",
+          "todo_auto": "Sobald etwas unter den Mindestbestand fällt, wird es (ohne Doppelte) auf die gewählte Liste gesetzt.",
+          "admin_only": "Gilt für die Oberfläche und die Aktionen. Automationen ohne Benutzer sind nicht betroffen.",
+          "show_sidebar": "Gilt, sobald die Oberfläche installiert ist."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "items_total": {
+        "name": "Dinge gesamt"
+      },
+      "containers_total": {
+        "name": "Behälter gesamt"
+      },
+      "empty_containers": {
+        "name": "Leere Behälter"
+      },
+      "unsorted": {
+        "name": "Unsortiert"
+      },
+      "checked_out": {
+        "name": "Entnommen"
+      },
+      "below_min": {
+        "name": "Unter Mindestbestand"
+      },
+      "expiring": {
+        "name": "Läuft bald ab"
+      },
+      "maintenance_due": {
+        "name": "Wartung fällig"
+      },
+      "missing": {
+        "name": "Vermisst"
+      }
+    },
+    "calendar": {
+      "dates": {
+        "name": "Termine"
+      }
+    }
+  },
+  "services": {
+    "search": {
+      "name": "Suchen",
+      "description": "Sucht im Inventar und liefert die Treffer mit vollständigem Pfad.",
+      "fields": {
+        "query": {
+          "name": "Suchbegriff",
+          "description": "Mehrere Wörter müssen alle vorkommen; Eingaben wie 14 oder #14 springen zur Kiste mit dieser Nummer."
+        },
+        "kind": {
+          "name": "Art",
+          "description": "Nur Einträge dieser Art (Kennung der Art, z. B. kiste)."
+        },
+        "within": {
+          "name": "Innerhalb von",
+          "description": "Nur Einträge in diesem Raum, Regal oder dieser Kiste (Kennung oder Nummer)."
+        },
+        "owner": {
+          "name": "Besitzer",
+          "description": "Kennung der Person; es zählt der wirksame (ggf. geerbte) Besitzer."
+        },
+        "tag": {
+          "name": "Schlagwort",
+          "description": "Nur Einträge mit diesem Schlagwort."
+        },
+        "condition": {
+          "name": "Zustand",
+          "description": "Nur Einträge in diesem Zustand."
+        },
+        "checked_out": {
+          "name": "Entnommen",
+          "description": "Nur entnommene (oder nur nicht entnommene) Einträge."
+        },
+        "include_archived": {
+          "name": "Archivierte einbeziehen",
+          "description": "Auch entsorgte oder weggegebene Einträge anzeigen."
+        },
+        "limit": {
+          "name": "Höchstzahl",
+          "description": "Wie viele Treffer höchstens geliefert werden."
+        }
+      }
+    },
+    "get_node": {
+      "name": "Eintrag lesen",
+      "description": "Liefert alle Angaben eines Eintrags samt Pfad und Inhalt.",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer (z. B. #14)."
+        }
+      }
+    },
+    "create_node": {
+      "name": "Eintrag anlegen",
+      "description": "Legt einen neuen Eintrag an. Pflicht ist nur der Name.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name des Eintrags."
+        },
+        "parent": {
+          "name": "Ablageort",
+          "description": "Kennung oder Nummer des Elternknotens; ohne Angabe auf oberster Ebene."
+        },
+        "kind": {
+          "name": "Art",
+          "description": "Kennung der Art; ohne Angabe wird eine passende vorgeschlagen."
+        },
+        "number": {
+          "name": "Nummer",
+          "description": "Eine Zahl oder auto für die kleinste freie Nummer."
+        },
+        "aliases": {
+          "name": "Weitere Namen",
+          "description": "Liste weiterer Namen."
+        },
+        "tags": {
+          "name": "Schlagwörter",
+          "description": "Liste von Schlagwörtern."
+        },
+        "note": {
+          "name": "Notiz",
+          "description": "Freitext."
+        },
+        "owner": {
+          "name": "Besitzer",
+          "description": "Kennung der Person."
+        },
+        "quantity": {
+          "name": "Menge",
+          "description": "Anzahl."
+        },
+        "unit": {
+          "name": "Einheit",
+          "description": "z. B. Stück oder Rollen."
+        },
+        "min_quantity": {
+          "name": "Mindestbestand",
+          "description": "Darunter erscheint der Eintrag unter „Nachkaufen“."
+        }
+      }
+    },
+    "update_node": {
+      "name": "Eintrag ändern",
+      "description": "Ändert Angaben eines Eintrags; nicht genannte Angaben bleiben, wie sie sind.",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Neuer Name."
+        },
+        "kind": {
+          "name": "Art",
+          "description": "Neue Art."
+        },
+        "number": {
+          "name": "Nummer",
+          "description": "Neue Nummer."
+        },
+        "aliases": {
+          "name": "Weitere Namen",
+          "description": "Ersetzt die Liste."
+        },
+        "tags": {
+          "name": "Schlagwörter",
+          "description": "Ersetzt die Liste."
+        },
+        "note": {
+          "name": "Notiz",
+          "description": "Neue Notiz."
+        },
+        "owner": {
+          "name": "Besitzer",
+          "description": "Kennung der Person."
+        },
+        "quantity": {
+          "name": "Menge",
+          "description": "Neue Menge."
+        },
+        "unit": {
+          "name": "Einheit",
+          "description": "Neue Einheit."
+        },
+        "min_quantity": {
+          "name": "Mindestbestand",
+          "description": "Neuer Mindestbestand."
+        },
+        "condition": {
+          "name": "Zustand",
+          "description": "Neuer Zustand."
+        }
+      }
+    },
+    "move_node": {
+      "name": "Eintrag verschieben",
+      "description": "Verschiebt Einträge samt Inhalt an einen neuen Ort.",
+      "fields": {
+        "nodes": {
+          "name": "Einträge",
+          "description": "Liste von Kennungen oder Nummern."
+        },
+        "target": {
+          "name": "Ziel",
+          "description": "Kennung oder Nummer des neuen Ablageorts."
+        }
+      }
+    },
+    "delete_node": {
+      "name": "Eintrag löschen",
+      "description": "Legt den Eintrag in den Papierkorb (30 Tage wiederherstellbar).",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer."
+        },
+        "mode": {
+          "name": "Art des Löschens",
+          "description": "Mit Inhalt in den Papierkorb, oder nur den Eintrag entfernen und den Inhalt eine Ebene nach oben schieben."
+        }
+      }
+    },
+    "check_out": {
+      "name": "Entnehmen",
+      "description": "Vermerkt, dass etwas ausgeliehen oder vorübergehend woanders ist. Der Stammplatz bleibt erhalten.",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer."
+        },
+        "type": {
+          "name": "Art",
+          "description": "Ausgeliehen oder entnommen/ausgelagert."
+        },
+        "to": {
+          "name": "An wen / wo",
+          "description": "z. B. Nachbar Huber oder beim Reifenhändler."
+        },
+        "since": {
+          "name": "Seit",
+          "description": "Ohne Angabe: heute."
+        },
+        "until": {
+          "name": "Bis",
+          "description": "Rückgabedatum (freiwillig)."
+        },
+        "note": {
+          "name": "Notiz",
+          "description": "Freitext."
+        },
+        "no_reminder": {
+          "name": "Langzeit-Ausleihe",
+          "description": "Keine Erinnerung „lange nicht zurück“ für diese Ausleihe."
+        }
+      }
+    },
+    "return_node": {
+      "name": "Zurücklegen",
+      "description": "Beendet die Entnahme; der Eintrag ist wieder an seinem Platz.",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer."
+        }
+      }
+    },
+    "adjust_quantity": {
+      "name": "Menge ändern",
+      "description": "Ändert die Menge um einen Wert oder setzt sie neu (nie unter 0).",
+      "fields": {
+        "node": {
+          "name": "Eintrag",
+          "description": "Kennung oder Nummer."
+        },
+        "delta": {
+          "name": "Änderung",
+          "description": "Z. B. -1 oder 5."
+        },
+        "quantity": {
+          "name": "Neue Menge",
+          "description": "Setzt die Menge fest."
+        }
+      }
+    },
+    "transfer_to_todo": {
+      "name": "Nachkäufe in To-do-Liste übertragen",
+      "description": "Trägt alles unter dem Mindestbestand in eine To-do-Liste ein (ohne Doppelte).",
+      "fields": {
+        "todo_entity": {
+          "name": "To-do-Liste",
+          "description": "Ohne Angabe die in den Optionen gewählte Liste."
+        }
+      }
+    },
+    "load_sample": {
+      "name": "Beispieldaten laden",
+      "description": "Lädt einen kleinen Beispielhaushalt (etwa 60 Einträge) zum Ausprobieren – nur in ein leeres Inventar."
+    },
+    "remove_sample": {
+      "name": "Beispieldaten entfernen",
+      "description": "Entfernt die Beispieldaten wieder. Eigene Einträge darin wandern nach „Unsortiert“."
+    },
+    "reload": {
+      "name": "Neu laden",
+      "description": "Liest inventar.json neu ein, z. B. nach dem Bearbeiten von Hand."
+    },
+    "create_backup": {
+      "name": "Sicherung anlegen",
+      "description": "Legt sofort eine Sicherungskopie von inventar.json an."
+    },
+    "export": {
+      "name": "Exportieren",
+      "description": "Liefert das Inventar als JSON-Datei oder als lesbare Markdown-Liste.",
+      "fields": {
+        "format": {
+          "name": "Format",
+          "description": "JSON (inventar.json) oder Markdown."
+        },
+        "node": {
+          "name": "Teilbaum",
+          "description": "Nur dieser Eintrag samt Inhalt (nur Markdown)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "condition": {
+      "options": {
+        "ok": "in Ordnung",
+        "missing": "vermisst",
+        "defective": "defekt",
+        "to_sell": "zu verkaufen",
+        "to_give_away": "zu verschenken",
+        "disposed": "entsorgt/weggegeben"
+      }
+    },
+    "delete_mode": {
+      "options": {
+        "trash": "samt Inhalt in den Papierkorb",
+        "lift": "nur den Eintrag, Inhalt eine Ebene hoch"
+      }
+    },
+    "checkout_type": {
+      "options": {
+        "lent": "ausgeliehen",
+        "out": "entnommen / ausgelagert"
+      }
+    },
+    "export_format": {
+      "options": {
+        "json": "JSON (inventar.json)",
+        "markdown": "Markdown-Liste"
+      }
+    }
+  },
+  "issues": {
+    "invalid_file": {
+      "title": "Die Inventardatei ist ungültig",
+      "description": "Der Ordnungs-Tracker hat **nichts verändert** und startet erst wieder, wenn die Datei in Ordnung ist.\n\nDatei: `{path}`\n\n{problems}\n\n**Was tun?** Korrigiere die genannten Stellen mit dem Datei-Editor. Der Ordnungs-Tracker versucht es automatisch erneut. Alternativ kopierst du die letzte gültige Sicherung aus dem Ordner `sicherungen` über `inventar.json`: `{backup}`."
+    },
+    "newer_schema": {
+      "title": "Die Inventardatei stammt von einer neueren Version",
+      "description": "{message}\n\nDatei: `{path}` (wird nicht angefasst)."
+    },
+    "external_invalid": {
+      "title": "inventar.json wurde von Hand geändert und ist jetzt ungültig",
+      "description": "Bis die Datei wieder gültig ist, werden **keine Änderungen gespeichert**.\n\nDatei: `{path}`\n\n{problems}\n\nUngespeicherte eigene Änderungen liegen in: `{conflict}`.\n\n**Was tun?** Korrigiere die Datei; sie wird automatisch neu eingelesen."
+    },
+    "conflict": {
+      "title": "inventar.json wurde geändert, während es ungespeicherte Änderungen gab",
+      "description": "Die Änderung von außen wurde übernommen. Dein ungespeicherter Stand liegt als `{conflict}` neben der Datei (`{path}`). Prüfe, ob etwas fehlt, und übernimm es ggf. von Hand."
+    },
+    "save_failed": {
+      "title": "Das Inventar konnte nicht gespeichert werden",
+      "description": "Fehler: {error}\n\nDatei: `{path}`\n\nPrüfe freien Speicherplatz und Schreibrechte. Die Änderungen bleiben im Speicher und werden erneut versucht."
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Der Ordnungs-Tracker ist nicht geladen. Prüfe unter Einstellungen → Reparaturen, ob die Datei inventar.json beanstandet wird."
+    },
+    "no_todo_entity": {
+      "message": "Es ist keine To-do-Liste gewählt. Wähle sie in den Optionen der Integration oder gib todo_entity an."
+    },
+    "todo_unknown": {
+      "message": "Die To-do-Liste {entity_id} gibt es nicht."
+    },
+    "admin_required": {
+      "message": "Dafür sind Administratorrechte nötig. In den Optionen der Integration ist eingestellt, dass Löschen und Einstellungen nur Administratoren vorbehalten sind."
+    }
+  }
+}
